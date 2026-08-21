@@ -25,7 +25,12 @@
 <style>
   :root {
     --accent:#3F5C28; --accent-soft:#BCCB93; --datum-c:#8C8C7E;
-    --phf: grayscale(1) contrast(1.12) brightness(0.88); --phn: contrast(1.07) saturate(0.62) brightness(0.97);
+    /* Grado único: en reposo, monocromo casi total; en foco, se recupera un
+       color contenido, nunca la saturación completa. --phc es la única
+       excepción, reservada al proyecto centrado de Obras (el clímax). */
+    --phf: grayscale(1) contrast(1.14) saturate(1) brightness(0.87);
+    --phn: grayscale(0.72) contrast(1.06) saturate(1.15) brightness(0.99);
+    --phc: grayscale(0.4) contrast(1.05) saturate(1.12) brightness(1.01);
     --datum-y: 76vh; --clear: clamp(150px,22vh,270px);
   }
   * { box-sizing: border-box; }
@@ -37,9 +42,9 @@
 
   /* Tratamiento fotográfico único: todo el material (renders y fotos de obra)
      pasa por el mismo grado para que la lámina se lea como una sola serie. */
-  .ph, [classname~="ph"] { filter: var(--phf); transition: filter .2s ease; }
-  .col[data-active="1"] .ph, .wplate[data-active="1"] .ph,
-  .col[data-active="1"] [classname~="ph"], .wplate[data-active="1"] [classname~="ph"] { filter: var(--phn); }
+  .ph, [classname~="ph"] { filter: var(--phf); transition: filter .35s ease; }
+  .col[data-active="1"] .ph, .col[data-active="1"] [classname~="ph"] { filter: var(--phn); }
+  .wplate[data-active="1"] .ph, .wplate[data-active="1"] [classname~="ph"] { filter: var(--phc); }
 
   /* Portada: negros con detalle y altas luces sin quemar. */
   #hero-video { filter: var(--phf) contrast(1.05) brightness(.94); }
@@ -119,6 +124,7 @@
     .zrow:hover .zm { background-color: var(--accent); transform: scale(1.5); }
     .clink:hover .ca { transform: translateX(10px); opacity:1; }
     .clink:hover .cr { background-color: var(--accent-soft); }
+    #cta-write:hover { color: var(--accent-soft); }
   }
 
   /* Movimiento reducido: se conserva la jerarquía y el estado final. La
@@ -319,19 +325,22 @@
       <section id="sc-nosotros" class="scene" data-theme="light" data-label="01 NOSOTROS" data-screen-label="01 Nosotros" style="position:relative;flex:none;width:128vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
         <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
-          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,30vw) 24vw;column-gap:clamp(72px,8.5vw,160px);align-items:end;flex:1">
-            <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(24px,3.6vh,40px)">
+          <!-- La palabra vive en su propia franja, en flujo normal: nunca puede
+               quedar detrás de la fotografía ni recortada por el viewport. Lo
+               monumental se resuelve en escala, no en superposición arriesgada. -->
+          <div id="nos-word" data-grade="true" style="flex:none;margin:0 0 clamp(30px,4.6vh,58px);font-size:clamp(64px,9.4vw,164px);font-weight:800;font-variation-settings:'wdth' 106;line-height:.86;letter-spacing:-.026em;color:#0E0F0D;pointer-events:none">NOSOTROS</div>
+          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,30vw) 28vw;column-gap:clamp(64px,7.5vw,140px);align-items:end;flex:1">
+            <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(22px,3.2vh,36px);padding-bottom:clamp(22px,3.4vh,40px)">
               <p style="margin:0;font-size:clamp(19px,1.62vw,26px);line-height:1.42;font-weight:500;max-width:24ch;text-wrap:pretty">Grupo Tejaz es una empresa de desarrollo y construcción con sede en Veracruz. Trabajamos cada proyecto desde el diseño hasta la entrega, cuidando el detalle en cada etapa del proceso.</p>
               <div style="height:1px;width:40%;background:rgba(14,15,13,.2)"></div>
               <p style="margin:0;font-size:16px;line-height:1.65;color:#3E4038;max-width:36ch;text-wrap:pretty">Construimos residencias, espacios comerciales y desarrollos de uso mixto. Calidad, cumplimiento y diseño a la medida en cada proyecto, con una relación cercana con cada cliente.</p>
             </div>
-            <div id="nos-strip" data-grade="true" style="position:relative;width:24vw;height:82vh;overflow:hidden;align-self:end">
+            <div id="nos-strip" data-grade="true" style="position:relative;width:28vw;height:50vh;overflow:hidden;align-self:end">
               <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                 <img id="nosotros-bg" class="ph" src="nosotros-bg.jpg" alt="Obra o fachada Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
               </div>
             </div>
           </div>
-          <div id="nos-word" style="position:absolute;left:clamp(120px,17vw,340px);top:clamp(64px,9vh,116px);z-index:3;font-size:clamp(64px,11.6vw,208px);font-weight:800;font-variation-settings:'wdth' 120;line-height:.78;letter-spacing:-.03em;color:#E5E3DC;mix-blend-mode:difference;pointer-events:none">NOSOTROS</div>
         </div>
       </section>
 
@@ -360,7 +369,7 @@
             </div>
 
             <!-- Comercial: peso medio -->
-            <div class="col" data-grade="true" data-cursor="02" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
+            <div class="col" data-grade="true" data-cursor="02" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
               <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">02</span>
                 <h3 style="margin:0;font-size:clamp(24px,2.5vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
@@ -374,18 +383,20 @@
             </div>
 
             <!-- Remodelación: nave angosta, vertical -->
-            <div class="col" data-grade="true" data-cursor="03" style="position:relative;z-index:1;flex:none;width:17vw;display:flex;flex-direction:column;justify-content:flex-end;padding:0 clamp(14px,1.6vw,28px);border-right:1px solid rgba(229,227,220,.16)">
-              <div class="ph-wrap" data-drift="12" style="position:relative;height:72%;overflow:hidden;margin-bottom:clamp(16px,2.4vh,26px)">
+            <div class="col" data-grade="true" data-cursor="03" style="position:relative;z-index:1;flex:none;width:17vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(14px,2vh,22px);padding:0 clamp(14px,1.6vw,28px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
+                <h3 style="margin:0;font-size:clamp(19px,1.9vw,29px);font-weight:700;font-variation-settings:'wdth' 108;line-height:1.02;letter-spacing:-.01em;color:var(--svc-h)">Remodelación</h3>
+              </div>
+              <div class="ph-wrap" data-drift="12" style="position:relative;height:64%;overflow:hidden">
                 <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-3" class="ph" src="ph-cocina-a.jpg" alt="Interior remodelado" style="width:100%;height:100%;object-fit:cover">
                 </div>
               </div>
-              <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
-              <h3 style="margin:6px 0 0;font-size:clamp(19px,1.9vw,29px);font-weight:700;font-variation-settings:'wdth' 108;line-height:1.02;letter-spacing:-.01em;color:var(--svc-h)">Remodelación</h3>
             </div>
 
             <!-- Desarrollos inmobiliarios: nave grande, contenida -->
-            <div class="col" data-grade="true" data-cursor="04" style="position:relative;z-index:1;flex:none;width:38vw;display:flex;flex-direction:column-reverse;justify-content:space-between;padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
+            <div class="col" data-grade="true" data-cursor="04" style="position:relative;z-index:1;flex:none;width:38vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(26px,4vh,48px);padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
               <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);max-width:26ch">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">04</span>
                 <h3 style="margin:0;font-size:clamp(22px,2.2vw,36px);font-weight:700;font-variation-settings:'wdth' 110;line-height:1;letter-spacing:-.012em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
@@ -459,7 +470,7 @@
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
         <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
-            <h2 data-mask="true" style="margin:0;font-size:clamp(30px,3.8vw,68px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.94;letter-spacing:-.024em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
+            <h2 data-mask="true" style="margin:0;font-size:clamp(30px,3.8vw,68px);font-weight:800;font-variation-settings:'wdth' 108;line-height:.94;letter-spacing:-.02em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55;white-space:nowrap">05 CIUDADES</span>
           </div>
 
@@ -528,10 +539,10 @@
                 <span>ricardo@grupotejaz.com</span>
                 <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
               </a>
-              <a href="#" id="cta-write" onclick="writeUs(event)" data-cursor="ESCRIBIR" class="clink" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;font-size:clamp(16px,1.5vw,23px);font-weight:700;color:var(--accent-soft)">
+              <a href="#" id="cta-write" onclick="writeUs(event)" data-cursor="ESCRIBIR" class="clink" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:18px 0 14px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.2em;font-weight:500">
                 <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
-                <span>Escribir a la oficina</span>
-                <span class="ca" style="opacity:.7;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+                <span>ESCRIBIR</span>
+                <span class="ca" style="opacity:.7;font-size:14px">↗</span>
               </a>
             </div>
           </div>
@@ -587,13 +598,17 @@
   // reserva espacio vacío a la izquierda (su .sc-in nace con margin-left:auto),
   // así que necesita frac=1 para alinear el viewport exactamente con su
   // contenido real.
+  // holdPct: qué fracción del propio recorrido de la escena (no del sitio
+  // completo) se queda en retención real, con el carril detenido en x
+  // constante. Portada y Obras retienen más tiempo porque son el disparo de
+  // apertura y el clímax; Nosotros y Zonas son las liberaciones, cortas.
   var JOURNEY = [
-    { id: 'sc-hero',     frac: 0.00, weight: 1.10, elev: 2.20 },
-    { id: 'sc-nosotros', frac: 0.00, weight: 0.38, elev: 0.55 },
-    { id: 'sc-hacemos',  frac: 0.46, weight: 0.68, elev: 2.65 },
-    { id: 'sc-obras',    frac: null, weight: 1.60, elev: 4.10 },
-    { id: 'sc-zonas',    frac: 0.00, weight: 0.34, elev: 0.60 },
-    { id: 'sc-contacto', frac: 1.00, weight: 0.85, elev: 1.35 }
+    { id: 'sc-hero',     frac: 0.00, holdPct: 0.22,  elev: 2.20 },
+    { id: 'sc-nosotros', frac: 0.00, holdPct: 0.135, elev: 0.55 },
+    { id: 'sc-hacemos',  frac: 0.46, holdPct: 0.175, elev: 2.65 },
+    { id: 'sc-obras',    frac: null, holdPct: 0.32,  elev: 4.10 },
+    { id: 'sc-zonas',    frac: 0.00, holdPct: 0.135, elev: 0.60 },
+    { id: 'sc-contacto', frac: 1.00, holdPct: 0.20,  elev: 1.35 }
   ];
 
   function isDesk() { return window.innerWidth > 1180; }
@@ -650,18 +665,22 @@
         anchorX = sc.offsetLeft + (s.frac || 0) * excess;
       }
       var out = Math.max(0, Math.min(1, anchorX / maxX));
+      // Retención en fracción del propio recorrido de la escena, no del
+      // sitio entero: una escena angosta y una ancha con el mismo holdPct
+      // deben sentirse proporcionalmente iguales, no en píxeles absolutos.
+      var ownSpan = Math.max(0.01, sc.offsetWidth / maxX);
       _anchorOut[s.id] = out;
-      pts.push({ out: out, weight: s.weight, elev: s.elev });
+      pts.push({ out: out, half: (s.holdPct * ownSpan) / 2, elev: s.elev });
     });
     // MAXP reserva un margen al final del recorrido para la rampa de cierre:
     // ninguna parada puede extenderse hasta donde el scroll real no puede
     // llegar (progress nunca pasa de 1), o la parada nunca soltaría y la cota
     // jamás resolvería a la referencia.
-    var BASE = 0.05, MAXP = 0.985;
+    var MAXP = 0.985;
     var kf = [], ekf = [];
     var cursor = 0;
     pts.forEach(function (pt) {
-      var half = pt.weight * BASE / 2;
+      var half = pt.half;
       var p0 = Math.min(MAXP, Math.max(cursor, pt.out - half));
       var p1 = Math.min(MAXP, Math.max(p0 + 0.002, pt.out + half));
       kf.push([p0, pt.out]); kf.push([p1, pt.out]);
@@ -840,7 +859,7 @@
       var a = (i * 90 - turn) * Math.PI / 180;
       var c = (Math.cos(a) + 1) / 2;
       if (c > bestC) { bestC = c; best = i; }
-      var sc = 0.16 + 0.84 * Math.pow(c, 2.9);
+      var sc = 0.3 + 0.7 * Math.pow(c, 1.5);
       var pl = st.plates[i];
       pl.style.transform = 'translateX(-50%) translate3d(' + (st.Rx * Math.sin(a)).toFixed(1) + 'px,' + (-(1 - c) * st.rise).toFixed(1) + 'px,0) scale(' + sc.toFixed(4) + ')';
       pl.style.opacity = (Math.pow(D, 0.8) * (0.1 + 0.9 * Math.pow(c, 0.95))).toFixed(3);
