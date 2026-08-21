@@ -40,6 +40,19 @@
   img, video { display:block; }
   ::selection { background:var(--accent); color:#E5E3DC; }
 
+  /* Foco de teclado: mismo principio que el hilo de nlink (currentColor), así
+     que el anillo se adapta al tema de cada escena sin una segunda paleta. */
+  a:focus-visible, button:focus-visible, .wplate:focus-visible {
+    outline: 1px solid currentColor; outline-offset: 4px;
+  }
+  #skip-link {
+    position: fixed; top: -100px; left: 18px; z-index: 999;
+    background: #0E0F0D; color: #E5E3DC; padding: 12px 18px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .16em;
+    transition: top 200ms cubic-bezier(.23,1,.32,1);
+  }
+  #skip-link:focus { top: 18px; }
+
   /* Tratamiento fotográfico único: todo el material (renders y fotos de obra)
      pasa por el mismo grado para que la lámina se lea como una sola serie. */
   .ph, [classname~="ph"] { filter: var(--phf); transition: filter .35s ease; }
@@ -65,6 +78,21 @@
      por el lector de cota en el chrome inferior, no por anotaciones aquí. */
   #datum-line { position:absolute; left:0; right:0; top:var(--datum-y); height:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:.88; transform:scaleX(0); transform-origin:left center; pointer-events:none; z-index:3; will-change:transform; }
   .hl, [data-grade] { will-change: clip-path, transform; }
+
+  /* ── Capa de trazo ──────────────────────────────────────────────────────
+     DRAWING → BUILT: el corte entre escenas ya no lo disuelve un degradado
+     encima de la costura (retirado: leía como cortina digital, no como
+     construcción). Ahora la continuidad la hace geometría real: líneas que
+     nacen de la cota y se alinean con bordes verdaderos (una franja de foto,
+     una división de nave, el marco de un proyecto activo), más objetos
+     fotográficos que de verdad viajan de una escena a la siguiente. Todo
+     hijo de #rail, como la cota, para que la posición sea geometría medida
+     y no un adorno de posición fija. En reposo casi no se ve; sólo se
+     afirma mientras una escena se está formando, y luego vuelve a ceder. */
+  .seam-vline { position:absolute; bottom:calc(100% - var(--datum-y)); width:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:0; transform-origin:bottom center; transform:scaleY(0); pointer-events:none; z-index:4; will-change:transform,opacity; }
+  .seam-hline { position:absolute; height:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:0; transform-origin:left center; transform:scaleX(0); pointer-events:none; z-index:4; will-change:transform,opacity; }
+  .flip-bridge { position:absolute; overflow:hidden; pointer-events:none; will-change:transform,opacity; z-index:1; }
+  .flip-bridge img { width:100%; height:100%; object-fit:cover; }
 
   /* Retención de apertura: el scroll queda en pausa mientras Portada se
      levanta, para que la composición se sostenga antes de que el recorrido
@@ -228,6 +256,8 @@
 </head>
 <body>
 
+<a href="#sc-hero" id="skip-link">SALTAR AL CONTENIDO</a>
+
 <div id="root" style="position:relative;width:100%;background:#0E0F0D">
 
   <div id="grain"></div>
@@ -278,8 +308,51 @@
 
       <div id="datum-line"></div>
 
+      <!-- Capa de trazo: cada línea nace en runtime sobre geometría real
+           (buildDrawingLayer), no sobre coordenadas inventadas — el borde
+           de una franja fotográfica, la división de una nave, el marco del
+           proyecto que cierra la rueda. Reemplaza el degradado anterior:
+           ese disolvía el corte encima de la costura y leía como cortina
+           digital, no como construcción. Ahora la continuidad la hace la
+           geometría misma. Hijas de #rail, como la cota. -->
+
+      <!-- T1 Portada → Nosotros — BUILT → DRAWING → VOID -->
+      <div id="t1-line-a" class="seam-vline" style="height:22vh"></div>
+      <div id="t1-line-b" class="seam-vline" style="height:13vh"></div>
+
+      <!-- T2 Nosotros → Hacemos — DRAWING → ESTRUCTURA. La línea de la
+           costura nace del borde derecho real de la franja de Nosotros;
+           las cuatro siguientes, del borde izquierdo real de cada nave. -->
+      <div id="t2-line-seam" class="seam-vline" style="height:56vh"></div>
+      <div id="t2-line-bay-0" class="seam-vline" style="height:42vh"></div>
+      <div id="t2-line-bay-1" class="seam-vline" style="height:42vh"></div>
+      <div id="t2-line-bay-2" class="seam-vline" style="height:42vh"></div>
+      <div id="t2-line-bay-3" class="seam-vline" style="height:42vh"></div>
+
+      <!-- T3 Hacemos → Obras: puente fotográfico FLIP, ver junto a Hacemos
+           más abajo (mismo objeto fotográfico real, no una línea). -->
+
+      <!-- T4 Obras → Zonas — momento de firma: BUILT → DOCUMENT → DRAWING →
+           SITE. Cuatro verticales sobre el marco real del proyecto que
+           cierra la rueda (izquierda, dos tercios interiores, derecha) y
+           una horizontal sobre su borde superior. Autoría, no detección de
+           bordes: los tercios son una decisión de composición, no un
+           filtro. -->
+      <div id="t4-line-l" class="seam-vline" style="height:50vh"></div>
+      <div id="t4-line-m1" class="seam-vline" style="height:50vh"></div>
+      <div id="t4-line-m2" class="seam-vline" style="height:50vh"></div>
+      <div id="t4-line-r" class="seam-vline" style="height:50vh"></div>
+      <div id="t4-line-top" class="seam-hline" style="width:1px"></div>
+
+      <!-- T5 Zonas → Contacto — SITE → SECTION → BUILT. La regla de la
+           última fila (Coatzacoalcos) no se apaga: viaja como línea de
+           carril hasta fundirse en altura con la cota dentro de Contacto,
+           con una marca vertical breve en el punto de llegada. -->
+      <div id="t5-line" class="seam-hline" style="width:1px;top:var(--datum-y)"></div>
+      <div id="t5-mark" class="seam-vline" style="height:5vh"></div>
+
       <!-- ══ 00 PORTADA — masa alta, disparo de establecimiento ══ -->
-      <section id="sc-hero" class="scene" data-theme="dark" data-label="00 PORTADA" data-screen-label="00 Portada" style="position:relative;flex:none;width:142vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
+      <section id="sc-hero" class="scene" tabindex="-1" data-theme="dark" data-label="00 PORTADA" data-screen-label="00 Portada" style="position:relative;flex:none;width:142vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC;outline:none">
         <div id="hero-mask" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(30% 0% 0% 0%)">
           <div data-par="5" style="position:absolute;top:-4%;left:-6%;width:112%;height:108%">
             <video id="hero-video" class="ph" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover">
@@ -355,13 +428,13 @@
             </div>
 
             <!-- Residencial: la nave mayor -->
-            <div class="col" data-grade="true" data-cursor="01" style="position:relative;z-index:1;flex:none;width:47vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(26px,2.8vw,50px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,28px)">
+            <div class="col" data-cursor="01" style="position:relative;z-index:1;flex:none;width:47vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(26px,2.8vw,50px);border-right:1px solid rgba(229,227,220,.16)">
+              <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,28px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">01</span>
                 <h3 style="margin:0;font-size:clamp(34px,3.8vw,64px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.018em;color:var(--svc-h)">Residencial</h3>
                 <p style="margin:0;font-size:15px;line-height:1.62;color:var(--svc-p);max-width:30ch">Casas y desarrollos habitacionales diseñados a la medida.</p>
               </div>
-              <div class="ph-wrap" data-drift="9" style="position:relative;height:56%;overflow:hidden">
+              <div class="ph-wrap" data-drift="9" data-photo="0" style="position:relative;height:56%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-1" class="ph" src="ph-fachada.jpg" alt="Casa entregada" style="width:100%;height:100%;object-fit:cover">
                 </div>
@@ -369,13 +442,13 @@
             </div>
 
             <!-- Comercial: peso medio -->
-            <div class="col" data-grade="true" data-cursor="02" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px)">
+            <div class="col" data-cursor="02" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
+              <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">02</span>
                 <h3 style="margin:0;font-size:clamp(24px,2.5vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
                 <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p);max-width:26ch">Espacios comerciales funcionales para el negocio de cada cliente.</p>
               </div>
-              <div class="ph-wrap" data-drift="-11" style="position:relative;height:58%;overflow:hidden">
+              <div class="ph-wrap" data-drift="-11" data-photo="1" style="position:relative;height:58%;overflow:hidden">
                 <div data-par="6" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-2" class="ph" src="contacto-bg.jpg" alt="Espacio comercial" style="width:100%;height:100%;object-fit:cover">
                 </div>
@@ -383,12 +456,12 @@
             </div>
 
             <!-- Remodelación: nave angosta, vertical -->
-            <div class="col" data-grade="true" data-cursor="03" style="position:relative;z-index:1;flex:none;width:17vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(14px,2vh,22px);padding:0 clamp(14px,1.6vw,28px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="col" data-cursor="03" style="position:relative;z-index:1;flex:none;width:17vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(14px,2vh,22px);padding:0 clamp(14px,1.6vw,28px);border-right:1px solid rgba(229,227,220,.16)">
+              <div data-grade="true" style="display:flex;flex-direction:column;gap:6px">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
                 <h3 style="margin:0;font-size:clamp(19px,1.9vw,29px);font-weight:700;font-variation-settings:'wdth' 108;line-height:1.02;letter-spacing:-.01em;color:var(--svc-h)">Remodelación</h3>
               </div>
-              <div class="ph-wrap" data-drift="12" style="position:relative;height:64%;overflow:hidden">
+              <div class="ph-wrap" data-drift="12" data-photo="2" style="position:relative;height:64%;overflow:hidden">
                 <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-3" class="ph" src="ph-cocina-a.jpg" alt="Interior remodelado" style="width:100%;height:100%;object-fit:cover">
                 </div>
@@ -396,13 +469,13 @@
             </div>
 
             <!-- Desarrollos inmobiliarios: nave grande, contenida -->
-            <div class="col" data-grade="true" data-cursor="04" style="position:relative;z-index:1;flex:none;width:38vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(26px,4vh,48px);padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
-              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);max-width:26ch">
+            <div class="col" data-cursor="04" style="position:relative;z-index:1;flex:none;width:38vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(26px,4vh,48px);padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
+              <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);max-width:26ch">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">04</span>
                 <h3 style="margin:0;font-size:clamp(22px,2.2vw,36px);font-weight:700;font-variation-settings:'wdth' 110;line-height:1;letter-spacing:-.012em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
                 <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p)">Del terreno a la entrega de llaves, bajo una sola dirección.</p>
               </div>
-              <div class="ph-wrap" data-drift="-8" style="position:relative;height:30%;overflow:hidden">
+              <div id="hac-bay-4-wrap" class="ph-wrap" data-drift="-8" data-photo="3" style="position:relative;height:30%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="hacemos-bg" class="ph" src="hacemos-bg.jpg" alt="Desarrollo en proceso" style="width:100%;height:100%;object-fit:cover">
                 </div>
@@ -411,6 +484,19 @@
           </div>
         </div>
       </section>
+
+      <!-- Puente fotográfico FLIP: la última nave de Hacemos (Desarrollos)
+           no se desvanece a negro y reaparece como otra cosa. Este es el
+           mismo objeto fotográfico, posicionado en runtime (buildFlipRects)
+           con la geometría real de salida (la franja de la nave) y de
+           llegada (el encuadre en reposo de la rueda) — sólo se anima
+           `transform`, calculado como delta entre ambos rectángulos (FLIP),
+           nunca left/top/width/height cuadro a cuadro. Termina fundiéndose
+           con el primer proyecto real de la rueda, así que el ojo lee un
+           solo objeto migrando y aterrizando, no dos cortes. -->
+      <div id="seam-hac-obr-bridge" class="flip-bridge" style="top:0;left:0;width:1px;height:1px;opacity:0">
+        <img class="ph" src="hacemos-bg.jpg" alt="">
+      </div>
 
       <!-- ══ 03 OBRAS — clímax, masa máxima ══ -->
       <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:258vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
@@ -425,25 +511,25 @@
             <div id="wheel-pane" style="position:absolute;left:0;top:0;width:100vw;height:100%;will-change:transform">
               <div id="wheel-stage" style="position:relative;width:100%;height:100%">
                 <div id="wheel-3d" style="position:absolute;inset:0">
-                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Reforma" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-1" class="ph" src="proj-1-bg.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO REFORMA · 2021</div>
                   </div>
-                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" tabindex="0" role="button" aria-label="Centrar Proyecto Costa Verde" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-2" class="ph" src="ph-cocina-b.jpg" alt="Proyecto Costa Verde" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO COSTA VERDE · 2022</div>
                   </div>
-                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Malecón" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-3" class="ph" src="ph-fachada.jpg" alt="Proyecto Malecón" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO MALECÓN · 2023</div>
                   </div>
-                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" tabindex="0" role="button" aria-label="Centrar Proyecto Arboledas" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-4" class="ph" src="ubicaciones-bg.jpg" alt="Proyecto Arboledas" style="width:100%;height:100%;object-fit:cover">
                     </div>
@@ -499,10 +585,10 @@
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:34%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°53′N 96°56′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
+            <a href="#" id="zrow-last" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">05</span>
               <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Coatzacoalcos</span>
-              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:78%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zrule" style="position:relative;height:1px"><span id="zrow-last-h" class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:78%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°08′N 94°25′W</span>
             </a>
           </div>
@@ -554,10 +640,10 @@
             <a href="#" onclick="goHero(event)" data-cursor="INICIO" class="nlink" style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.75">↑ VOLVER AL INICIO</a>
           </div>
 
-          <div id="foot" style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:clamp(14px,2.4vh,26px);border-top:1px solid rgba(229,227,220,.18);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(229,227,220,.62)">
+          <footer id="foot" style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:clamp(14px,2.4vh,26px);border-top:1px solid rgba(229,227,220,.18);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(229,227,220,.62)">
             <span style="display:flex;align-items:center;gap:10px"><img src="logo-tejaz.png" alt="" style="height:16px;width:auto;filter:brightness(0) invert(1);opacity:.8">GRUPO TEJAZ · DESARROLLO Y CONSTRUCCIÓN</span>
             <span>© 2026 GRUPO TEJAZ. TODOS LOS DERECHOS RESERVADOS.</span>
-          </div>
+          </footer>
         </div>
       </section>
 
@@ -585,6 +671,9 @@
   var _elevKF = null;
   var _maxX = 1;
   var _anchorOut = {};
+  var _lastCloseT = -1;
+  var _flip = null;
+  var _t5DatumDy = 0;
 
   // ── Recorrido: dónde se detiene la lámina y qué cota marca cada parada ──
   // Un solo plan de datos gobierna dos cosas: el paso no-lineal del carril
@@ -701,6 +790,99 @@
     _railKF = kf; _elevKF = ekf;
   }
 
+  // Posiciona toda la capa de trazo sobre geometría real (nunca sobre
+  // coordenadas inventadas): la costura entre escenas, el borde de una
+  // franja fotográfica, la división de una nave, el marco en reposo de la
+  // rueda, la regla de la última fila de Zonas. `rectOf` da coordenadas
+  // fijas relativas al carril — restar el rect del propio carril cancela
+  // su transform de scroll actual, así que el resultado no depende de en
+  // qué punto del recorrido se llame esta función.
+  function buildDrawingLayer() {
+    var rail = _rail;
+    if (!rail) return;
+    var vw = window.innerWidth;
+    var rr = rail.getBoundingClientRect();
+    function rectOf(el) {
+      if (!el) return null;
+      var r = el.getBoundingClientRect();
+      return { x: r.left - rr.left, y: r.top, w: r.width, h: r.height };
+    }
+
+    // ── Fase de lectura: todo layout medido antes de escribir un solo
+    // style — batching de lecturas/escrituras para no forzar más de un
+    // reflow síncrono por llamada. Esta función corre poco (init, refresh,
+    // resize, nunca por cuadro de scroll), así que el costo real es bajo,
+    // pero es la práctica correcta igual.
+    var nos = document.getElementById('sc-nosotros');
+    var seamX1 = nos ? nos.offsetLeft : 0;
+    var strip = rectOf(document.getElementById('nos-strip'));
+    var hac = document.getElementById('sc-hacemos');
+    var cols = Array.from(document.querySelectorAll('#sc-hacemos .col')).slice(0, 4).map(rectOf);
+    var src = rectOf(document.getElementById('hac-bay-4-wrap'));
+    var plates = (_wheel && _wheel.plates) || Array.from(document.querySelectorAll('.wplate'));
+    var rest = rectOf(plates[0]);
+    var lastH = rectOf(document.getElementById('zrow-last-h'));
+    var con = document.getElementById('sc-contacto');
+    var conLeft = con ? con.offsetLeft : 0;
+
+    // ── Fase de escritura ────────────────────────────────────────────────
+    function setV(id, x) { var el = document.getElementById(id); if (el) el.style.left = x + 'px'; }
+
+    // T1 Portada → Nosotros: dos líneas nacen cerca de la costura real.
+    if (nos) {
+      setV('t1-line-a', seamX1);
+      setV('t1-line-b', seamX1 + vw * 0.045);
+    }
+
+    // T2 Nosotros → Hacemos: la costura nace del borde derecho real de la
+    // franja de Nosotros; las cuatro naves, de su propio borde izquierdo.
+    setV('t2-line-seam', strip ? strip.x + strip.w : (hac ? hac.offsetLeft : 0));
+    cols.forEach(function (r, i) { if (r) setV('t2-line-bay-' + i, r.x); });
+
+    // T3 + T4 comparten una sola medición: las cuatro placas de la rueda
+    // tienen la misma caja CSS en reposo (mismo left/bottom/width/height),
+    // así que un único rectángulo sirve de llegada al puente FLIP (T3,
+    // Hacemos → Obras) y de salida para las líneas de firma (T4, Obras →
+    // Zonas) — no hace falta medir dos veces la misma geometría.
+    _flip = (src && rest) ? { src: src, dst: rest } : null;
+
+    // El puente FLIP se posiciona SIEMPRE en su rectángulo de llegada (la
+    // caja fija, sin coste de layout); sólo `transform` se anima, y esa
+    // animación relee `_flip` en cada refresh (invalidateOnRefresh), así
+    // que un resize nunca la deja con geometría vieja.
+    var hoBridge = document.getElementById('seam-hac-obr-bridge');
+    if (hoBridge && rest) {
+      hoBridge.style.left = rest.x + 'px';
+      hoBridge.style.top = rest.y + 'px';
+      hoBridge.style.width = rest.w + 'px';
+      hoBridge.style.height = rest.h + 'px';
+    }
+
+    if (rest) {
+      setV('t4-line-l', rest.x);
+      setV('t4-line-m1', rest.x + rest.w / 3);
+      setV('t4-line-m2', rest.x + rest.w * 2 / 3);
+      setV('t4-line-r', rest.x + rest.w);
+      var topLine = document.getElementById('t4-line-top');
+      if (topLine) { topLine.style.left = rest.x + 'px'; topLine.style.top = rest.y + 'px'; topLine.style.width = rest.w + 'px'; }
+    }
+
+    // T5 Zonas → Contacto: la regla de la última fila se posiciona como
+    // línea de carril, con su extensión total ya resuelta (crece por
+    // scaleX, nunca por width) hasta un punto de llegada dentro de
+    // Contacto; la distancia vertical hasta la cota se precalcula para
+    // que el ascenso también sea sólo `transform`.
+    var t5 = document.getElementById('t5-line');
+    if (lastH && con && t5) {
+      var endX = conLeft + vw * 0.30;
+      t5.style.left = lastH.x + 'px';
+      t5.style.top = lastH.y + 'px';
+      t5.style.width = Math.max(10, endX - lastH.x) + 'px';
+      _t5DatumDy = (window.innerHeight * 0.76) - lastH.y;
+    }
+    setV('t5-mark', con ? conLeft + vw * 0.30 : 0);
+  }
+
   function go(id) {
     var sc = document.getElementById(id);
     var scroller = document.getElementById('scroller');
@@ -755,11 +937,25 @@
     setTimeout(function () { window.location.href = 'mailto:rafael@grupotejaz.com?subject=Proyecto%20con%20Grupo%20Tejaz'; }, 180);
   }
 
+  function fmtElev(v) { return (v >= -0.001 ? '+' : '') + v.toFixed(2); }
+
   function paint(p) {
     var n = document.getElementById('elev-read');
-    if (n) {
-      var elev = evalKF(p, _elevKF);
-      n.textContent = (elev >= -0.001 ? '+' : '') + elev.toFixed(2);
+    if (n) n.textContent = fmtElev(evalKF(p, _elevKF));
+    // Cierre del recorrido: en el último tramo, todo lo que no es la cota se
+    // retira, hasta que sólo queda la referencia resolviendo a ±0.00. No hay
+    // texto que lo explique; se siente porque la pantalla se vacía.
+    var closeT = Math.min(1, Math.max(0, (p - 0.965) / 0.035));
+    if (Math.abs(closeT - _lastCloseT) > 0.003) {
+      _lastCloseT = closeT;
+      var grid = document.querySelector('.con-grid');
+      var back = document.querySelector('#sc-contacto .nlink');
+      var bg = document.getElementById('contacto-bg');
+      var word = document.getElementById('con-word');
+      if (grid) grid.style.opacity = (1 - closeT).toFixed(3);
+      if (back) back.style.opacity = (1 - closeT).toFixed(3);
+      if (bg) bg.style.opacity = (1 - closeT * 0.7).toFixed(3);
+      if (word) word.style.opacity = (1 - Math.max(0, (closeT - 0.35) / 0.65)).toFixed(3);
     }
   }
 
@@ -809,6 +1005,9 @@
       if (pl._wired) return;
       pl._wired = true;
       pl.addEventListener('click', function () { focusPlate(i); });
+      pl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); focusPlate(i); }
+      });
     });
     _cols = Array.from(document.querySelectorAll('#sc-hacemos .col'));
     layoutWheel();
@@ -859,17 +1058,39 @@
       var a = (i * 90 - turn) * Math.PI / 180;
       var c = (Math.cos(a) + 1) / 2;
       if (c > bestC) { bestC = c; best = i; }
+      // Llegada vs salida: `dir` distingue si esta placa todavía se acerca
+      // al centro (a > 0, llegada) o ya lo dejó atrás (a < 0, salida). La
+      // posición y la escala comparten una sola curva de referencia (sin
+      // cambios); color, foco y opacidad leen curvas propias y asimétricas
+      // según `dir`, así que ninguna propiedad empieza o termina en el
+      // mismo instante que otra, y salir no es sólo llegar en reversa:
+      // en la llegada el color es lo último en resolverse (curva lenta,
+      // exponente alto); en la salida es lo primero en irse (curva
+      // rápida, exponente bajo), y el desenfoque — la profundidad — es lo
+      // último en aparecer.
+      var dir = a >= 0 ? 1 : -1;
       var sc = 0.3 + 0.7 * Math.pow(c, 1.5);
       var pl = st.plates[i];
       pl.style.transform = 'translateX(-50%) translate3d(' + (st.Rx * Math.sin(a)).toFixed(1) + 'px,' + (-(1 - c) * st.rise).toFixed(1) + 'px,0) scale(' + sc.toFixed(4) + ')';
-      pl.style.opacity = (Math.pow(D, 0.8) * (0.1 + 0.9 * Math.pow(c, 0.95))).toFixed(3);
+      var opPow = dir >= 0 ? 1.05 : 0.8;
+      pl.style.opacity = (Math.pow(D, 0.8) * (0.08 + 0.92 * Math.pow(c, opPow))).toFixed(3);
       pl.style.zIndex = String(100 + Math.round(c * 100));
       var fr = st.frames[i];
       if (fr) {
-        var dim = 'brightness(' + (0.78 - 0.34 * (1 - c)).toFixed(3) + ')';
+        // Salida: el color cae con exponente ALTO (se va rápido, primero);
+        // el foco cae con exponente BAJO (se mantiene nítido más tiempo,
+        // la profundidad llega al final) — más bajo incluso que la propia
+        // curva de escala (1.5), para que el orden sea siempre color →
+        // escala → profundidad, nunca al revés.
+        var blurPow = dir >= 0 ? 0.55 : 0.5;
+        var clarity = Math.pow(c, blurPow);
+        var blurPx = 3.2 * (1 - clarity);
+        var colorPow = dir >= 0 ? 1.9 : 3.2;
+        var cc = Math.pow(c, colorPow);
+        var dim = 'brightness(' + (0.78 - 0.34 * (1 - cc)).toFixed(3) + ')';
         fr.style.clipPath = _reduce ? 'none' : 'inset(' + ((1 - D) * 100).toFixed(2) + '% 0% 0% 0%)';
         fr.style.filter = c > 0.985 ? 'none' : _reduce ? dim
-          : 'blur(' + (1.7 / Math.max(0.2, sc)).toFixed(1) + 'px) ' + dim;
+          : 'blur(' + blurPx.toFixed(2) + 'px) ' + dim;
       }
       var cp = st.caps[i];
       if (cp) {
@@ -964,7 +1185,18 @@
         })
           .fromTo('#hero-mask', { clipPath: 'inset(30% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' })
           .fromTo('#datum-line', { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power3.inOut' }, '-=.85')
-          .fromTo('.hl', { clipPath: 'inset(100% 0% 0% 0%)', y: 16 }, { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.15, stagger: .12, ease: 'power4.out' }, '-=.6')
+          // La cota nace en ±0.00 (grado, nada construido todavía) y sube
+          // a la elevación de Portada sólo cuando la máscara ya se abrió y
+          // la línea ya se trazó — la primera masa afirmándose sobre el
+          // terreno, no un número que ya llega resuelto.
+          .fromTo({ v: 0 }, { v: 0 }, (function () {
+            var n = document.getElementById('elev-read');
+            return {
+              v: 2.20, duration: .9, ease: 'power2.out',
+              onUpdate: function () { if (n) n.textContent = fmtElev(this.targets()[0].v); }
+            };
+          })(), '-=.55')
+          .fromTo('.hl', { clipPath: 'inset(100% 0% 0% 0%)', y: 16 }, { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.15, stagger: .12, ease: 'power4.out' }, '-=.9')
           .fromTo('.hcell', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .6, stagger: .06, ease: 'power3.out' }, '-=.7');
 
     var mm = gsap.matchMedia();
@@ -980,13 +1212,14 @@
       _rail = rail;
       initWheel(scroller);
       buildJourney();
+      buildDrawingLayer();
 
       var masterTween = gsap.to(rail, {
         x: function () { return -maxX(); }, ease: railEase,
         scrollTrigger: {
           trigger: scroller, start: 'top top', end: function () { return '+=' + maxX(); },
           scrub: .65, invalidateOnRefresh: true,
-          onRefreshInit: function () { sizeIt(); buildJourney(); },
+          onRefreshInit: function () { sizeIt(); buildJourney(); buildDrawingLayer(); },
           onUpdate: function (self) { paint(self.progress); }
         }
       });
@@ -1028,6 +1261,22 @@
           scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 92%', end: 'left 56%', scrub: .4 }
         });
       });
+      // Naves de Hacemos — DRAW → BUILD: la masa fotográfica se resuelve
+      // antes que la tipografía de la misma nave (empieza y termina antes
+      // en la ventana de scroll) y sólo anima clipPath, nunca `y` — ese
+      // eje ya lo usa el drift de paralaje del mismo elemento
+      // (data-drift), y ambos compitiendo por la misma propiedad
+      // producirían un temblor. El escalonado entre naves es geométrico,
+      // no una lista con retraso artificial: cada .ph-wrap cruza su
+      // propio umbral en un punto distinto del carril porque vive en una
+      // posición real distinta, no porque se le haya asignado un índice.
+      gsap.utils.toArray('[data-photo]').forEach(function (el) {
+        if (reduce) { fade(el, 'left 96%', 'left 68%'); return; }
+        gsap.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, {
+          clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 96%', end: 'left 58%', scrub: .45 }
+        });
+      });
       gsap.utils.toArray('[data-mask]').forEach(function (el) {
         if (reduce) { fade(el, 'left 94%', 'left 74%'); return; }
         gsap.fromTo(el, { clipPath: 'inset(0% 100% 0% 0%)' }, {
@@ -1044,10 +1293,20 @@
 
       var fill = document.getElementById('hero-fill');
       if (fill && reduce) gsap.set(fill, { clipPath: 'inset(0% 0% 0% 0%)' });
-      else if (fill) gsap.fromTo(fill, { clipPath: 'inset(0% 100% 0% 0%)' }, {
-        clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
-        scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'left left', end: 'left -30%', scrub: .3 }
-      });
+      else if (fill) {
+        gsap.fromTo(fill, { clipPath: 'inset(0% 100% 0% 0%)' }, {
+          clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+          scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'left left', end: 'left -30%', scrub: .3 }
+        });
+        // Puente BUILT → DRAWING: la única palabra que se había llenado de
+        // color vuelve a ser sólo contorno justo cuando Portada cede el
+        // paso, un recordatorio de que la masa construida puede regresar
+        // a ser trazo antes de que empiece el vacío de Nosotros.
+        gsap.to(fill, {
+          clipPath: 'inset(0% 100% 0% 0%)', ease: 'none',
+          scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'right 62%', end: 'right left', scrub: .3 }
+        });
+      }
 
       // Recede: la masa de Portada cede dominio (retrocede y se desvanece)
       // mientras la lámina avanza; Nosotros crece dentro del vacío que deja.
@@ -1062,6 +1321,158 @@
         scrollTrigger: { trigger: '#sc-nosotros', containerAnimation: ca, start: 'left right', end: 'right left', scrub: true }
       });
 
+      // ── Capa de trazo ──────────────────────────────────────────────────
+      // DRAW → RECEDE, siempre las dos mitades: cada línea nace desde la
+      // cota mientras su escena se está formando (draw) y vuelve a ceder
+      // una vez que esa escena ya es masa construida (recede) — nunca
+      // queda dibujada de forma permanente, y en reposo es casi
+      // imperceptible. dT/dS/dE = disparador y ventana de trazo;
+      // rT/rS/rE = disparador y ventana de repliegue.
+      var VLINES = [
+        { id: 't1-line-a', op: .8, dT: '#sc-hero', dS: 'right 80%', dE: 'right 36%', rT: '#sc-nosotros', rS: 'left 24%', rE: 'left 4%' },
+        { id: 't1-line-b', op: .5, dT: '#sc-hero', dS: 'right 72%', dE: 'right 28%', rT: '#sc-nosotros', rS: 'left 20%', rE: 'left 2%' },
+        { id: 't2-line-seam', op: .82, dT: '#sc-hacemos', dS: 'left 90%', dE: 'left 60%', rT: '#sc-hacemos', rS: 'left 34%', rE: 'left 12%' },
+        { id: 't2-line-bay-0', op: .5, dT: '#sc-hacemos', dS: 'left 84%', dE: 'left 55%', rT: '#sc-hacemos', rS: 'left 40%', rE: 'left 16%' },
+        { id: 't2-line-bay-1', op: .5, dT: '#sc-hacemos', dS: 'left 80%', dE: 'left 51%', rT: '#sc-hacemos', rS: 'left 42%', rE: 'left 18%' },
+        { id: 't2-line-bay-2', op: .5, dT: '#sc-hacemos', dS: 'left 76%', dE: 'left 47%', rT: '#sc-hacemos', rS: 'left 44%', rE: 'left 20%' },
+        { id: 't2-line-bay-3', op: .5, dT: '#sc-hacemos', dS: 'left 72%', dE: 'left 43%', rT: '#sc-hacemos', rS: 'left 46%', rE: 'left 22%' },
+        { id: 't4-line-l', op: .8, dT: '#sc-obras', dS: 'right 88%', dE: 'right 58%', rT: '#sc-zonas', rS: 'left 28%', rE: 'left 8%' },
+        { id: 't4-line-m1', op: .45, dT: '#sc-obras', dS: 'right 82%', dE: 'right 52%', rT: '#sc-zonas', rS: 'left 24%', rE: 'left 6%' },
+        { id: 't4-line-m2', op: .45, dT: '#sc-obras', dS: 'right 80%', dE: 'right 50%', rT: '#sc-zonas', rS: 'left 22%', rE: 'left 4%' },
+        { id: 't4-line-r', op: .8, dT: '#sc-obras', dS: 'right 86%', dE: 'right 56%', rT: '#sc-zonas', rS: 'left 30%', rE: 'left 10%' },
+        { id: 't5-mark', op: .7, dT: '#sc-contacto', dS: 'left 68%', dE: 'left 38%', rT: '#sc-contacto', rS: 'left 16%', rE: 'left 2%' }
+      ];
+      VLINES.forEach(function (L) {
+        var el = document.getElementById(L.id);
+        if (!el) return;
+        if (reduce) { gsap.set(el, { scaleY: 1, opacity: L.op * .6 }); return; }
+        gsap.fromTo(el, { scaleY: 0, opacity: 0 }, {
+          scaleY: 1, opacity: L.op, ease: 'none',
+          scrollTrigger: { trigger: L.dT, containerAnimation: ca, start: L.dS, end: L.dE, scrub: .4 }
+        });
+        gsap.to(el, {
+          opacity: 0, ease: 'none',
+          scrollTrigger: { trigger: L.rT, containerAnimation: ca, start: L.rS, end: L.rE, scrub: .4 }
+        });
+      });
+
+      var HLINES = [
+        { id: 't4-line-top', op: .55, dT: '#sc-obras', dS: 'right 88%', dE: 'right 58%', rT: '#sc-zonas', rS: 'left 28%', rE: 'left 8%' }
+      ];
+      HLINES.forEach(function (L) {
+        var el = document.getElementById(L.id);
+        if (!el) return;
+        if (reduce) { gsap.set(el, { scaleX: 1, opacity: L.op * .6 }); return; }
+        gsap.fromTo(el, { scaleX: 0, opacity: 0 }, {
+          scaleX: 1, opacity: L.op, ease: 'none',
+          scrollTrigger: { trigger: L.dT, containerAnimation: ca, start: L.dS, end: L.dE, scrub: .4 }
+        });
+        gsap.to(el, {
+          opacity: 0, ease: 'none',
+          scrollTrigger: { trigger: L.rT, containerAnimation: ca, start: L.rS, end: L.rE, scrub: .4 }
+        });
+      });
+
+      // Pulso de cota en cada costura: la línea es el único hilo continuo
+      // de todo el recorrido — este es el único refuerzo que recibe, y sólo
+      // en opacidad (nunca en scaleX/posición, eso rompería la continuidad
+      // que la hace funcionar). Ocasional (cinco cruces por recorrido
+      // completo), no decorativo de fondo: indica estado ("seguimos sobre
+      // la misma referencia"), así que pasa el filtro de propósito de
+      // `animate`. Se omite entero en reduced-motion, como ya hace
+      // #elev-read.climax en este mismo archivo — no es una animación que
+      // ayude a comprender contenido, es refuerzo puramente decorativo.
+      if (!reduce) {
+        var DATUM_PULSES = ['#sc-nosotros', '#sc-hacemos', '#sc-obras', '#sc-zonas', '#sc-contacto'];
+        DATUM_PULSES.forEach(function (trig) {
+          gsap.timeline({
+            scrollTrigger: { trigger: trig, containerAnimation: ca, start: 'left 96%', end: 'left 60%', scrub: .4 }
+          })
+            .fromTo('#datum-line', { opacity: .88 }, { opacity: 1, duration: .5, ease: 'none' })
+            .to('#datum-line', { opacity: .88, duration: .5, ease: 'none' });
+        });
+      }
+
+      // T5 Zonas → Contacto: la regla de la última fila no se apaga —
+      // crece por scaleX (nunca por width, ya resuelto en
+      // buildDrawingLayer) y asciende en `y` hasta fundirse en altura con
+      // la cota, para que el propio datum cargue la marca hacia Contacto
+      // en vez de un elemento nuevo que compita con él. Luego cede el
+      // paso a la fotografía y a CONTÁCTENOS.
+      var t5line = document.getElementById('t5-line');
+      if (t5line) {
+        if (reduce) { gsap.set(t5line, { scaleX: 1, y: _t5DatumDy, opacity: .7 }); }
+        else {
+          gsap.timeline({
+            scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 78%', end: 'left 30%', scrub: .45, invalidateOnRefresh: true }
+          })
+            .fromTo(t5line, { scaleX: 0, opacity: 0, y: 0 }, { scaleX: 1, opacity: .8, duration: .6, ease: 'none' })
+            .to(t5line, { y: function () { return _t5DatumDy; }, duration: .4, ease: 'none' }, '-=.15');
+          gsap.to(t5line, {
+            opacity: 0, ease: 'none',
+            scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 16%', end: 'left 0%', scrub: .4 }
+          });
+        }
+      }
+
+      // Las otras cuatro filas ceden mientras la última se afirma como la
+      // que continúa hacia Contacto — no desaparecen (dejarían huecos
+      // horizontales vacíos, el problema que esta transición corrige),
+      // sólo retroceden en opacidad. Reversible por construcción: es un
+      // scrub, no una reproducción de una sola vía.
+      var otherRows = Array.from(document.querySelectorAll('#sc-zonas .zrow')).filter(function (r) { return r.id !== 'zrow-last'; });
+      if (otherRows.length && !reduce) {
+        gsap.to(otherRows, {
+          opacity: .18, ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 92%', end: 'left 55%', scrub: .4 }
+        });
+      }
+
+      // ── Puente fotográfico Hacemos → Obras (FLIP real) ──────────────────
+      // El elemento vive SIEMPRE en su rectángulo de llegada (buildDrawingLayer
+      // fija left/top/width/height ahí — coste de layout una sola vez, no
+      // por cuadro). Sólo se anima `transform`: se invierte al valor que lo
+      // hace VERSE en el rectángulo de salida (la nave de Desarrollos) y esa
+      // inversión se deshace hasta la identidad — la técnica FLIP estándar.
+      // Los valores son funciones que releen `_flip` en cada refresh
+      // (invalidateOnRefresh), así que un resize nunca deja la animación con
+      // geometría vieja. Nunca hay un cuadro intermedio con una fotografía
+      // huérfana flotando en negro: el elemento siempre ocupa un rectángulo
+      // con sentido, encogido sobre su propio origen de imagen.
+      var hoBridge = document.getElementById('seam-hac-obr-bridge');
+      if (hoBridge) {
+        if (reduce || !_flip) { gsap.set(hoBridge, { opacity: _flip ? .6 : 0 }); }
+        else {
+          var flipDx = function () { return _flip ? (_flip.src.x + _flip.src.w / 2) - (_flip.dst.x + _flip.dst.w / 2) : 0; };
+          var flipDy = function () { return _flip ? (_flip.src.y + _flip.src.h / 2) - (_flip.dst.y + _flip.dst.h / 2) : 0; };
+          var flipSx = function () { return _flip ? _flip.src.w / _flip.dst.w : 1; };
+          var flipSy = function () { return _flip ? _flip.src.h / _flip.dst.h : 1; };
+          gsap.fromTo(hoBridge,
+            { opacity: 0, x: flipDx, y: flipDy, scaleX: flipSx, scaleY: flipSy },
+            {
+              opacity: 1, x: 0, y: 0, scaleX: 1, scaleY: 1, ease: 'none',
+              scrollTrigger: {
+                trigger: hoBridge, containerAnimation: ca, start: 'left 92%', end: 'left 24%', scrub: .5, invalidateOnRefresh: true,
+                // No depender del orden entre este refresh y el del tween
+                // maestro: este trigger recalcula _flip por sí mismo justo
+                // antes de invalidar sus propios valores, así un resize
+                // nunca puede leerlo desactualizado por una carrera de
+                // temporización entre dos onRefreshInit distintos.
+                onRefreshInit: buildDrawingLayer
+              }
+            }
+          );
+          // Aterrizaje: el puente ya ocupa el encuadre de llegada cuando
+          // cede — se funde con el proyecto real de la rueda que ya está
+          // ahí debajo, así que el ojo lee un solo objeto resolviéndose,
+          // no un corte.
+          gsap.to(hoBridge, {
+            opacity: 0, ease: 'none',
+            scrollTrigger: { trigger: hoBridge, containerAnimation: ca, start: 'left 30%', end: 'left 4%', scrub: .4 }
+          });
+        }
+      }
+
       scenes.forEach(function (id) {
         var sc = document.getElementById(id);
         if (!sc) return;
@@ -1072,7 +1483,20 @@
       });
 
       setScene(document.getElementById('sc-hero'));
-      paint(0);
+      // La lectura de cota en p=0 la resuelve el propio timeline de
+      // apertura (nace en ±0.00, sube a +2.20 con la máscara y la línea).
+      // Un paint(0) inmediato aquí la pisaría con +2.20 antes de que el
+      // usuario vea el ±0.00 inicial. En reduced-motion no hay ese
+      // ascenso — el valor correcto se afirma de una vez, sin cuenta.
+      if (reduce) paint(0);
+      else {
+        var closeGrid = document.querySelector('.con-grid');
+        var closeBack = document.querySelector('#sc-contacto .nlink');
+        var closeBg = document.getElementById('contacto-bg');
+        if (closeGrid) closeGrid.style.opacity = '1';
+        if (closeBack) closeBack.style.opacity = '1';
+        if (closeBg) closeBg.style.opacity = '1';
+      }
 
       // Trackpad: el gesto horizontal también avanza el recorrido.
       var onWheel = function (e) {
@@ -1098,7 +1522,7 @@
       };
       window.addEventListener('keydown', onKey);
 
-      var onResize = function () { sizeIt(); layoutWheel(); buildJourney(); };
+      var onResize = function () { sizeIt(); layoutWheel(); buildJourney(); buildDrawingLayer(); };
       window.addEventListener('resize', onResize);
 
       return function () {
@@ -1167,7 +1591,7 @@
       }
     }
 
-    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); buildJourney(); }, 400);
+    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); buildJourney(); buildDrawingLayer(); }, 400);
   }
 
   window.goHero = goHero;
