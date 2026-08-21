@@ -32,6 +32,8 @@
     --phn: grayscale(0.72) contrast(1.06) saturate(1.15) brightness(0.99);
     --phc: grayscale(0.4) contrast(1.05) saturate(1.12) brightness(1.01);
     --datum-y: 76vh; --clear: clamp(150px,22vh,270px);
+    --safe-x: clamp(32px,3vw,72px);
+    --dark: #0E0F0D; --bone: #E5E3DC;
   }
   * { box-sizing: border-box; }
   body { margin:0; background:#0E0F0D; color:#E5E3DC; font-family:'Archivo',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
@@ -69,6 +71,36 @@
   .col h3, .col p { transition: color .2s ease; }
 
   .wframe { will-change: clip-path, filter; }
+
+  /* ── Fondo fijo del stage ───────────────────────────────────────────────
+     Un solo campo de color, hijo de #stage (que ya está fijo al viewport
+     por su propio position:sticky), detrás del carril. Interpola entre
+     oscuro y hueso con el scroll — así el cambio de tema de una escena a
+     la siguiente ocurre en el AMBIENTE, no como un panel sólido entrando
+     físicamente por la derecha. Las escenas que no necesitan un tono
+     propio distinto (todas menos Obras, que retiene su negro más profundo
+     como el clímax) quedan transparentes y dejan ver este campo. */
+  #stage-bg { position:absolute; inset:0; z-index:0; background:var(--dark); pointer-events:none; }
+  #rail { position:relative; z-index:1; }
+
+  /* ── Capa de trazo, restringida ────────────────────────────────────────
+     Vocabulario máximo por transición: la cota (ya existe, global), una o
+     dos verticales de construcción, una línea de objeto/sección. Nunca
+     medidas por JS contra geometría real — posición fija, autorada, hija
+     de #rail. En reposo casi invisible; sólo se afirma durante el cruce. */
+  .seam-line { position:absolute; bottom:calc(100% - var(--datum-y)); width:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:0; transform-origin:bottom center; transform:scaleY(0); pointer-events:none; z-index:4; will-change:transform,opacity; }
+  .seam-hline { position:absolute; height:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:0; transform-origin:left center; transform:scaleX(0); pointer-events:none; z-index:4; will-change:transform,opacity; }
+
+  /* ── Identificador de lámina ──────────────────────────────────────────
+     Referencia de "juego de planos", nunca protagonista. */
+  .sheet-id { position:absolute; left:var(--safe-x); bottom:calc(var(--clear) * .42); font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.18em; opacity:.4; pointer-events:none; z-index:2; }
+
+  /* ── Match cut Hacemos → Obras ────────────────────────────────────────
+     Sin FLIP, sin medir rectángulos: la última fotografía de Hacemos y la
+     primera de Obras se superponen brevemente en la misma región visual y
+     se resuelven por opacidad + clip-path, cada una en su propio lugar en
+     el layout normal — nunca un tercer elemento migrando entre ambas. */
+  #hac-obr-outgoing { will-change: opacity, transform; }
 
   /* ── COTA CERO ──────────────────────────────────────────────────────────
      Una sola línea, hija de #rail, recorre el carril entero a una altura
@@ -156,8 +188,13 @@
     .sc-in { padding-top:82px !important; padding-bottom:min(180px,20vh) !important; }
     #hac-head p { display:none !important; }
     .col .ph-wrap { max-height:38vh; }
-    #con-mask { font-size:clamp(36px,7.3vw,120px) !important; }
+    #con-mask { font-size:clamp(36px,6.2vw,108px) !important; }
     .con-grid p { font-size:clamp(15px,1.3vw,19px) !important; }
+    /* Cinco filas de Zonas + cabecera deben caber sobre la cota sin tocar
+       el borde inferior real del viewport a esta altura reducida. */
+    .zrow { padding:12px 0 !important; }
+    .zname { font-size:clamp(26px,3vw,46px) !important; }
+    #sc-zonas h2[data-mask] { font-size:clamp(26px,3vw,52px) !important; }
   }
 
   @media (max-width:1180px) and (max-height:660px) {
@@ -289,12 +326,29 @@
 
   <div id="scroller" style="position:relative;width:100%">
   <div id="stage" style="position:sticky;top:0;width:100%;height:100vh;overflow:hidden">
+    <div id="stage-bg"></div>
     <div id="rail" style="position:relative;display:flex;height:100%;width:max-content;will-change:transform">
 
       <div id="datum-line"></div>
 
+      <!-- Capa de trazo, autorada y fija por transición: sin medición
+           dinámica de geometría. Vocabulario máximo por costura: dos
+           verticales de construcción. Hijas de #rail para que su posición
+           X sea real (mismo offsetLeft simple de siempre), no un adorno
+           de posición fija en pantalla. -->
+      <div id="seam-1a" class="seam-line" style="height:20vh"></div>
+      <div id="seam-1b" class="seam-line" style="height:12vh"></div>
+      <div id="seam-2a" class="seam-line" style="height:30vh"></div>
+      <div id="seam-4a" class="seam-line" style="height:30vh"></div>
+      <div id="seam-4b" class="seam-line" style="height:18vh"></div>
+      <div id="seam-4c" class="seam-line" style="height:24vh"></div>
+      <div id="seam-4d" class="seam-line" style="height:14vh"></div>
+      <div id="seam-4-top" class="seam-hline" style="top:24vh;width:1px"></div>
+      <div id="seam-5a" class="seam-hline" style="top:var(--datum-y);width:1px"></div>
+
       <!-- ══ 00 PORTADA — masa alta, disparo de establecimiento ══ -->
-      <section id="sc-hero" class="scene" tabindex="-1" data-theme="dark" data-label="00 PORTADA" data-screen-label="00 Portada" style="position:relative;flex:none;width:142vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC;outline:none">
+      <section id="sc-hero" class="scene" tabindex="-1" data-theme="dark" data-label="00 PORTADA" data-screen-label="00 Portada" style="position:relative;flex:none;width:142vw;height:100%;overflow:hidden;background:transparent;color:#E5E3DC;outline:none">
+        <span class="sheet-id">A-00 / PORTADA</span>
         <div id="hero-mask" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(30% 0% 0% 0%)">
           <div data-par="5" style="position:absolute;top:-4%;left:-6%;width:112%;height:108%">
             <video id="hero-video" class="ph" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover">
@@ -337,8 +391,8 @@
       </section>
 
       <!-- ══ 01 NOSOTROS — vacío mayor, primera liberación ══ -->
-      <section id="sc-nosotros" class="scene" data-theme="light" data-label="01 NOSOTROS" data-screen-label="01 Nosotros" style="position:relative;flex:none;width:128vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
-        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
+      <section id="sc-nosotros" class="scene" data-theme="light" data-label="01 NOSOTROS" data-screen-label="01 Nosotros" style="position:relative;flex:none;width:128vw;height:100%;overflow:hidden;background:transparent;color:#0E0F0D">
+        <span class="sheet-id" style="color:#0E0F0D">A-01 / NOSOTROS</span>
         <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <!-- La palabra vive en su propia franja, en flujo normal: nunca puede
                quedar detrás de la fotografía ni recortada por el viewport. Lo
@@ -360,8 +414,8 @@
       </section>
 
       <!-- ══ 02 HACEMOS — cuatro naves de peso desigual ══ -->
-      <section id="sc-hacemos" class="scene" data-theme="dark" data-label="02 HACEMOS" data-screen-label="02 Hacemos" style="position:relative;flex:none;width:172vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
-        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
+      <section id="sc-hacemos" class="scene" data-theme="dark" data-label="02 HACEMOS" data-screen-label="02 Hacemos" style="position:relative;flex:none;width:172vw;height:100%;overflow:hidden;background:transparent;color:#E5E3DC">
+        <span class="sheet-id">A-02 / HACEMOS</span>
         <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div class="hac-row" style="position:relative;display:flex;height:100%;gap:0">
             <div id="hac-head" style="position:relative;z-index:1;flex:none;width:15vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(18px,2.2vw,36px);border-right:1px solid rgba(229,227,220,.16)">
@@ -429,7 +483,7 @@
 
       <!-- ══ 03 OBRAS — clímax, masa máxima ══ -->
       <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:258vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
-        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
+        <span class="sheet-id">A-03 / OBRAS</span>
         <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:stretch;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div id="obras-head" style="position:relative;flex:none;width:13vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(16px,2vw,32px);border-right:1px solid rgba(229,227,220,.16)">
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55">OBRAS</span>
@@ -440,6 +494,16 @@
             <div id="wheel-pane" style="position:absolute;left:0;top:0;width:100vw;height:100%;will-change:transform">
               <div id="wheel-stage" style="position:relative;width:100%;height:100%">
                 <div id="wheel-3d" style="position:absolute;inset:0">
+                  <!-- Match cut Hacemos → Obras: la misma caja estática de
+                       reposo de la rueda (izquierda/abajo/ancho/alto
+                       idénticos a un wplate, sin medir nada), mostrando la
+                       última fotografía de Hacemos. Se desvanece justo
+                       cuando Reforma, debajo, ya se ha resuelto — un solo
+                       encuadre, nunca dos imágenes en posiciones distintas
+                       compitiendo por dominio. -->
+                  <div id="hac-obr-outgoing" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform:translateX(-50%);overflow:hidden;opacity:0;pointer-events:none;z-index:50">
+                    <img class="ph" src="hacemos-bg.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+                  </div>
                   <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Reforma" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-1" class="ph" src="proj-1-bg.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
@@ -481,8 +545,8 @@
       </section>
 
       <!-- ══ 04 ZONAS — segunda liberación ══ -->
-      <section id="sc-zonas" class="scene" data-theme="light" data-label="04 ZONAS" data-screen-label="04 Zonas" style="position:relative;flex:none;width:120vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
-        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
+      <section id="sc-zonas" class="scene" data-theme="light" data-label="04 ZONAS" data-screen-label="04 Zonas" style="position:relative;flex:none;width:120vw;height:100%;overflow:hidden;background:transparent;color:#0E0F0D">
+        <span class="sheet-id" style="color:#0E0F0D">A-04 / LOCALIZACIÓN</span>
         <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
             <h2 data-mask="true" style="margin:0;font-size:clamp(30px,3.8vw,68px);font-weight:800;font-variation-settings:'wdth' 108;line-height:.94;letter-spacing:-.02em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
@@ -490,33 +554,33 @@
           </div>
 
           <div style="display:flex;flex-direction:column;width:100%">
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">01</span>
-              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Veracruz</span>
+              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Veracruz</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:22%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°10′N 96°08′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">02</span>
-              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Boca del Río</span>
+              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Boca del Río</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:41%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°06′N 96°06′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">03</span>
-              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Xalapa</span>
+              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Xalapa</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:63%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°32′N 96°55′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">04</span>
-              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Córdoba</span>
+              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Córdoba</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:34%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°53′N 96°56′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">05</span>
-              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Coatzacoalcos</span>
+              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Coatzacoalcos</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:78%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°08′N 94°25′W</span>
             </a>
@@ -527,8 +591,8 @@
       </section>
 
       <!-- ══ 05 CONTACTO — resolución, masa contenida ══ -->
-      <section id="sc-contacto" class="scene" data-theme="dark" data-label="05 CONTACTO" data-screen-label="05 Contacto" style="position:relative;flex:none;width:114vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
-        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
+      <section id="sc-contacto" class="scene" data-theme="dark" data-label="05 CONTACTO" data-screen-label="05 Contacto" style="position:relative;flex:none;width:114vw;height:100%;overflow:hidden;background:transparent;color:#E5E3DC">
+        <span class="sheet-id">A-05 / CONTACTO</span>
         <div style="position:absolute;inset:0;overflow:hidden">
           <div data-par="6" style="position:absolute;top:-5%;left:-7%;width:114%;height:110%">
             <img id="contacto-bg" class="ph" src="ubicaciones-bg.jpg" alt="Oficina o proyecto Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
@@ -536,7 +600,7 @@
           <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.94) 0%,rgba(14,15,13,.82) 44%,rgba(14,15,13,.64) 100%)"></div>
         </div>
 
-        <div class="sc-in" style="position:relative;z-index:2;width:100vw;margin-left:auto;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;margin-left:auto;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(40px,4vw,88px) var(--clear) clamp(22px,3.2vw,58px)">
           <div class="con-grid" style="display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:clamp(30px,4.4vw,86px);align-items:start;max-width:1240px">
             <div data-rise="true" style="display:flex;flex-direction:column;gap:14px">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
@@ -563,7 +627,7 @@
           </div>
 
           <div id="con-close" style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px">
-            <div id="con-mask" style="overflow:hidden;flex:1;min-width:0;font-size:clamp(40px,8.4vw,156px);padding-block:.24em;margin-block:-.24em">
+            <div id="con-mask" style="overflow:hidden;flex:1;min-width:0;max-width:70vw;font-size:clamp(38px,7vw,124px);padding-block:.24em;margin-block:-.24em">
               <div id="con-word" data-grade="true" style="font-size:1em;font-weight:800;font-variation-settings:'wdth' 122;line-height:.82;letter-spacing:-.03em;text-transform:uppercase">Contáctenos</div>
             </div>
             <a href="#" onclick="goHero(event)" data-cursor="INICIO" class="nlink" style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.75">↑ VOLVER AL INICIO</a>
@@ -714,6 +778,33 @@
     kf.push([Math.max(lastP + 0.002, 1), 1]);
     ekf.push([Math.max(ekf[ekf.length - 1][0] + 0.002, 1), 0]);
     _railKF = kf; _elevKF = ekf;
+  }
+
+  // Capa de trazo, deliberadamente simple: sólo `offsetLeft` de las propias
+  // escenas (geometría real, pero barata — nada de getBoundingClientRect
+  // contra bordes de imagen o de nave). Autorada: los desplazamientos entre
+  // líneas son decisiones de composición fijas, no mediciones.
+  function buildSeams() {
+    function setV(id, x) { var el = document.getElementById(id); if (el) el.style.left = x + 'px'; }
+    var vw = window.innerWidth;
+    var nos = document.getElementById('sc-nosotros');
+    var hac = document.getElementById('sc-hacemos');
+    var zon = document.getElementById('sc-zonas');
+    var con = document.getElementById('sc-contacto');
+    if (nos) { setV('seam-1a', nos.offsetLeft - vw * 0.03); setV('seam-1b', nos.offsetLeft + vw * 0.02); }
+    if (hac) { setV('seam-2a', hac.offsetLeft - vw * 0.02); }
+    if (zon) {
+      setV('seam-4a', zon.offsetLeft - vw * 0.08);
+      setV('seam-4b', zon.offsetLeft - vw * 0.03);
+      setV('seam-4c', zon.offsetLeft + vw * 0.02);
+      setV('seam-4d', zon.offsetLeft + vw * 0.055);
+      var t4top = document.getElementById('seam-4-top');
+      if (t4top) { t4top.style.left = (zon.offsetLeft - vw * 0.08) + 'px'; t4top.style.width = (vw * 0.135) + 'px'; }
+    }
+    if (con) {
+      var s5 = document.getElementById('seam-5a');
+      if (s5) { s5.style.left = (con.offsetLeft - vw * 0.16) + 'px'; s5.style.width = (vw * 0.30) + 'px'; }
+    }
   }
 
   function go(id) {
@@ -998,13 +1089,14 @@
       _rail = rail;
       initWheel(scroller);
       buildJourney();
+      buildSeams();
 
       var masterTween = gsap.to(rail, {
         x: function () { return -maxX(); }, ease: railEase,
         scrollTrigger: {
           trigger: scroller, start: 'top top', end: function () { return '+=' + maxX(); },
           scrub: .65, invalidateOnRefresh: true,
-          onRefreshInit: function () { sizeIt(); buildJourney(); },
+          onRefreshInit: function () { sizeIt(); buildJourney(); buildSeams(); },
           onUpdate: function (self) { paint(self.progress); }
         }
       });
@@ -1080,6 +1172,168 @@
         scrollTrigger: { trigger: '#sc-nosotros', containerAnimation: ca, start: 'left right', end: 'right left', scrub: true }
       });
 
+      // ── Fondo fijo: el ambiente cambia de tono, no un panel que entra ──
+      // Cuatro cruces reales de color (Hacemos → Obras no cambia: ambos
+      // oscuros, Obras conserva su propio negro más profundo aparte).
+      // Interpolación de color determinista, sin blur, sin degradado con
+      // pluma — el mismo mecanismo que ya usa el resto del archivo para
+      // el color de #chrome-top/#chrome-bot en setTheme().
+      var stageBg = document.getElementById('stage-bg');
+      if (stageBg) {
+        var bgStops = [
+          { trig: '#sc-nosotros', to: '#E5E3DC' },
+          { trig: '#sc-hacemos', to: '#0E0F0D' },
+          { trig: '#sc-zonas', to: '#E5E3DC' },
+          { trig: '#sc-contacto', to: '#0E0F0D' }
+        ];
+        bgStops.forEach(function (s) {
+          gsap.to(stageBg, {
+            backgroundColor: s.to, ease: 'none',
+            scrollTrigger: { trigger: s.trig, containerAnimation: ca, start: 'left 90%', end: 'left 45%', scrub: .4 }
+          });
+        });
+      }
+
+      // ── Capa de trazo ────────────────────────────────────────────────
+      // Reposo casi invisible, se afirma sólo mientras la escena se está
+      // formando (15-22% percibido), nunca dominante. Vocabulario fijo,
+      // sin medición de geometría: dos verticales en T1 y T4, una en T2,
+      // una horizontal en T5 (ver Zonas → Contacto más abajo).
+      var SEAM_V = [
+        { id: 'seam-1a', op: .22, trig: '#sc-nosotros', s: 'left 96%', e: 'left 55%' },
+        { id: 'seam-1b', op: .16, trig: '#sc-nosotros', s: 'left 92%', e: 'left 50%' },
+        { id: 'seam-2a', op: .2, trig: '#sc-hacemos', s: 'left 94%', e: 'left 52%' },
+        { id: 'seam-4a', op: .2, trig: '#sc-obras', s: 'right 75%', e: 'right 45%' },
+        { id: 'seam-4b', op: .22, trig: '#sc-obras', s: 'right 70%', e: 'right 40%' },
+        { id: 'seam-4c', op: .22, trig: '#sc-obras', s: 'right 68%', e: 'right 38%' },
+        { id: 'seam-4d', op: .2, trig: '#sc-obras', s: 'right 72%', e: 'right 42%' }
+      ];
+      SEAM_V.forEach(function (s) {
+        var el = document.getElementById(s.id);
+        if (!el) return;
+        if (reduce) { gsap.set(el, { scaleY: 1, opacity: s.op * .5 }); return; }
+        gsap.fromTo(el, { scaleY: 0, opacity: 0 }, {
+          scaleY: 1, opacity: s.op, ease: 'none',
+          scrollTrigger: { trigger: s.trig, containerAnimation: ca, start: s.s, end: s.e, scrub: .4 }
+        });
+        gsap.to(el, {
+          opacity: .06, ease: 'none',
+          scrollTrigger: { trigger: s.trig, containerAnimation: ca, start: 'left 35%', end: 'left 10%', scrub: .4 }
+        });
+      });
+
+      // ── Zonas → Contacto ────────────────────────────────────────────────
+      // Las cuatro filas que no continúan ceden en bloque — texto y su
+      // propia regla juntos, nunca un esqueleto de línea vacía — mientras
+      // la fila activa (la última, Coatzacoalcos) permanece y su
+      // extensión (seam-5a, ver capa de trazo abajo) viaja hacia Contacto.
+      var zonRows = Array.from(document.querySelectorAll('#sc-zonas .zrow'));
+      var zonInactive = zonRows.slice(0, -1);
+      if (zonInactive.length && !reduce) {
+        gsap.to(zonInactive, {
+          opacity: .12, ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 92%', end: 'left 58%', scrub: .4 }
+        });
+      }
+
+      var t4top = document.getElementById('seam-4-top');
+      if (t4top) {
+        if (reduce) { gsap.set(t4top, { scaleX: 1, opacity: .1 }); }
+        else {
+          gsap.fromTo(t4top, { scaleX: 0, opacity: 0 }, {
+            scaleX: 1, opacity: .18, ease: 'none',
+            scrollTrigger: { trigger: '#sc-obras', containerAnimation: ca, start: 'right 68%', end: 'right 40%', scrub: .4 }
+          });
+          gsap.to(t4top, {
+            opacity: .05, ease: 'none',
+            scrollTrigger: { trigger: '#sc-zonas', containerAnimation: ca, start: 'left 35%', end: 'left 10%', scrub: .4 }
+          });
+        }
+      }
+
+      // Documento: el escenario de la rueda pierde saturación conforme
+      // Obras cede hacia Zonas — sin medir qué placa está activa, sólo el
+      // conjunto entero, que para entonces siempre muestra el último
+      // proyecto (Arboledas) por cómo termina el giro de la rueda.
+      if (!reduce) {
+        gsap.fromTo('#wheel-stage', { filter: 'saturate(1)' }, {
+          filter: 'saturate(.28)', ease: 'none',
+          scrollTrigger: { trigger: '#sc-obras', containerAnimation: ca, start: 'right 78%', end: 'right 42%', scrub: .4 }
+        });
+      }
+
+      // La línea que sobrevive de Zonas viaja hacia Contacto y, con el
+      // mismo ritmo, revela su fotografía por clip-path — la línea no
+      // sólo precede a la imagen, la trae consigo.
+      var seam5 = document.getElementById('seam-5a');
+      var conBg = document.getElementById('contacto-bg');
+      if (seam5) {
+        if (reduce) { gsap.set(seam5, { scaleX: 1, opacity: .18 }); }
+        else {
+          gsap.fromTo(seam5, { scaleX: 0, opacity: 0 }, {
+            scaleX: 1, opacity: .2, ease: 'none',
+            scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 82%', end: 'left 45%', scrub: .4 }
+          });
+          gsap.to(seam5, {
+            opacity: .05, ease: 'none',
+            scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 22%', end: 'left 4%', scrub: .4 }
+          });
+        }
+      }
+      if (conBg) {
+        if (reduce) gsap.set(conBg, { clipPath: 'inset(0% 0% 0% 0%)' });
+        else gsap.fromTo(conBg, { clipPath: 'inset(0% 100% 0% 0%)' }, {
+          clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 78%', end: 'left 38%', scrub: .4 }
+        });
+      }
+
+      // ── Cierre ──────────────────────────────────────────────────────────
+      // En el tramo final, la información de contacto cede y la fotografía
+      // pierde dominio — sólo opacidad, ninguna pieza de layout se mueve.
+      // La cota ya resuelve a ±0.00 en p=1 por su propio keyframe
+      // (buildJourney); esto es sólo el acompañamiento visual de esa
+      // resolución, no un mecanismo nuevo de progreso.
+      if (!reduce) {
+        var closeTargets = [document.querySelector('.con-grid'), document.querySelector('#sc-contacto .nlink')].filter(Boolean);
+        if (closeTargets.length) gsap.to(closeTargets, {
+          opacity: .1, ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'right 14%', end: 'right -2%', scrub: .4 }
+        });
+        if (conBg) gsap.to(conBg, {
+          opacity: .55, ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'right 14%', end: 'right -2%', scrub: .4 }
+        });
+        // CONTÁCTENOS se sostiene fuerte casi todo el tramo de Contacto
+        // (Sección 18: la composición final debe llegar plena) y sólo
+        // cede en el último respiro, cuando ya no queda más que la cota.
+        var conWord = document.getElementById('con-word');
+        if (conWord) gsap.to(conWord, {
+          opacity: .08, ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'right 5%', end: 'right -2%', scrub: .3 }
+        });
+      }
+
+      // ── Match cut Hacemos → Obras ──────────────────────────────────────
+      // La última fotografía de Hacemos se afirma mientras la nave sale,
+      // se sostiene un instante sobre el encuadre de la rueda (que ya
+      // empieza a resolver Reforma debajo, por su propio mecanismo) y
+      // cede — 10-15% de solape real, nunca doble exposición larga.
+      var hoOut = document.getElementById('hac-obr-outgoing');
+      if (hoOut) {
+        if (reduce) { gsap.set(hoOut, { opacity: 0 }); }
+        else {
+          gsap.fromTo(hoOut, { opacity: 0 }, {
+            opacity: 1, ease: 'none',
+            scrollTrigger: { trigger: '#sc-hacemos', containerAnimation: ca, start: 'right 88%', end: 'right 62%', scrub: .4 }
+          });
+          gsap.to(hoOut, {
+            opacity: 0, ease: 'none',
+            scrollTrigger: { trigger: '#sc-obras', containerAnimation: ca, start: 'left 80%', end: 'left 52%', scrub: .4 }
+          });
+        }
+      }
+
       scenes.forEach(function (id) {
         var sc = document.getElementById(id);
         if (!sc) return;
@@ -1116,7 +1370,7 @@
       };
       window.addEventListener('keydown', onKey);
 
-      var onResize = function () { sizeIt(); layoutWheel(); buildJourney(); };
+      var onResize = function () { sizeIt(); layoutWheel(); buildJourney(); buildSeams(); };
       window.addEventListener('resize', onResize);
 
       return function () {
@@ -1185,7 +1439,7 @@
       }
     }
 
-    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); buildJourney(); }, 400);
+    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); buildJourney(); buildSeams(); }, 400);
   }
 
   window.goHero = goHero;
