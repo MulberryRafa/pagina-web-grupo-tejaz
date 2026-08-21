@@ -909,6 +909,7 @@
       dStat: document.getElementById('wd-stat'),
       frames: plates.map(function (p) { return p.querySelector('.wframe'); }),
       caps: plates.map(function (p) { return p.querySelector('.wcap'); }),
+      bridge: document.getElementById('hac-obr-outgoing'),
       Rx: 0, rise: 0, len: 1, trackL: 0, active: -1
     };
     plates.forEach(function (pl, i) {
@@ -952,6 +953,13 @@
     var form = Math.min(1, Math.max(0, (0.66 - q) / 0.44));
     var pin = Math.min(1, Math.max(0, (rel - st.trackL) / st.len));
     st.pane.style.transform = 'translate3d(' + (pin * st.len).toFixed(2) + 'px,0,0)';
+    // Cierre duro: el puente de match cut vive dentro de #wheel-pane, así
+    // que en cuanto la rueda empieza a fijarse y a trasladarse (pin > 0)
+    // viajaría con ella si siguiera visible. El scrub de opacidad ya lo
+    // desvanece antes de este punto en el caso normal; esto es un
+    // seguro adicional, no una segunda fuente de verdad — nunca sube la
+    // opacidad, sólo la fuerza a 0 si algo la dejó despierta.
+    if (st.bridge && pin > 0.001) st.bridge.style.opacity = '0';
     renderWheel(form, pin);
   }
 
