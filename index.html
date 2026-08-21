@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grupo Tejaz — Desarrollo y Construcción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root { --accent:#3F5C28; --accent-soft:#BCCB93; --phf: grayscale(1) contrast(1.12) brightness(0.88); --phn: contrast(1.07) saturate(0.62) brightness(0.97); --gridop: 1; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0E0F0D; color:#E5E3DC; font-family:'Archivo',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  a { color:inherit; text-decoration:none; }
+  a:hover { color:var(--accent-soft); }
+  img, video { display:block; }
+  ::selection { background:var(--accent); color:#E5E3DC; }
+
+  /* Tratamiento fotográfico único: todo el material (renders y fotos de obra)
+     pasa por el mismo grado para que la lámina se lea como una sola serie. */
+  .ph, [classname~="ph"] { filter: var(--phf); transition: filter .2s ease; }
+  .col[data-active="1"] .ph, .wplate[data-active="1"] .ph,
+  .col[data-active="1"] [classname~="ph"], .wplate[data-active="1"] [classname~="ph"] { filter: var(--phn); }
+
+  /* Portada: negros con detalle y altas luces sin quemar. */
+  #hero-video { filter: var(--phf) contrast(1.05) brightness(.94); }
+
+  /* Servicios como sistema: el estado viaja por variable, así que título,
+     texto e imagen cambian juntos, en el mismo tiempo y de vuelta. */
+  .col { --svc-h: rgba(229,227,220,.66); --svc-p: rgba(229,227,220,.58); }
+  .col[data-active="1"] { --svc-h: #E5E3DC; --svc-p: rgba(229,227,220,.8); }
+  .col h3, .col p { transition: color .2s ease; }
+
+  .wframe { will-change: clip-path, filter; }
+  .zrow .zi { transition: color .2s ease; }
+
+  /* Titulares con interlineado < 1: la tinta sobresale de la caja y las
+     máscaras la cortan. Se le da aire dentro del recorte sin mover el layout. */
+  h2[data-mask] { padding-block: .2em; margin-block: -.2em; }
+  #hac-title { padding-block: .18em; padding-inline: .06em; }
+  /* El recorte se aplica a la caja del elemento: si el texto desborda su
+     contenedor, inset(0) lo rasura. La caja se ciñe al texto y reserva holgura. */
+  #obras-title { width: max-content; padding-right: .07em; }
+  .zrow .zcoord { transition: color .2s ease; }
+
+  @keyframes cue { 0%,100% { transform:translateX(0); opacity:.85 } 50% { transform:translateX(14px); opacity:.25 } }
+
+  #grain { position:fixed; inset:0; z-index:88; pointer-events:none; opacity:.34; mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:180px 180px; }
+
+  /* Un solo gesto en todo el sitio: el hilo se enciende y el elemento avanza. */
+  .nlink { position:relative; }
+  .nlink::after { content:''; position:absolute; left:0; right:0; bottom:-6px; height:1px; background:currentColor; transform:scaleX(0); transform-origin:left center; transition:transform .2s cubic-bezier(.23,1,.32,1); }
+  .nlink[data-on="1"]::after { transform:scaleX(1); }
+  .nlink[data-on="1"] { opacity:1 !important; }
+
+  /* Zonas: la posición del punto ES el dato geográfico. No viaja al pasar el
+     cursor; se afirma sobre su coordenada. */
+  .zrow .zn { transition: transform .2s cubic-bezier(.23,1,.32,1); }
+  .zrow .zh { transition: background-color .2s ease; }
+  .zrow .zm { transition: transform .2s cubic-bezier(.23,1,.32,1), background-color .2s ease; }
+
+  .clink .ca { transition: transform .2s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
+  .clink .cr { transition: background-color .2s ease; }
+  /* Feedback de presión: rápido y sin celebración. */
+  #cta-write { transition: transform .12s cubic-bezier(.23,1,.32,1), background-color .2s ease; }
+  #cta-write:active { transform: scale(.97); }
+
+  .col .cnum { transition: color .2s ease; }
+  .col[data-active="1"] .cnum { color: var(--accent-soft); }
+  .wplate .wcap { transition: opacity .28s linear, color .2s ease; }
+  .wplate[data-active="1"] .wcap { color: #E5E3DC; }
+  .wplate { cursor: none; }
+
+  /* El estado de hover sólo existe donde hay cursor: en pantalla táctil el
+     toque no debe encender un estado que el dedo no puede sostener. */
+  @media (hover:hover) and (pointer:fine) {
+    html.cur-on, html.cur-on * { cursor:none !important; }
+    .col:hover .ph, .wplate:hover .ph,
+    .col:hover [classname~="ph"], .wplate:hover [classname~="ph"] { filter: var(--phn); }
+    .col:hover { --svc-h: #E5E3DC; --svc-p: rgba(229,227,220,.8); }
+    .col:hover .cnum { color: var(--accent-soft); }
+    .nlink:hover::after { transform: scaleX(1); }
+    .zrow:hover .zi, .zrow:hover .zcoord { color: var(--accent); }
+    .zrow:hover .zn { transform: translateX(10px); }
+    .zrow:hover .zh { background-color: var(--accent); }
+    .zrow:hover .zm { background-color: var(--accent); transform: scale(1.5); }
+    .clink:hover .ca { transform: translateX(10px); opacity:1; }
+    .clink:hover .cr { background-color: var(--accent-soft); }
+  }
+
+  /* Movimiento reducido: se conserva la jerarquía y el estado final. La
+     promesa del Hero aparece ya materializada, no se representa su tránsito. */
+  @media (prefers-reduced-motion: reduce) {
+    #cue-line { animation:none !important; }
+    #hero-out { -webkit-text-stroke-width:0 !important; }
+    #hero-fill { clip-path:inset(0 0 0 0) !important; }
+    .zrow:hover .zn, .clink:hover .ca { transform:none !important; }
+  }
+
+  @media (min-width:1181px) and (max-height:780px) {
+    .sc-in { padding-top:82px !important; padding-bottom:52px !important; }
+    #hac-title { font-size:clamp(36px,4.6vw,72px) !important; margin:12px 0 !important; }
+    #hac-head p, #obras-head p { display:none !important; }
+    .zrow { padding:9px 0 !important; }
+    #nos-word { font-size:clamp(56px,9.4vw,150px) !important; }
+    .col .ph-wrap { max-height:42vh; }
+    #con-mask { font-size:clamp(36px,7.3vw,120px) !important; }
+    .con-grid p { font-size:clamp(15px,1.3vw,19px) !important; }
+  }
+
+  @media (max-width:1180px) and (max-height:660px) {
+    .hero-meta .hcell:nth-child(3) { display:none !important; }
+    #sc-hero .sc-in { gap:16px !important; }
+  }
+
+  /* ── Móvil: la lámina horizontal se convierte en una secuencia vertical ── */
+  @media (max-width:1180px) {
+    #stage { position:static !important; height:auto !important; overflow:visible !important; }
+    #scroller { height:auto !important; }
+    #rail { display:block !important; width:100% !important; transform:none !important; }
+    .scene { width:100% !important; height:auto !important; min-height:auto !important; }
+    .sc-in { width:100% !important; height:auto !important; padding:96px 22px 64px !important; }
+    .desk { display:none !important; }
+    .mob { display:flex !important; }
+    #cursor { display:none !important; }
+    #chrome-top { padding:14px 18px !important; }
+    #nav-index { display:none !important; }
+    #chrome-bot { padding:10px 18px calc(10px + env(safe-area-inset-bottom)) !important; }
+
+    #sc-hero { min-height:100svh !important; }
+    #sc-hero .sc-in { min-height:100svh !important; justify-content:flex-end !important; gap:26px !important; }
+    #sc-hero .sc-in { padding-bottom:84px !important; }
+    .hero-meta { grid-template-columns:1fr !important; }
+    .hero-meta .hcell:last-child { display:none !important; }
+    .hero-meta > div { border-left:none !important; border-top:1px solid rgba(229,227,220,.18) !important; padding:11px 0 0 !important; }
+
+    .nos-grid { display:flex !important; flex-direction:column !important; align-items:stretch !important; gap:22px !important; }
+    #nos-strip { width:100% !important; height:62vw !important; position:relative !important; }
+    #sc-nosotros { display:flex !important; flex-direction:column !important; }
+    #sc-nosotros .sc-in { padding-top:16px !important; }
+    #nos-word { order:-1 !important; position:relative !important; top:auto !important; left:auto !important; margin:94px 22px -8px !important; font-size:calc(100vw / 9.6) !important; mix-blend-mode:normal !important; color:#0E0F0D !important; }
+
+    .hac-row { flex-direction:column !important; gap:0 !important; }
+    #hac-title { writing-mode:horizontal-tb !important; transform:none !important; font-size:15vw !important; }
+    #hac-head { width:100% !important; padding-right:0 !important; border-right:none !important; }
+    /* En una secuencia vertical la profundidad de campo no significa nada:
+       los cuatro servicios se leen al mismo nivel. */
+    .col { --svc-h:#E5E3DC !important; --svc-p:rgba(229,227,220,.78) !important; }
+    .col { width:100% !important; border-left:none !important; border-top:1px solid rgba(229,227,220,.16) !important; padding:20px 0 !important; }
+    .col .ph-wrap { height:46vw !important; margin-top:16px !important; }
+
+    #sc-obras .sc-in { flex-direction:column !important; align-items:stretch !important; }
+    #obras-head { width:100% !important; border-right:none !important; padding-right:0 !important; gap:18px !important; }
+    #obras-title { max-width:100% !important; }
+    #sc-contacto .sc-in { justify-content:flex-start !important; gap:26px !important; }
+    #con-close { flex-direction:column !important; align-items:flex-start !important; gap:18px !important; }
+    #con-close > div:first-child { width:100% !important; }
+    #wheel-track { width:100% !important; height:auto !important; }
+    #wheel-pane { position:relative !important; width:100% !important; height:auto !important; transform:none !important; }
+    #wheel-stage { perspective:none !important; height:auto !important; }
+    #wheel-3d { position:relative !important; inset:auto !important; transform-style:flat !important; display:flex !important; flex-direction:column !important; gap:40px !important; margin-top:42px !important; height:auto !important; }
+    .wplate { position:relative !important; left:auto !important; bottom:auto !important; width:100% !important; transform:none !important; opacity:1 !important; z-index:auto !important; cursor:pointer !important; }
+    .wplate .wcap { opacity:1 !important; }
+    #wheel-datum, #wheel-idx, #hac-datum, #wheel-data, #obras-axis { display:none !important; }
+    .wplate { height:auto !important; }
+    .wplate .wframe { position:relative !important; inset:auto !important; height:64vw !important; filter:none !important; clip-path:none !important; }
+    .wplate .wcap { position:relative !important; top:auto !important; margin-top:12px !important; font-size:11px !important; white-space:normal !important; }
+    #hero-out { -webkit-text-stroke-width:0 !important; }
+    #hero-fill { clip-path:inset(0 0 0 0) !important; }
+
+    .zrow { grid-template-columns:34px 1fr auto !important; }
+    .zrow .zrule { display:none !important; }
+    .zname { font-size:9vw !important; }
+
+    #con-mask { font-size:calc(100vw / 12.2) !important; }
+    #con-word { transform:none !important; }
+    .con-grid { grid-template-columns:1fr !important; gap:26px !important; }
+    #con-end { position:relative !important; right:auto !important; bottom:auto !important; width:100% !important; margin-top:30px !important; }
+    #foot { flex-direction:column !important; align-items:flex-start !important; gap:14px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="root" style="position:relative;width:100%;background:#0E0F0D">
+
+  <div id="grain"></div>
+
+  <header id="chrome-top" style="position:fixed;top:0;left:0;right:0;z-index:92;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px clamp(18px,2.4vw,34px);color:#E5E3DC;pointer-events:none">
+    <a href="#" onclick="goHero(event)" data-cursor="INICIO" style="display:flex;align-items:center;gap:10px;pointer-events:auto">
+      <img id="nav-mark" src="logo-tejaz.png" alt="" style="height:20px;width:auto;filter:brightness(0) invert(1)">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase">Grupo Tejaz</span>
+    </a>
+    <nav id="nav-index" class="desk" style="display:flex;align-items:center;gap:clamp(14px,2vw,30px);pointer-events:auto">
+      <a href="#" data-nav="sc-nosotros" onclick="goNosotros(event)" class="nlink" style="display:flex;align-items:baseline;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.7"><span style="opacity:.6">01</span>NOSOTROS</a>
+      <a href="#" data-nav="sc-hacemos" onclick="goHacemos(event)" class="nlink" style="display:flex;align-items:baseline;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.7"><span style="opacity:.6">02</span>HACEMOS</a>
+      <a href="#" data-nav="sc-obras" onclick="goObras(event)" class="nlink" style="display:flex;align-items:baseline;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.7"><span style="opacity:.6">03</span>OBRAS</a>
+      <a href="#" data-nav="sc-zonas" onclick="goZonas(event)" class="nlink" style="display:flex;align-items:baseline;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.7"><span style="opacity:.6">04</span>ZONAS</a>
+      <a href="#" data-nav="sc-contacto" onclick="goContacto(event)" class="nlink" style="display:flex;align-items:baseline;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.7"><span style="opacity:.6">05</span>CONTACTO</a>
+    </nav>
+    <button class="mob" onclick="toggleMenu()" aria-label="Índice" style="display:none;align-items:center;gap:9px;background:none;border:none;color:inherit;padding:6px 0;pointer-events:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;cursor:pointer">
+      ÍNDICE
+      <span style="display:flex;flex-direction:column;gap:4px"><span style="width:20px;height:1px;background:currentColor;display:block"></span><span style="width:20px;height:1px;background:currentColor;display:block"></span></span>
+    </button>
+  </header>
+
+  <div id="chrome-bot" style="position:fixed;left:0;right:0;bottom:0;z-index:92;display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:14px clamp(18px,2.4vw,34px) calc(14px + env(safe-area-inset-bottom));color:#E5E3DC;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em">
+    <span id="scene-label" style="min-width:98px;opacity:.85">00 PORTADA</span>
+    <div style="position:relative;flex:1;height:1px;background:currentColor;opacity:.9">
+      <div data-hair="true" style="position:absolute;inset:0;background:rgba(229,227,220,.22)"></div>
+      <div id="pfill" style="position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--accent-soft);transform:scaleX(0);transform-origin:left center"></div>
+      <div id="tickrow" style="position:absolute;inset:0"></div>
+    </div>
+    <span id="pct" style="min-width:44px;text-align:right">00%</span>
+  </div>
+
+  <div id="menu" style="position:fixed;inset:0;z-index:99;background:#0E0F0D;display:none;flex-direction:column;justify-content:center;gap:2px;padding:0 22px">
+    <button onclick="closeMenu()" aria-label="Cerrar" style="position:absolute;top:18px;right:18px;background:none;border:none;color:#E5E3DC;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;cursor:pointer">CERRAR</button>
+    <a href="#" onclick="goNosotrosM(event)" style="display:flex;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid rgba(229,227,220,.16);font-size:9vw;font-variation-settings:'wdth' 112;font-weight:700;line-height:1;color:#E5E3DC"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;opacity:.45">01</span>NOSOTROS</a>
+    <a href="#" onclick="goHacemosM(event)" style="display:flex;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid rgba(229,227,220,.16);font-size:9vw;font-variation-settings:'wdth' 112;font-weight:700;line-height:1;color:#E5E3DC"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;opacity:.45">02</span>HACEMOS</a>
+    <a href="#" onclick="goObrasM(event)" style="display:flex;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid rgba(229,227,220,.16);font-size:9vw;font-variation-settings:'wdth' 112;font-weight:700;line-height:1;color:#E5E3DC"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;opacity:.45">03</span>OBRAS</a>
+    <a href="#" onclick="goZonasM(event)" style="display:flex;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid rgba(229,227,220,.16);font-size:9vw;font-variation-settings:'wdth' 112;font-weight:700;line-height:1;color:#E5E3DC"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;opacity:.45">04</span>ZONAS</a>
+    <a href="#" onclick="goContactoM(event)" style="display:flex;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid rgba(229,227,220,.16);border-bottom:1px solid rgba(229,227,220,.16);font-size:9vw;font-variation-settings:'wdth' 112;font-weight:700;line-height:1;color:#E5E3DC"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;opacity:.45">05</span>CONTACTO</a>
+  </div>
+
+  <div id="cursor" style="position:fixed;top:0;left:0;z-index:96;pointer-events:none;opacity:0;will-change:transform">
+    <span style="position:absolute;left:-11px;top:0;width:22px;height:1px;background:#E5E3DC;display:block"></span>
+    <span style="position:absolute;top:-11px;left:0;width:1px;height:22px;background:#E5E3DC;display:block"></span>
+    <span id="cursor-label" style="position:absolute;left:16px;top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;white-space:nowrap;opacity:0;color:#E5E3DC">VER</span>
+  </div>
+
+  <div id="scroller" style="position:relative;width:100%">
+  <div id="stage" style="position:sticky;top:0;width:100%;height:100vh;overflow:hidden">
+    <div id="rail" style="position:relative;display:flex;height:100%;width:max-content;will-change:transform">
+
+      <!-- ══ 00 PORTADA ══ -->
+      <section id="sc-hero" class="scene" data-theme="dark" data-label="00 PORTADA" data-screen-label="00 Portada" style="position:relative;flex:none;width:142vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
+        <div id="hero-mask" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(44% 0% 44% 0%)">
+          <div data-par="5" style="position:absolute;top:-4%;left:-6%;width:112%;height:108%">
+            <video id="hero-video" class="ph" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover">
+              <source src="hero-bg.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.88) 0%,rgba(14,15,13,.26) 30%,rgba(14,15,13,.08) 60%,rgba(14,15,13,.7) 100%)"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,15,13,.46) 0%,rgba(14,15,13,0) 30%,rgba(14,15,13,.88) 100%)"></div>
+        </div>
+
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:30px">
+            <div style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
+              <span style="width:34px;height:1px;background:currentColor;opacity:.5"></span>DESARROLLO Y CONSTRUCCIÓN
+            </div>
+            <div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.72;line-height:1.9">VERACRUZ, MÉXICO<br>19°10′N 96°08′W</div>
+          </div>
+
+          <div id="hero-copy" style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,30px)">
+            <h1 style="margin:0;font-size:clamp(36px,5.9vw,112px);font-weight:800;font-variation-settings:'wdth' 116;line-height:.92;letter-spacing:-.02em;text-transform:uppercase">
+              <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em"><div class="hl">Llevamos</div></div>
+              <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em"><div class="hl">tus proyectos</div></div>
+              <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em;padding-left:clamp(24px,5.6vw,108px)"><div class="hl" style="position:relative"><span id="hero-out" style="color:transparent;-webkit-text-stroke:1.25px rgba(229,227,220,.62)">a la realidad</span><span id="hero-fill" style="position:absolute;left:0;top:0;white-space:nowrap;clip-path:inset(0% 100% 0% 0%)">a la realidad</span></div></div>
+            </h1>
+            <div id="hero-rule" style="height:1px;width:100%;background:rgba(229,227,220,.32);transform:scaleX(0);transform-origin:left center"></div>
+            <div class="hero-meta" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:0 clamp(18px,2.6vw,44px);align-items:end">
+              <div class="hcell" style="display:flex;flex-direction:column;gap:9px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">SERVICIOS</span>
+                <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Residencial · Comercial · Remodelación</span>
+              </div>
+              <div class="hcell" style="display:flex;flex-direction:column;gap:9px;padding-left:clamp(18px,2.6vw,44px);border-left:1px solid rgba(229,227,220,.18)">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">COBERTURA</span>
+                <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Veracruz · Boca del Río · Xalapa</span>
+              </div>
+              <div class="hcell" style="display:flex;flex-direction:column;gap:9px;padding-left:clamp(18px,2.6vw,44px);border-left:1px solid rgba(229,227,220,.18)">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
+                <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Fracc. Reforma, Veracruz, Ver.</span>
+              </div>
+              <div class="hcell" id="hero-cue" style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.85;padding-bottom:2px;transition:opacity .2s ease">
+                DESLIZA<span id="cue-line" style="width:38px;height:1px;background:currentColor;animation:cue 2.2s ease-in-out infinite"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 01 NOSOTROS ══ -->
+      <section id="sc-nosotros" class="scene" data-theme="light" data-label="01 NOSOTROS" data-screen-label="01 Nosotros" style="position:relative;flex:none;width:118vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
+        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
+        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
+            <span style="display:flex;gap:14px"><span style="opacity:.55">01</span>QUIÉNES SOMOS</span>
+          </div>
+
+          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,29vw) minmax(0,25vw) 32vw;column-gap:clamp(32px,4.2vw,76px);align-items:end;flex:1;padding:clamp(20px,4vh,54px) 0 0">
+            <div data-rise="true" style="display:flex;flex-direction:column;gap:clamp(18px,3vh,32px);padding-bottom:clamp(6px,2vh,20px)">
+              <p style="margin:0;font-size:clamp(19px,1.62vw,26px);line-height:1.42;font-weight:500;max-width:26ch;text-wrap:pretty">Grupo Tejaz es una empresa de desarrollo y construcción con sede en Veracruz. Trabajamos cada proyecto desde el diseño hasta la entrega, cuidando el detalle en cada etapa del proceso.</p>
+              <div style="height:1px;width:70%;background:rgba(14,15,13,.2)"></div>
+            </div>
+            <div data-rise="true" style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,26px);padding-bottom:clamp(6px,2vh,20px)">
+              <p style="margin:0;font-size:16px;line-height:1.6;color:#3E4038;max-width:34ch;text-wrap:pretty">Construimos residencias, espacios comerciales y desarrollos de uso mixto, siempre con un enfoque en la calidad de los materiales y una relación cercana con cada cliente.</p>
+              <div style="display:flex;flex-direction:column">
+                <span style="display:flex;align-items:baseline;gap:14px;padding:15px 0;border-top:1px solid rgba(14,15,13,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em"><span style="font-family:'Archivo',sans-serif;font-size:17.5px;font-weight:600;letter-spacing:0">Calidad</span></span>
+                <span style="display:flex;align-items:baseline;gap:14px;padding:15px 0;border-top:1px solid rgba(14,15,13,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em"><span style="font-family:'Archivo',sans-serif;font-size:17.5px;font-weight:600;letter-spacing:0">Cumplimiento</span></span>
+                <span style="display:flex;align-items:baseline;gap:14px;padding:15px 0;border-top:1px solid rgba(14,15,13,.2);border-bottom:1px solid rgba(14,15,13,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em"><span style="font-family:'Archivo',sans-serif;font-size:17.5px;font-weight:600;letter-spacing:0">Diseño a la medida</span></span>
+              </div>
+            </div>
+            <div id="nos-strip" style="position:relative;width:32vw;height:80vh;overflow:hidden;align-self:end;margin-bottom:calc(-1 * clamp(62px,9vh,92px))">
+              <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+                <img id="nosotros-bg" class="ph" src="nosotros-bg.jpg" alt="Obra o fachada Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="nos-word" style="position:absolute;left:clamp(150px,24vw,480px);top:clamp(60px,8.4vh,104px);z-index:3;font-size:clamp(52px,9.4vw,172px);font-weight:800;font-variation-settings:'wdth' 120;line-height:.8;letter-spacing:-.03em;color:#E5E3DC;mix-blend-mode:difference;pointer-events:none">NOSOTROS</div>
+      </section>
+
+      <!-- ══ 02 HACEMOS ══ -->
+      <section id="sc-hacemos" class="scene" data-theme="dark" data-label="02 QUÉ HACEMOS" data-screen-label="02 Hacemos" style="position:relative;flex:none;width:190vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
+        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
+        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+          <div class="hac-row" style="position:relative;display:flex;height:100%;gap:0">
+            <div id="hac-datum" data-line="true" style="position:absolute;left:32vw;right:0;top:54%;height:1px;background:rgba(229,227,220,.26);transform:scaleX(0);transform-origin:left center;pointer-events:none"></div>
+            <div id="hac-head" style="position:relative;z-index:1;flex:none;width:32vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(24px,3vw,54px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
+                <span style="display:flex;gap:14px"><span style="opacity:.55">02</span>SERVICIOS</span>
+              </div>
+              <div id="hac-title" data-vmask="true" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:clamp(34px,4.7vw,84px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.9;letter-spacing:-.02em;margin:clamp(18px,3vh,34px) 0">HACEMOS</div>
+              <p style="margin:0;font-size:14px;line-height:1.65;color:rgba(229,227,220,.7);max-width:30ch">Cuatro disciplinas, un mismo proceso: proyecto, obra y entrega bajo una sola dirección.</p>
+            </div>
+
+            <div class="col" data-cursor="01" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+                <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">01</span>
+                <h3 data-rise="true" style="margin:0;font-size:clamp(26px,2.7vw,46px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Residencial</h3>
+                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Casas y desarrollos habitacionales diseñados a la medida.</p>
+              </div>
+              <div class="ph-wrap" data-mask="true" data-drift="9" style="position:relative;height:46%;overflow:hidden">
+                <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+                  <img id="svc-1" class="ph" src="ph-fachada.jpg" alt="Casa entregada" style="width:100%;height:100%;object-fit:cover">
+                </div>
+              </div>
+            </div>
+
+            <div class="col" data-cursor="02" style="position:relative;z-index:1;flex:none;width:41vw;display:flex;flex-direction:column-reverse;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+                <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">02</span>
+                <h3 data-rise="true" style="margin:0;font-size:clamp(28px,3.2vw,56px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
+                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Espacios comerciales funcionales, pensados para el negocio de cada cliente.</p>
+              </div>
+              <div class="ph-wrap" data-mask="true" data-drift="-11" style="position:relative;height:54%;overflow:hidden">
+                <div data-par="6" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+                  <img id="svc-2" class="ph" src="contacto-bg.jpg" alt="Espacio comercial" style="width:100%;height:100%;object-fit:cover">
+                </div>
+              </div>
+            </div>
+
+            <div class="col" data-cursor="03" style="position:relative;z-index:1;flex:none;width:31vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+                <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
+                <h3 data-rise="true" style="margin:0;font-size:clamp(24px,2.4vw,41px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Remodelación</h3>
+                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Renovación y ampliación de espacios existentes, sin perder su esencia.</p>
+              </div>
+              <div class="ph-wrap" data-mask="true" data-drift="12" style="position:relative;height:32%;overflow:hidden">
+                <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+                  <img id="svc-3" class="ph" src="ph-cocina-a.jpg" alt="Interior remodelado" style="width:100%;height:100%;object-fit:cover">
+                </div>
+              </div>
+            </div>
+
+            <div class="col" data-cursor="04" style="position:relative;z-index:1;flex:none;width:43vw;display:flex;flex-direction:column-reverse;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px)">
+              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+                <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">04</span>
+                <h3 data-rise="true" style="margin:0;font-size:clamp(27px,3vw,51px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
+                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Desarrollo integral de proyectos, del terreno a la entrega de llaves.</p>
+              </div>
+              <div class="ph-wrap" data-mask="true" data-drift="-8" style="position:relative;height:40%;overflow:hidden">
+                <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+                  <img id="hacemos-bg" class="ph" src="hacemos-bg.jpg" alt="Desarrollo en proceso" style="width:100%;height:100%;object-fit:cover">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 03 OBRAS ══ -->
+      <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:302vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
+        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
+        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:stretch;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+          <div id="obras-head" style="position:relative;flex:none;width:44vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(24px,3vw,54px);border-right:1px solid rgba(229,227,220,.16)">
+            <div id="obras-axis" data-line="true" style="position:absolute;left:0;bottom:9%;width:58vw;height:1px;background:rgba(229,227,220,.26);transform:scaleX(0);transform-origin:left center;pointer-events:none"></div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
+              <span style="display:flex;gap:14px"><span style="opacity:.55">03</span>NUESTRAS OBRAS</span>
+              <span style="opacity:.55">2021 — 2024</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+              <h2 id="obras-title" data-mask="true" style="margin:0;font-size:clamp(30px,3.9vw,72px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.9;letter-spacing:-.024em;text-transform:uppercase">Portafolio</h2>
+              <p style="margin:0;font-size:14px;line-height:1.65;color:rgba(229,227,220,.7);max-width:30ch">Obra propia en el estado de Veracruz. Cada lámina es un proyecto entregado.</p>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.64)">
+              <span id="obras-count">04</span> PROYECTOS
+            </div>
+          </div>
+
+          <div id="wheel-track" style="flex:none;width:250vw;height:100%;position:relative">
+            <div id="wheel-pane" style="position:absolute;left:0;top:0;width:100vw;height:100%;will-change:transform">
+              <div id="wheel-stage" style="position:relative;width:100%;height:100%">
+                <div id="wheel-3d" style="position:absolute;inset:0">
+                  <div id="wheel-datum" style="position:absolute;left:-34%;bottom:9%;width:150%;height:1px;background:rgba(229,227,220,.3);transform-origin:left center;pointer-events:none"></div>
+                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                    <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
+                      <img id="proj-1" class="ph" src="proj-1-bg.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
+                    </div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO REFORMA · 2021</div>
+                  </div>
+                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                    <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
+                      <img id="proj-2" class="ph" src="ph-cocina-b.jpg" alt="Proyecto Costa Verde" style="width:100%;height:100%;object-fit:cover">
+                    </div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO COSTA VERDE · 2022</div>
+                  </div>
+                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                    <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
+                      <img id="proj-3" class="ph" src="ph-fachada.jpg" alt="Proyecto Malecón" style="width:100%;height:100%;object-fit:cover">
+                    </div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO MALECÓN · 2023</div>
+                  </div>
+                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                    <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
+                      <img id="proj-4" class="ph" src="ubicaciones-bg.jpg" alt="Proyecto Arboledas" style="width:100%;height:100%;object-fit:cover">
+                    </div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO ARBOLEDAS · 2024</div>
+                  </div>
+                </div>
+                <div id="wheel-data" style="position:absolute;right:3vw;bottom:9%;width:20vw;display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);opacity:0;pointer-events:none">
+                  <div id="wd-name" style="font-size:clamp(22px,2.1vw,38px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">Proyecto Reforma</div>
+                  <div style="display:flex;flex-direction:column">
+                    <span style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid rgba(229,227,220,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em"><span style="opacity:.5">AÑO</span><span id="wd-year">2021</span></span>
+                    <span style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid rgba(229,227,220,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em"><span style="opacity:.5">TIPOLOGÍA</span><span id="wd-type">Residencial</span></span>
+                    <span style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid rgba(229,227,220,.2);border-bottom:1px solid rgba(229,227,220,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em"><span style="opacity:.5">UBICACIÓN</span><span id="wd-place">Veracruz, Ver.</span></span>
+                  </div>
+                </div>
+                <span id="wheel-idx" style="position:absolute;left:0;bottom:2.4%;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.5)">01 / 04</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 04 ZONAS ══ -->
+      <section id="sc-zonas" class="scene" data-theme="light" data-label="04 DÓNDE CONSTRUIMOS" data-screen-label="04 Zonas" style="position:relative;flex:none;width:124vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
+        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
+        <div data-grid="true" style="position:absolute;inset:0;opacity:var(--gridop);background-image:repeating-linear-gradient(90deg,rgba(14,15,13,.06) 0 1px,transparent 1px 112px),repeating-linear-gradient(180deg,rgba(14,15,13,.05) 0 1px,transparent 1px 112px);pointer-events:none"></div>
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
+            <div style="display:flex;flex-direction:column;gap:clamp(12px,2vh,22px)">
+              <span style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em"><span style="opacity:.55">04</span>COBERTURA</span>
+              <h2 data-mask="true" style="margin:0;font-size:clamp(34px,4.4vw,82px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.92;letter-spacing:-.026em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.6;white-space:nowrap">05 CIUDADES · EDO. DE VERACRUZ</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;width:100%">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">01</span>
+              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Veracruz</span>
+              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:22%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">19°10′N 96°08′W</span>
+            </a>
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">02</span>
+              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Boca del Río</span>
+              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:41%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">19°06′N 96°06′W</span>
+            </a>
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">03</span>
+              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Xalapa</span>
+              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:63%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">19°32′N 96°55′W</span>
+            </a>
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">04</span>
+              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Córdoba</span>
+              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:34%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">18°53′N 96°56′W</span>
+            </a>
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
+              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">05</span>
+              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Coatzacoalcos</span>
+              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:78%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">18°08′N 94°25′W</span>
+            </a>
+          </div>
+
+          <div style="display:flex;align-items:flex-end;justify-content:flex-end;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.58">
+            <span>GOLFO DE MÉXICO</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 05 CONTACTO ══ -->
+      <section id="sc-contacto" class="scene" data-theme="dark" data-label="05 CONTACTO" data-screen-label="05 Contacto" style="position:relative;flex:none;width:114vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
+        <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
+        <div style="position:absolute;inset:0;overflow:hidden">
+          <div data-par="6" style="position:absolute;top:-5%;left:-7%;width:114%;height:110%">
+            <img id="contacto-bg" class="ph" src="ubicaciones-bg.jpg" alt="Oficina o proyecto Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.92) 0%,rgba(14,15,13,.78) 44%,rgba(14,15,13,.6) 100%)"></div>
+        </div>
+
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;margin-left:auto;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
+            <span style="display:flex;gap:14px"><span style="opacity:.55">05</span>CONTACTO</span>
+          </div>
+
+          <div class="con-grid" style="display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:clamp(30px,4.4vw,86px);align-items:start;max-width:1240px">
+            <div data-rise="true" style="display:flex;flex-direction:column;gap:14px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
+              <p style="margin:0;font-size:clamp(17px,1.42vw,23px);line-height:1.46;font-weight:500;max-width:20ch;text-wrap:pretty">Pinzón 1, Esq. Simón Bolívar, Fracc. Reforma, Veracruz, Ver.</p>
+            </div>
+            <div data-rise="true" style="display:flex;flex-direction:column;gap:14px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">ESCRÍBENOS</span>
+              <div style="display:flex;flex-direction:column">
+                <a href="mailto:rafael@grupotejaz.com" onclick="markDone()" class="clink" data-cursor="ESCRIBIR" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;font-size:clamp(16px,1.5vw,23px);font-weight:500">
+                  <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                  <span>rafael@grupotejaz.com</span>
+                  <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+                </a>
+                <a href="mailto:ricardo@grupotejaz.com" onclick="markDone()" class="clink" data-cursor="ESCRIBIR" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid rgba(229,227,220,.24);font-size:clamp(16px,1.5vw,23px);font-weight:500">
+                  <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                  <span>ricardo@grupotejaz.com</span>
+                  <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+                </a>
+              </div>
+              <a href="#" id="cta-write" onclick="writeUs(event)" data-cursor="ESCRIBIR" class="clink" style="display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:clamp(16px,2.6vh,30px);padding:13px clamp(14px,1.2vw,20px);background:var(--accent);color:#E5E3DC;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em">ESCRIBIR<span class="ca" style="font-size:13px;opacity:.75">→</span></a>
+            </div>
+          </div>
+
+          <div id="con-close" style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px">
+            <div id="con-mask" style="overflow:hidden;flex:1;min-width:0;font-size:clamp(38px,8.2vw,146px);padding-block:.26em;margin-block:-.26em">
+              <div id="con-word" data-up="true" style="font-size:1em;font-weight:800;font-variation-settings:'wdth' 122;line-height:.84;letter-spacing:-.03em;text-transform:uppercase">Contáctenos</div>
+            </div>
+            <div id="con-end" style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:12px;text-align:right">
+              <span id="con-flag" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:0;transition:opacity .2s ease;color:var(--accent-soft)">RECORRIDO COMPLETO</span>
+              <a href="#" onclick="goHero(event)" data-cursor="INICIO" class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.75">↑ VOLVER AL INICIO</a>
+            </div>
+          </div>
+
+          <div id="foot" style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:clamp(14px,2.4vh,26px);border-top:1px solid rgba(229,227,220,.18);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(229,227,220,.62)">
+            <span style="display:flex;align-items:center;gap:10px"><img src="logo-tejaz.png" alt="" style="height:16px;width:auto;filter:brightness(0) invert(1);opacity:.8">GRUPO TEJAZ — DESARROLLO Y CONSTRUCCIÓN</span>
+            <span>© 2026 GRUPO TEJAZ. TODOS LOS DERECHOS RESERVADOS.</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var scenes = ['sc-hero', 'sc-nosotros', 'sc-hacemos', 'sc-obras', 'sc-zonas', 'sc-contacto'];
+  var menuOpen = false;
+  var done = false;
+  var _theme = null;
+  var _cueOff = false;
+  var _wheel = null;
+  var _cols = null;
+  var _activeCol = null;
+  var _rail = null;
+  var _lastRel = 0;
+  var master = null;
+  var _reduce = false;
+  var _intro = null;
+
+  function isDesk() { return window.innerWidth > 1180; }
+
+  function go(id) {
+    var sc = document.getElementById(id);
+    var scroller = document.getElementById('scroller');
+    if (!sc || !scroller) return;
+    if (!isDesk() || !master) {
+      window.scrollTo({ top: sc.getBoundingClientRect().top + window.scrollY - 64, behavior: 'smooth' });
+      return;
+    }
+    window.scrollTo({ top: scroller.offsetTop + sc.offsetLeft, behavior: 'smooth' });
+  }
+
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+    var m = document.getElementById('menu');
+    if (m) m.style.display = menuOpen ? 'flex' : 'none';
+  }
+  function closeMenu() {
+    menuOpen = false;
+    var m = document.getElementById('menu');
+    if (m) m.style.display = 'none';
+  }
+  function noop(e) { if (e && e.preventDefault) e.preventDefault(); }
+
+  function goHero(e) { e.preventDefault(); go('sc-hero'); }
+  function goNosotros(e) { e.preventDefault(); go('sc-nosotros'); }
+  function goHacemos(e) { e.preventDefault(); go('sc-hacemos'); }
+  function goObras(e) { e.preventDefault(); go('sc-obras'); }
+  function goZonas(e) { e.preventDefault(); go('sc-zonas'); }
+  function goContacto(e) { e.preventDefault(); go('sc-contacto'); }
+  function goNosotrosM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-nosotros'); }, 60); }
+  function goHacemosM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-hacemos'); }, 60); }
+  function goObrasM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-obras'); }, 60); }
+  function goZonasM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-zonas'); }, 60); }
+  function goContactoM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-contacto'); }, 60); }
+
+  // Acuse del gesto: la línea inferior engrosa una vez y vuelve. Nada más.
+  function markDone() {
+    if (done) return;
+    done = true;
+    var f = document.getElementById('pfill');
+    if (f && window.gsap) window.gsap.fromTo(f, { height: 3 }, { height: 7, duration: .09, yoyo: true, repeat: 1, ease: 'power2.out' });
+  }
+
+  function writeUs(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    markDone();
+    setTimeout(function () { window.location.href = 'mailto:rafael@grupotejaz.com?subject=Proyecto%20con%20Grupo%20Tejaz'; }, 180);
+  }
+
+  function paint(p) {
+    var n = document.getElementById('pct');
+    if (n) n.textContent = String(Math.round(p * 100)).padStart(2, '0') + '%';
+    var f = document.getElementById('pfill');
+    if (f) f.style.transform = 'scaleX(' + p + ')';
+    var flag = document.getElementById('con-flag');
+    if (flag) flag.style.opacity = p >= 0.985 ? '1' : '0';
+    if (!_cueOff && p > 0.012) {
+      _cueOff = true;
+      var cue = document.getElementById('hero-cue');
+      if (cue) cue.style.opacity = '0';
+      var line = document.getElementById('cue-line');
+      if (line) line.style.animation = 'none';
+    }
+  }
+
+  function setScene(sc) {
+    var label = document.getElementById('scene-label');
+    if (label && sc.dataset.label) label.textContent = sc.dataset.label;
+    document.querySelectorAll('[data-nav]').forEach(function (a) {
+      a.setAttribute('data-on', a.getAttribute('data-nav') === sc.id ? '1' : '0');
+      a.style.opacity = a.getAttribute('data-nav') === sc.id ? '1' : '0.62';
+    });
+    setTheme(sc.dataset.theme || 'dark');
+  }
+
+  function setTheme(theme) {
+    if (_theme === theme) return;
+    _theme = theme;
+    var gsap = window.gsap;
+    var dark = theme !== 'light';
+    var fg = dark ? '#E5E3DC' : '#0E0F0D';
+    var top = document.getElementById('chrome-top');
+    var bot = document.getElementById('chrome-bot');
+    if (gsap) gsap.to([top, bot].filter(Boolean), { color: fg, duration: .28, ease: 'power1.out', overwrite: 'auto' });
+    var mark = document.getElementById('nav-mark');
+    if (mark) mark.style.filter = dark ? 'brightness(0) invert(1)' : 'none';
+    var hair = document.querySelector('#chrome-bot [data-hair]');
+    if (hair && gsap) gsap.to(hair, { backgroundColor: dark ? 'rgba(229,227,220,0.22)' : 'rgba(14,15,13,0.2)', duration: .28 });
+    var fill = document.getElementById('pfill');
+    if (fill) fill.style.background = dark ? 'var(--accent-soft)' : 'var(--accent)';
+    document.querySelectorAll('#cursor span').forEach(function (s) { s.style.background = fg; s.style.color = fg; });
+    var lbl = document.getElementById('cursor-label');
+    if (lbl) { lbl.style.background = 'transparent'; lbl.style.color = fg; }
+  }
+
+  function buildTicks() {
+    var row = document.getElementById('tickrow');
+    var rail = document.getElementById('rail');
+    if (!row || !rail) return;
+    var total = rail.scrollWidth;
+    row.innerHTML = '';
+    scenes.forEach(function (id, i) {
+      if (!i) return;
+      var sc = document.getElementById(id);
+      if (!sc) return;
+      var t = document.createElement('span');
+      t.style.cssText = 'position:absolute;top:-4px;width:1px;height:9px;background:currentColor;opacity:.4;left:' + ((sc.offsetLeft / total) * 100) + '%';
+      row.appendChild(t);
+    });
+  }
+
+  // ── Rueda cerrada del portafolio ─────────────────────────────────────────
+  function initWheel(scroller) {
+    var track = document.getElementById('wheel-track');
+    var pane = document.getElementById('wheel-pane');
+    var plates = Array.from(document.querySelectorAll('.wplate'));
+    if (!track || !pane || !plates.length) return;
+    _wheel = {
+      track: track, pane: pane, plates: plates, scroller: scroller,
+      datum: document.getElementById('wheel-datum'),
+      idx: document.getElementById('wheel-idx'),
+      data: document.getElementById('wheel-data'),
+      dName: document.getElementById('wd-name'),
+      dYear: document.getElementById('wd-year'),
+      dType: document.getElementById('wd-type'),
+      dPlace: document.getElementById('wd-place'),
+      frames: plates.map(function (p) { return p.querySelector('.wframe'); }),
+      caps: plates.map(function (p) { return p.querySelector('.wcap'); }),
+      Rx: 0, rise: 0, len: 1, trackL: 0, active: -1
+    };
+    plates.forEach(function (pl, i) {
+      if (pl._wired) return;
+      pl._wired = true;
+      pl.addEventListener('click', function () { focusPlate(i); });
+    });
+    _cols = Array.from(document.querySelectorAll('#sc-hacemos .col'));
+    layoutWheel();
+    wheelUpdate(0);
+  }
+
+  function layoutWheel() {
+    var st = _wheel;
+    if (!st) return;
+    var vw = window.innerWidth;
+    var rail = _rail;
+    st.trackL = rail ? st.track.getBoundingClientRect().left - rail.getBoundingClientRect().left : st.track.offsetLeft;
+    st.len = Math.max(1, st.track.offsetWidth - vw);
+    st.Rx = vw * 0.24;
+    st.rise = window.innerHeight * 0.035;
+  }
+
+  function focusPlate(i) {
+    var st = _wheel;
+    if (!st) return;
+    window.scrollTo({ top: st.scroller.offsetTop + st.trackL + st.len * (i / 3), behavior: 'smooth' });
+  }
+
+  function wheelUpdate(rel) {
+    var st = _wheel;
+    if (!st) return;
+    var vw = window.innerWidth;
+    var q = (st.trackL - rel) / vw;
+    var form = Math.min(1, Math.max(0, (0.66 - q) / 0.44));
+    var pin = Math.min(1, Math.max(0, (rel - st.trackL) / st.len));
+    st.pane.style.transform = 'translate3d(' + (pin * st.len).toFixed(2) + 'px,0,0)';
+    renderWheel(form, pin);
+  }
+
+  function renderWheel(D, pin) {
+    var st = _wheel;
+    if (!st) return;
+    var u = pin * 3;
+    var seg = Math.min(2, Math.floor(u));
+    var t = u - seg;
+    var turn = (seg + t * t * (3 - 2 * t)) * 90;
+    var rest = 1 - Math.min(1, Math.min(t, 1 - t) * 2.6);
+    var best = 0, bestC = -1;
+    for (var i = 0; i < st.plates.length; i++) {
+      var a = (i * 90 - turn) * Math.PI / 180;
+      var c = (Math.cos(a) + 1) / 2;
+      if (c > bestC) { bestC = c; best = i; }
+      var sc = 0.16 + 0.84 * Math.pow(c, 2.9);
+      var pl = st.plates[i];
+      pl.style.transform = 'translateX(-50%) translate3d(' + (st.Rx * Math.sin(a)).toFixed(1) + 'px,' + (-(1 - c) * st.rise).toFixed(1) + 'px,0) scale(' + sc.toFixed(4) + ')';
+      pl.style.opacity = (Math.pow(D, 0.8) * (0.1 + 0.9 * Math.pow(c, 0.95))).toFixed(3);
+      pl.style.zIndex = String(100 + Math.round(c * 100));
+      var fr = st.frames[i];
+      if (fr) {
+        var dim = 'brightness(' + (0.78 - 0.34 * (1 - c)).toFixed(3) + ')';
+        fr.style.clipPath = _reduce ? 'none' : 'inset(' + ((1 - D) * 100).toFixed(2) + '% 0% 0% 0%)';
+        fr.style.filter = c > 0.985 ? 'none' : _reduce ? dim
+          : 'blur(' + (1.7 / Math.max(0.2, sc)).toFixed(1) + 'px) ' + dim;
+      }
+      var cp = st.caps[i];
+      if (cp) {
+        var inv = 1 / Math.max(0.2, sc);
+        cp.style.opacity = (0.6 * Math.pow(Math.sin(Math.PI * c), 1.5) * D).toFixed(3);
+        cp.style.fontSize = (10.5 * inv).toFixed(1) + 'px';
+        cp.style.marginTop = (13 * inv).toFixed(1) + 'px';
+      }
+    }
+    if (best !== st.active) {
+      st.active = best;
+      st.plates.forEach(function (pl, i) {
+        if (i === best) pl.setAttribute('data-active', '1');
+        else pl.removeAttribute('data-active');
+      });
+      var d = st.plates[best].dataset;
+      if (st.dName) st.dName.textContent = d.name || '';
+      if (st.dYear) st.dYear.textContent = d.year || '';
+      if (st.dType) st.dType.textContent = d.type || '';
+      if (st.dPlace) st.dPlace.textContent = d.place || '';
+      if (st.idx) st.idx.textContent = String(best + 1).padStart(2, '0') + ' / 04';
+    }
+    if (st.data) {
+      var on = Math.min(1, Math.max(0, (D - 0.88) / 0.12) * rest);
+      st.data.style.opacity = on.toFixed(3);
+      st.data.style.transform = 'translateY(' + ((1 - on) * 16).toFixed(1) + 'px)';
+    }
+    if (st.datum) {
+      st.datum.style.transform = 'scaleX(' + (0.3 + 0.7 * D).toFixed(3) + ')';
+      st.datum.style.opacity = (0.16 + 0.62 * D).toFixed(3);
+    }
+  }
+
+  function serviceFocus() {
+    var cols = _cols;
+    if (!cols || !cols.length) return;
+    var vw = window.innerWidth, cx = vw / 2;
+    var best = null, bd = Infinity;
+    for (var idx = 0; idx < cols.length; idx++) {
+      var c = cols[idx];
+      var r = c.getBoundingClientRect();
+      if (r.right < 0 || r.left > vw) continue;
+      var d = Math.abs(r.left + r.width / 2 - cx);
+      if (d < bd) { bd = d; best = c; }
+    }
+    if (best === _activeCol) return;
+    if (_activeCol) _activeCol.removeAttribute('data-active');
+    if (best) best.setAttribute('data-active', '1');
+    _activeCol = best;
+  }
+
+  function tick() {
+    var rail = _rail;
+    if (!rail || !window.gsap) return;
+    var rel = -(window.gsap.getProperty(rail, 'x') || 0);
+    if (Math.abs(rel - (_lastRel || 0)) < 0.35) return;
+    _lastRel = rel;
+    wheelUpdate(rel);
+    serviceFocus();
+  }
+
+  function init() {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    _reduce = reduce;
+    if (!gsap || !ScrollTrigger) return;
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.getAll().forEach(function (t) { t.kill(true); });
+
+    var video = document.getElementById('hero-video');
+    if (video) {
+      video.muted = true; video.defaultMuted = true;
+      var play = function () { video.play().catch(function () {}); };
+      play();
+      document.addEventListener('pointerdown', play, { once: true });
+      document.addEventListener('keydown', play, { once: true });
+    }
+
+    // Apertura: la imagen se abre como un obturador y el titular sube detrás.
+    if (_intro) _intro.kill();
+    _intro = reduce
+      ? gsap.timeline()
+          .set('#hero-mask', { clipPath: 'inset(0% 0% 0% 0%)' })
+          .set('#hero-rule', { scaleX: 1 })
+          .fromTo('#hero-copy', { opacity: 0 }, { opacity: 1, duration: .3, ease: 'power2.out' })
+      : gsap.timeline({ delay: .1 })
+          .fromTo('#hero-mask', { clipPath: 'inset(44% 0% 44% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' })
+          .fromTo('.hl', { yPercent: 118 }, { yPercent: 0, duration: 1.25, stagger: .09, ease: 'expo.out' }, '-=.95')
+          .fromTo('#hero-rule', { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power3.inOut' }, '-=.8')
+          .fromTo('.hcell', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: .7, stagger: .07, ease: 'power3.out' }, '-=.85');
+
+    var mm = gsap.matchMedia();
+
+    mm.add('(min-width: 1181px)', function () {
+      var rail = document.getElementById('rail');
+      var scroller = document.getElementById('scroller');
+      if (!rail || !scroller) return;
+      var maxX = function () { return Math.max(0, rail.scrollWidth - window.innerWidth); };
+      var sizeIt = function () { scroller.style.height = (window.innerHeight + maxX()) + 'px'; };
+      sizeIt();
+
+      var masterTween = gsap.to(rail, {
+        x: function () { return -maxX(); }, ease: 'none',
+        scrollTrigger: {
+          trigger: scroller, start: 'top top', end: function () { return '+=' + maxX(); },
+          scrub: .65, invalidateOnRefresh: true,
+          onRefreshInit: sizeIt,
+          onUpdate: function (self) { paint(self.progress); }
+        }
+      });
+      master = masterTween;
+      var ca = masterTween;
+      _rail = rail;
+      initWheel(scroller);
+      gsap.ticker.add(tick);
+
+      // Fondos que se quedan atrás; primeros planos que se adelantan.
+      if (!reduce) {
+        gsap.utils.toArray('[data-par]').forEach(function (el) {
+          var a = parseFloat(el.dataset.par) || 6;
+          gsap.fromTo(el, { xPercent: -a }, {
+            xPercent: a, ease: 'none',
+            scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left right', end: 'right left', scrub: true }
+          });
+        });
+        gsap.utils.toArray('[data-drift]').forEach(function (el) {
+          var a = parseFloat(el.dataset.drift) || 20;
+          gsap.fromTo(el, { y: a }, {
+            y: -a, ease: 'none',
+            scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left right', end: 'right left', scrub: true }
+          });
+        });
+      }
+      var fade = function (el, s, e) {
+        gsap.fromTo(el, { opacity: 0 }, {
+          opacity: 1, ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: s, end: e, scrub: .35 }
+        });
+      };
+      gsap.utils.toArray('[data-mask]').forEach(function (el) {
+        if (reduce) { fade(el, 'left 94%', 'left 74%'); return; }
+        gsap.fromTo(el, { clipPath: 'inset(0% 100% 0% 0%)' }, {
+          clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 94%', end: 'left 66%', scrub: .35 }
+        });
+      });
+      gsap.utils.toArray('[data-vmask]').forEach(function (el) {
+        if (reduce) { fade(el, 'left 92%', 'left 72%'); return; }
+        gsap.fromTo(el, { clipPath: 'inset(0% 0% 100% 0%)' }, {
+          clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 92%', end: 'left 62%', scrub: .35 }
+        });
+      });
+      gsap.utils.toArray('[data-rise]').forEach(function (el) {
+        gsap.fromTo(el, { y: reduce ? 0 : 40, opacity: 0 }, {
+          y: 0, opacity: 1, ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 100%', end: 'left 55%', scrub: .5 }
+        });
+      });
+      gsap.utils.toArray('[data-line]').forEach(function (el) {
+        gsap.fromTo(el, { scaleX: 0 }, {
+          scaleX: 1, ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 94%', end: 'right 44%', scrub: .3 }
+        });
+      });
+      gsap.utils.toArray('[data-up]').forEach(function (el) {
+        if (reduce) { fade(el, 'left 90%', 'left 70%'); return; }
+        gsap.fromTo(el, { yPercent: 104 }, {
+          yPercent: 0, ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 90%', end: 'left 54%', scrub: .35 }
+        });
+      });
+
+      var fill = document.getElementById('hero-fill');
+      if (fill && reduce) gsap.set(fill, { clipPath: 'inset(0% 0% 0% 0%)' });
+      else if (fill) gsap.fromTo(fill, { clipPath: 'inset(0% 100% 0% 0%)' }, {
+        clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
+        scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'left left', end: 'left -30%', scrub: .3 }
+      });
+
+      var copy = document.getElementById('hero-copy');
+      if (copy) gsap.to(copy, {
+        xPercent: reduce ? 0 : -11, opacity: .2, ease: 'none',
+        scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'left left', end: 'right left', scrub: true }
+      });
+      var word = document.getElementById('nos-word');
+      if (word && !reduce) gsap.fromTo(word, { xPercent: 7 }, {
+        xPercent: -7, ease: 'none',
+        scrollTrigger: { trigger: '#sc-nosotros', containerAnimation: ca, start: 'left right', end: 'right left', scrub: true }
+      });
+
+      scenes.forEach(function (id) {
+        var sc = document.getElementById(id);
+        if (!sc) return;
+        ScrollTrigger.create({
+          trigger: sc, containerAnimation: ca, start: 'left 55%', end: 'right 55%',
+          onToggle: function (self) { if (self.isActive) setScene(sc); }
+        });
+      });
+
+      buildTicks();
+      setScene(document.getElementById('sc-hero'));
+
+      // Trackpad: el gesto horizontal también avanza el recorrido.
+      var onWheel = function (e) {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.15 && Math.abs(e.deltaX) > 2) {
+          window.scrollBy(0, e.deltaX);
+          e.preventDefault();
+        }
+      };
+      window.addEventListener('wheel', onWheel, { passive: false });
+
+      var onKey = function (e) {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        var pos = window.scrollY - scroller.offsetTop;
+        var idx = 0, best = Infinity;
+        scenes.forEach(function (id, i) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          var d = Math.abs(el.offsetLeft - pos);
+          if (d < best) { best = d; idx = i; }
+        });
+        var next = e.key === 'ArrowRight' ? Math.min(idx + 1, scenes.length - 1) : Math.max(idx - 1, 0);
+        go(scenes[next]);
+      };
+      window.addEventListener('keydown', onKey);
+
+      var onResize = function () { sizeIt(); buildTicks(); layoutWheel(); };
+      window.addEventListener('resize', onResize);
+
+      return function () {
+        window.removeEventListener('wheel', onWheel);
+        window.removeEventListener('keydown', onKey);
+        window.removeEventListener('resize', onResize);
+        gsap.ticker.remove(tick);
+        scroller.style.height = '';
+        gsap.set(rail, { clearProps: 'transform' });
+        _wheel = null; _rail = null; master = null;
+      };
+    });
+
+    mm.add('(max-width: 1180px)', function () {
+      gsap.utils.toArray('[data-mask],[data-vmask],[data-rise],[data-up]').forEach(function (el) {
+        gsap.fromTo(el, { y: reduce ? 0 : 26, opacity: 0 }, {
+          y: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: reduce ? .3 : .9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 90%' }
+        });
+      });
+      scenes.forEach(function (id) {
+        var sc = document.getElementById(id);
+        if (!sc) return;
+        ScrollTrigger.create({
+          trigger: sc, start: 'top 55%', end: 'bottom 55%',
+          onToggle: function (self) { if (self.isActive) setScene(sc); }
+        });
+      });
+      var upd = function () {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        paint(h > 0 ? Math.min(1, window.scrollY / h) : 0);
+      };
+      window.addEventListener('scroll', upd, { passive: true });
+      upd();
+      return function () { window.removeEventListener('scroll', upd); };
+    });
+
+    // Cursor de retícula: sustituye a la flecha del sistema en escritorio.
+    if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+      var cur = document.getElementById('cursor');
+      var lbl2 = document.getElementById('cursor-label');
+      if (cur) {
+        document.documentElement.classList.add('cur-on');
+        var xTo = gsap.quickTo(cur, 'x', { duration: .32, ease: 'power3' });
+        var yTo = gsap.quickTo(cur, 'y', { duration: .32, ease: 'power3' });
+        var shown = false;
+        var move = function (e) {
+          xTo(e.clientX); yTo(e.clientY);
+          if (!shown) { shown = true; gsap.to(cur, { opacity: 1, duration: .3 }); }
+        };
+        window.addEventListener('pointermove', move, { passive: true });
+        var hide = function () { shown = false; gsap.to(cur, { opacity: 0, duration: .3 }); };
+        document.documentElement.addEventListener('mouseleave', hide);
+        window.addEventListener('blur', hide);
+        document.querySelectorAll('[data-cursor]').forEach(function (el) {
+          el.addEventListener('pointerenter', function () {
+            if (lbl2) { lbl2.textContent = el.getAttribute('data-cursor'); gsap.to(lbl2, { opacity: 1, duration: .18 }); }
+            gsap.to(cur, { scale: 1.7, duration: .22, ease: 'power3.out' });
+          });
+          el.addEventListener('pointerleave', function () {
+            if (lbl2) gsap.to(lbl2, { opacity: 0, duration: .15 });
+            gsap.to(cur, { scale: 1, duration: .22, ease: 'power3.out' });
+          });
+        });
+      }
+    }
+
+    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); }, 400);
+  }
+
+  window.goHero = goHero;
+  window.goNosotros = goNosotros;
+  window.goHacemos = goHacemos;
+  window.goObras = goObras;
+  window.goZonas = goZonas;
+  window.goContacto = goContacto;
+  window.goNosotrosM = goNosotrosM;
+  window.goHacemosM = goHacemosM;
+  window.goObrasM = goObrasM;
+  window.goZonasM = goZonasM;
+  window.goContactoM = goContactoM;
+  window.toggleMenu = toggleMenu;
+  window.closeMenu = closeMenu;
+  window.noop = noop;
+  window.markDone = markDone;
+  window.writeUs = writeUs;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

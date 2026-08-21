@@ -1,0 +1,378 @@
+<title>Grupo Tejaz Login</title>
+<style>
+  :root {
+    --bg: oklch(98.3% 0.004 260);
+    --surface: oklch(100% 0 0);
+    --text: oklch(23% 0.02 260);
+    --text-muted: oklch(46% 0.018 260);
+    --text-faint: oklch(58% 0.014 260);
+    --border: oklch(89% 0.007 260);
+    --border-strong: oklch(80% 0.01 260);
+    --accent: oklch(46% 0.11 255);
+    --accent-hover: oklch(40% 0.115 255);
+    --accent-contrast: oklch(99% 0.004 260);
+    --accent-soft: oklch(46% 0.11 255 / 10%);
+    --panel-text: oklch(97% 0.006 260);
+    --panel-text-muted: oklch(88% 0.014 260 / 82%);
+    --panel-line: oklch(97% 0.006 260 / 14%);
+    --shadow: 0 1px 2px oklch(20% 0.02 260 / 4%), 0 12px 32px oklch(20% 0.02 260 / 6%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: oklch(17% 0.014 260);
+      --surface: oklch(21% 0.016 260);
+      --text: oklch(93% 0.008 260);
+      --text-muted: oklch(70% 0.016 260);
+      --text-faint: oklch(58% 0.016 260);
+      --border: oklch(32% 0.018 260);
+      --border-strong: oklch(40% 0.02 260);
+      --accent: oklch(74% 0.1 255);
+      --accent-hover: oklch(80% 0.09 255);
+      --accent-contrast: oklch(14% 0.02 260);
+      --accent-soft: oklch(74% 0.1 255 / 14%);
+      --panel-text: oklch(96% 0.006 260);
+      --panel-text-muted: oklch(88% 0.014 260 / 78%);
+      --panel-line: oklch(97% 0.006 260 / 10%);
+      --shadow: 0 1px 2px oklch(0% 0 0 / 20%), 0 12px 32px oklch(0% 0 0 / 30%);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: oklch(17% 0.014 260);
+    --surface: oklch(21% 0.016 260);
+    --text: oklch(93% 0.008 260);
+    --text-muted: oklch(70% 0.016 260);
+    --text-faint: oklch(58% 0.016 260);
+    --border: oklch(32% 0.018 260);
+    --border-strong: oklch(40% 0.02 260);
+    --accent: oklch(74% 0.1 255);
+    --accent-hover: oklch(80% 0.09 255);
+    --accent-contrast: oklch(14% 0.02 260);
+    --accent-soft: oklch(74% 0.1 255 / 14%);
+    --panel-text: oklch(96% 0.006 260);
+    --panel-text-muted: oklch(88% 0.014 260 / 78%);
+    --panel-line: oklch(97% 0.006 260 / 10%);
+    --shadow: 0 1px 2px oklch(0% 0 0 / 20%), 0 12px 32px oklch(0% 0 0 / 30%);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell {
+    min-height: 100vh;
+    display: flex;
+  }
+
+  .brand-panel {
+    flex: 0 0 42%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 56px;
+    background: var(--accent);
+    color: var(--panel-text);
+    overflow: hidden;
+    min-width: 360px;
+  }
+
+  .tile-motif {
+    position: absolute;
+    right: -170px;
+    bottom: -170px;
+    width: 620px;
+    height: 620px;
+    opacity: 0.16;
+    pointer-events: none;
+  }
+
+  .wordmark {
+    position: relative;
+    font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 21px;
+    letter-spacing: 0.01em;
+  }
+
+  .brand-copy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 380px;
+  }
+
+  .brand-copy h1 {
+    margin: 0;
+    font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .brand-copy p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--panel-text-muted);
+  }
+
+  .brand-foot {
+    position: relative;
+    font-size: 13px;
+    color: var(--panel-text-muted);
+  }
+
+  .form-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 32px;
+  }
+
+  .form-card {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .form-head {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-head h2 {
+    margin: 0;
+    font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 27px;
+  }
+
+  .form-head p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .field input {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .field input::placeholder { color: var(--text-faint); }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .password-wrap { position: relative; display: flex; align-items: center; }
+
+  .password-wrap input { width: 100%; padding-right: 44px; }
+
+  .eye-toggle {
+    position: absolute;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--text-faint);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .eye-toggle:hover { color: var(--text-muted); background: var(--accent-soft); }
+  .eye-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .eye-toggle svg { width: 20px; height: 20px; }
+
+  .row-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .remember input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  a.link {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  a.link:hover { text-decoration: underline; }
+
+  .submit {
+    height: 48px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 120ms ease;
+  }
+
+  .submit:hover { background: var(--accent-hover); }
+  .submit:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .signup {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 860px) {
+    .shell { flex-direction: column; }
+    .brand-panel {
+      flex: 0 0 auto;
+      min-width: 0;
+      padding: 32px 28px;
+      gap: 20px;
+    }
+    .brand-copy { display: none; }
+    .tile-motif { width: 380px; height: 380px; right: -120px; bottom: -160px; }
+    .form-panel { padding: 40px 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .submit, .field input, .eye-toggle { transition: none; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="shell">
+  <div class="brand-panel">
+    <svg class="tile-motif" viewBox="0 0 620 620" aria-hidden="true">
+      <defs>
+        <pattern id="tilePattern" width="70" height="70" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+          <rect x="4" y="4" width="52" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        </pattern>
+      </defs>
+      <rect width="620" height="620" fill="url(#tilePattern)" style="color: var(--panel-line)"></rect>
+    </svg>
+
+    <div class="wordmark">Grupo Tejaz</div>
+
+    <div class="brand-copy">
+      <h1>Gestiona tu negocio con confianza</h1>
+      <p>Accede a tu panel para dar seguimiento a tus proyectos, equipos y clientes en un solo lugar.</p>
+    </div>
+
+    <div class="brand-foot">&copy; 2026 Grupo Tejaz. Todos los derechos reservados.</div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-card">
+      <div class="form-head">
+        <h2>Iniciar sesión</h2>
+        <p>Ingresa tus datos para acceder a tu cuenta.</p>
+      </div>
+
+      <form onsubmit="return false;">
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input id="email" type="email" placeholder="nombre@empresa.com" autocomplete="username">
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="password-wrap">
+            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="eye-toggle" aria-label="Mostrar contraseña" onclick="
+              const input = document.getElementById('password');
+              const showing = input.type === 'text';
+              input.type = showing ? 'password' : 'text';
+              this.setAttribute('aria-label', showing ? 'Mostrar contraseña' : 'Ocultar contraseña');
+              this.innerHTML = showing
+                ? '&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z&quot;/&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;/svg&gt;'
+                : '&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-7-11-7a19.9 19.9 0 0 1 4.22-5.44M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.86 19.86 0 0 1-2.44 3.4M14.12 14.12a3 3 0 1 1-4.24-4.24&quot;/&gt;&lt;line x1=&quot;1&quot; y1=&quot;1&quot; x2=&quot;23&quot; y2=&quot;23&quot;/&gt;&lt;/svg&gt;';
+            ">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox">
+            Recordarme
+          </label>
+          <a href="#" class="link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="submit">Iniciar sesión</button>
+      </form>
+
+      <div class="signup">¿No tienes una cuenta? <a href="#" class="link">Regístrate</a></div>
+    </div>
+  </div>
+</div>
