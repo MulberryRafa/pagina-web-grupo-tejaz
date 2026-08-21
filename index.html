@@ -3,14 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Grupo Tejaz — Desarrollo y Construcción</title>
+<title>Grupo Tejaz · Desarrollo y Construcción</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<!-- Phase 1 fallback: if JavaScript is disabled entirely, this keeps the site
+     readable and scrollable (normal vertical flow) instead of frozen mid-animation
+     and clipped at the hero mask. Has zero effect when the site initializes normally. -->
+<noscript>
 <style>
-  :root { --accent:#3F5C28; --accent-soft:#BCCB93; --phf: grayscale(1) contrast(1.12) brightness(0.88); --phn: contrast(1.07) saturate(0.62) brightness(0.97); --gridop: 1; }
+  #stage { position: static !important; height: auto !important; overflow: visible !important; }
+  #scroller { height: auto !important; }
+  #rail { display: block !important; width: 100% !important; transform: none !important; }
+  .scene { width: 100% !important; height: auto !important; }
+  #hero-mask { clip-path: inset(0% 0% 0% 0%) !important; }
+  #datum-line { display:none !important; }
+</style>
+</noscript>
+<style>
+  :root {
+    --accent:#3F5C28; --accent-soft:#BCCB93; --datum-c:#8C8C7E;
+    --phf: grayscale(1) contrast(1.12) brightness(0.88); --phn: contrast(1.07) saturate(0.62) brightness(0.97);
+    --datum-y: 76vh; --clear: clamp(150px,22vh,270px);
+  }
   * { box-sizing: border-box; }
   body { margin:0; background:#0E0F0D; color:#E5E3DC; font-family:'Archivo',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
   a { color:inherit; text-decoration:none; }
@@ -34,18 +51,28 @@
   .col h3, .col p { transition: color .2s ease; }
 
   .wframe { will-change: clip-path, filter; }
-  .zrow .zi { transition: color .2s ease; }
+
+  /* ── COTA CERO ──────────────────────────────────────────────────────────
+     Una sola línea, hija de #rail, recorre el carril entero a una altura
+     constante (--datum-y). Se funde por diferencia con lo que tiene detrás,
+     así que se lee clara sobre fondo oscuro o claro sin necesitar dos
+     versiones. No lleva cifras ni marcas sobre sí misma: la lectura corre
+     por el lector de cota en el chrome inferior, no por anotaciones aquí. */
+  #datum-line { position:absolute; left:0; right:0; top:var(--datum-y); height:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:.88; transform:scaleX(0); transform-origin:left center; pointer-events:none; z-index:3; will-change:transform; }
+  .hl, [data-grade] { will-change: clip-path, transform; }
+
+  /* Retención de apertura: el scroll queda en pausa mientras Portada se
+     levanta, para que la composición se sostenga antes de que el recorrido
+     continúe (sólo escritorio; se libera solo al terminar la intro). */
+  @media (min-width:1181px) {
+    html.intro-lock, html.intro-lock body { overflow:hidden !important; }
+  }
 
   /* Titulares con interlineado < 1: la tinta sobresale de la caja y las
      máscaras la cortan. Se le da aire dentro del recorte sin mover el layout. */
   h2[data-mask] { padding-block: .2em; margin-block: -.2em; }
-  #hac-title { padding-block: .18em; padding-inline: .06em; }
-  /* El recorte se aplica a la caja del elemento: si el texto desborda su
-     contenedor, inset(0) lo rasura. La caja se ciñe al texto y reserva holgura. */
-  #obras-title { width: max-content; padding-right: .07em; }
-  .zrow .zcoord { transition: color .2s ease; }
 
-  @keyframes cue { 0%,100% { transform:translateX(0); opacity:.85 } 50% { transform:translateX(14px); opacity:.25 } }
+  @keyframes climaxPulse { 0%,100% { opacity:.7 } 50% { opacity:1 } }
 
   #grain { position:fixed; inset:0; z-index:88; pointer-events:none; opacity:.34; mix-blend-mode:soft-light;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -58,22 +85,24 @@
   .nlink[data-on="1"] { opacity:1 !important; }
 
   /* Zonas: la posición del punto ES el dato geográfico. No viaja al pasar el
-     cursor; se afirma sobre su coordenada. */
+     cursor; se afirma sobre su coordenada. La cota sólo se lee en la fila activa. */
   .zrow .zn { transition: transform .2s cubic-bezier(.23,1,.32,1); }
   .zrow .zh { transition: background-color .2s ease; }
   .zrow .zm { transition: transform .2s cubic-bezier(.23,1,.32,1), background-color .2s ease; }
+  .zrow .zcoord { opacity:0; transition: opacity .2s ease, color .2s ease; }
+  .zrow:hover .zcoord, .zrow:focus-visible .zcoord { opacity:1; }
 
   .clink .ca { transition: transform .2s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
   .clink .cr { transition: background-color .2s ease; }
-  /* Feedback de presión: rápido y sin celebración. */
-  #cta-write { transition: transform .12s cubic-bezier(.23,1,.32,1), background-color .2s ease; }
-  #cta-write:active { transform: scale(.97); }
 
   .col .cnum { transition: color .2s ease; }
   .col[data-active="1"] .cnum { color: var(--accent-soft); }
   .wplate .wcap { transition: opacity .28s linear, color .2s ease; }
   .wplate[data-active="1"] .wcap { color: #E5E3DC; }
   .wplate { cursor: none; }
+  #obras-stat { transition: opacity .3s ease, transform .3s ease; }
+
+  #elev-read.climax { color: var(--accent-soft); animation: climaxPulse 2.4s ease-in-out infinite; }
 
   /* El estado de hover sólo existe donde hay cursor: en pantalla táctil el
      toque no debe encender un estado que el dedo no puede sostener. */
@@ -84,7 +113,7 @@
     .col:hover { --svc-h: #E5E3DC; --svc-p: rgba(229,227,220,.8); }
     .col:hover .cnum { color: var(--accent-soft); }
     .nlink:hover::after { transform: scaleX(1); }
-    .zrow:hover .zi, .zrow:hover .zcoord { color: var(--accent); }
+    .zrow:hover .zi { color: var(--accent); }
     .zrow:hover .zn { transform: translateX(10px); }
     .zrow:hover .zh { background-color: var(--accent); }
     .zrow:hover .zm { background-color: var(--accent); transform: scale(1.5); }
@@ -95,19 +124,19 @@
   /* Movimiento reducido: se conserva la jerarquía y el estado final. La
      promesa del Hero aparece ya materializada, no se representa su tránsito. */
   @media (prefers-reduced-motion: reduce) {
-    #cue-line { animation:none !important; }
     #hero-out { -webkit-text-stroke-width:0 !important; }
     #hero-fill { clip-path:inset(0 0 0 0) !important; }
     .zrow:hover .zn, .clink:hover .ca { transform:none !important; }
+    .hl, [data-grade] { clip-path:none !important; transform:none !important; }
+    #datum-line { transform:scaleX(1) !important; }
+    html.intro-lock, html.intro-lock body { overflow:visible !important; }
+    #elev-read.climax { animation:none !important; }
   }
 
   @media (min-width:1181px) and (max-height:780px) {
-    .sc-in { padding-top:82px !important; padding-bottom:52px !important; }
-    #hac-title { font-size:clamp(36px,4.6vw,72px) !important; margin:12px 0 !important; }
-    #hac-head p, #obras-head p { display:none !important; }
-    .zrow { padding:9px 0 !important; }
-    #nos-word { font-size:clamp(56px,9.4vw,150px) !important; }
-    .col .ph-wrap { max-height:42vh; }
+    .sc-in { padding-top:82px !important; padding-bottom:min(180px,20vh) !important; }
+    #hac-head p { display:none !important; }
+    .col .ph-wrap { max-height:38vh; }
     #con-mask { font-size:clamp(36px,7.3vw,120px) !important; }
     .con-grid p { font-size:clamp(15px,1.3vw,19px) !important; }
   }
@@ -127,6 +156,7 @@
     .desk { display:none !important; }
     .mob { display:flex !important; }
     #cursor { display:none !important; }
+    #datum-line { display:none !important; }
     #chrome-top { padding:14px 18px !important; }
     #nav-index { display:none !important; }
     #chrome-bot { padding:10px 18px calc(10px + env(safe-area-inset-bottom)) !important; }
@@ -135,18 +165,16 @@
     #sc-hero .sc-in { min-height:100svh !important; justify-content:flex-end !important; gap:26px !important; }
     #sc-hero .sc-in { padding-bottom:84px !important; }
     .hero-meta { grid-template-columns:1fr !important; }
-    .hero-meta .hcell:last-child { display:none !important; }
     .hero-meta > div { border-left:none !important; border-top:1px solid rgba(229,227,220,.18) !important; padding:11px 0 0 !important; }
 
     .nos-grid { display:flex !important; flex-direction:column !important; align-items:stretch !important; gap:22px !important; }
-    #nos-strip { width:100% !important; height:62vw !important; position:relative !important; }
+    #nos-strip { width:100% !important; height:62vw !important; position:relative !important; margin-bottom:0 !important; }
     #sc-nosotros { display:flex !important; flex-direction:column !important; }
     #sc-nosotros .sc-in { padding-top:16px !important; }
     #nos-word { order:-1 !important; position:relative !important; top:auto !important; left:auto !important; margin:94px 22px -8px !important; font-size:calc(100vw / 9.6) !important; mix-blend-mode:normal !important; color:#0E0F0D !important; }
 
     .hac-row { flex-direction:column !important; gap:0 !important; }
-    #hac-title { writing-mode:horizontal-tb !important; transform:none !important; font-size:15vw !important; }
-    #hac-head { width:100% !important; padding-right:0 !important; border-right:none !important; }
+    #hac-head { width:100% !important; padding-right:0 !important; border-right:none !important; padding-bottom:18px !important; }
     /* En una secuencia vertical la profundidad de campo no significa nada:
        los cuatro servicios se leen al mismo nivel. */
     .col { --svc-h:#E5E3DC !important; --svc-p:rgba(229,227,220,.78) !important; }
@@ -154,34 +182,42 @@
     .col .ph-wrap { height:46vw !important; margin-top:16px !important; }
 
     #sc-obras .sc-in { flex-direction:column !important; align-items:stretch !important; }
-    #obras-head { width:100% !important; border-right:none !important; padding-right:0 !important; gap:18px !important; }
-    #obras-title { max-width:100% !important; }
-    #sc-contacto .sc-in { justify-content:flex-start !important; gap:26px !important; }
-    #con-close { flex-direction:column !important; align-items:flex-start !important; gap:18px !important; }
-    #con-close > div:first-child { width:100% !important; }
+    #obras-head { width:100% !important; border-right:none !important; padding-right:0 !important; gap:10px !important; padding-bottom:18px !important; }
     #wheel-track { width:100% !important; height:auto !important; }
     #wheel-pane { position:relative !important; width:100% !important; height:auto !important; transform:none !important; }
     #wheel-stage { perspective:none !important; height:auto !important; }
     #wheel-3d { position:relative !important; inset:auto !important; transform-style:flat !important; display:flex !important; flex-direction:column !important; gap:40px !important; margin-top:42px !important; height:auto !important; }
     .wplate { position:relative !important; left:auto !important; bottom:auto !important; width:100% !important; transform:none !important; opacity:1 !important; z-index:auto !important; cursor:pointer !important; }
     .wplate .wcap { opacity:1 !important; }
-    #wheel-datum, #wheel-idx, #hac-datum, #wheel-data, #obras-axis { display:none !important; }
+    #wheel-idx, #wheel-data { display:none !important; }
     .wplate { height:auto !important; }
     .wplate .wframe { position:relative !important; inset:auto !important; height:64vw !important; filter:none !important; clip-path:none !important; }
     .wplate .wcap { position:relative !important; top:auto !important; margin-top:12px !important; font-size:11px !important; white-space:normal !important; }
+    #obras-mob-stats { display:flex !important; }
     #hero-out { -webkit-text-stroke-width:0 !important; }
     #hero-fill { clip-path:inset(0 0 0 0) !important; }
 
     .zrow { grid-template-columns:34px 1fr auto !important; }
     .zrow .zrule { display:none !important; }
+    .zrow .zcoord { display:none !important; }
     .zname { font-size:9vw !important; }
 
     #con-mask { font-size:calc(100vw / 12.2) !important; }
-    #con-word { transform:none !important; }
     .con-grid { grid-template-columns:1fr !important; gap:26px !important; }
     #con-end { position:relative !important; right:auto !important; bottom:auto !important; width:100% !important; margin-top:30px !important; }
     #foot { flex-direction:column !important; align-items:flex-start !important; gap:14px !important; }
   }
+
+  /* Phase 1 fallback: applied by script below only if GSAP/ScrollTrigger fail to
+     initialize (e.g. the local files fail to load). Same intent as the <noscript>
+     block above — keep the site readable and scrollable instead of frozen/clipped.
+     Never applied, and has zero effect, when the site initializes normally. */
+  html.no-gsap #stage { position: static !important; height: auto !important; overflow: visible !important; }
+  html.no-gsap #scroller { height: auto !important; }
+  html.no-gsap #rail { display: block !important; width: 100% !important; transform: none !important; }
+  html.no-gsap .scene { width: 100% !important; height: auto !important; }
+  html.no-gsap #hero-mask { clip-path: inset(0% 0% 0% 0%) !important; }
+  html.no-gsap #datum-line { display:none !important; }
 </style>
 </head>
 <body>
@@ -208,14 +244,11 @@
     </button>
   </header>
 
-  <div id="chrome-bot" style="position:fixed;left:0;right:0;bottom:0;z-index:92;display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:14px clamp(18px,2.4vw,34px) calc(14px + env(safe-area-inset-bottom));color:#E5E3DC;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em">
-    <span id="scene-label" style="min-width:98px;opacity:.85">00 PORTADA</span>
-    <div style="position:relative;flex:1;height:1px;background:currentColor;opacity:.9">
-      <div data-hair="true" style="position:absolute;inset:0;background:rgba(229,227,220,.22)"></div>
-      <div id="pfill" style="position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--accent-soft);transform:scaleX(0);transform-origin:left center"></div>
-      <div id="tickrow" style="position:absolute;inset:0"></div>
-    </div>
-    <span id="pct" style="min-width:44px;text-align:right">00%</span>
+  <!-- Cota Cero: único indicador de avance. No hay porcentaje, ni marcador de
+       escena, ni barra de progreso — la lectura de cota es la métrica. -->
+  <div id="chrome-bot" style="position:fixed;left:0;right:0;bottom:0;z-index:92;display:flex;align-items:baseline;justify-content:flex-start;gap:10px;padding:14px clamp(18px,2.4vw,34px) calc(14px + env(safe-area-inset-bottom));color:#E5E3DC;pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em">
+    <span style="opacity:.5">COTA</span>
+    <span id="elev-read">+0.00</span>
   </div>
 
   <div id="menu" style="position:fixed;inset:0;z-index:99;background:#0E0F0D;display:none;flex-direction:column;justify-content:center;gap:2px;padding:0 22px">
@@ -237,34 +270,34 @@
   <div id="stage" style="position:sticky;top:0;width:100%;height:100vh;overflow:hidden">
     <div id="rail" style="position:relative;display:flex;height:100%;width:max-content;will-change:transform">
 
-      <!-- ══ 00 PORTADA ══ -->
+      <div id="datum-line"></div>
+
+      <!-- ══ 00 PORTADA — masa alta, disparo de establecimiento ══ -->
       <section id="sc-hero" class="scene" data-theme="dark" data-label="00 PORTADA" data-screen-label="00 Portada" style="position:relative;flex:none;width:142vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
-        <div id="hero-mask" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(44% 0% 44% 0%)">
+        <div id="hero-mask" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(30% 0% 0% 0%)">
           <div data-par="5" style="position:absolute;top:-4%;left:-6%;width:112%;height:108%">
             <video id="hero-video" class="ph" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover">
               <source src="hero-bg.mp4" type="video/mp4">
             </video>
           </div>
-          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.88) 0%,rgba(14,15,13,.26) 30%,rgba(14,15,13,.08) 60%,rgba(14,15,13,.7) 100%)"></div>
-          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,15,13,.46) 0%,rgba(14,15,13,0) 30%,rgba(14,15,13,.88) 100%)"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.9) 0%,rgba(14,15,13,.3) 32%,rgba(14,15,13,.06) 58%,rgba(14,15,13,.62) 100%)"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,15,13,.5) 0%,rgba(14,15,13,0) 26%,rgba(14,15,13,.94) 100%)"></div>
         </div>
 
-        <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:30px">
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
+          <div style="display:flex;align-items:flex-start;gap:30px">
             <div style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
               <span style="width:34px;height:1px;background:currentColor;opacity:.5"></span>DESARROLLO Y CONSTRUCCIÓN
             </div>
-            <div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.72;line-height:1.9">VERACRUZ, MÉXICO<br>19°10′N 96°08′W</div>
           </div>
 
-          <div id="hero-copy" style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,30px)">
-            <h1 style="margin:0;font-size:clamp(36px,5.9vw,112px);font-weight:800;font-variation-settings:'wdth' 116;line-height:.92;letter-spacing:-.02em;text-transform:uppercase">
+          <div id="hero-copy" style="display:flex;flex-direction:column;gap:clamp(22px,3.6vh,40px)">
+            <h1 style="margin:0;font-size:clamp(44px,7.4vw,140px);font-weight:800;font-variation-settings:'wdth' 116;line-height:.9;letter-spacing:-.022em;text-transform:uppercase">
               <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em"><div class="hl">Llevamos</div></div>
               <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em"><div class="hl">tus proyectos</div></div>
               <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em;padding-left:clamp(24px,5.6vw,108px)"><div class="hl" style="position:relative"><span id="hero-out" style="color:transparent;-webkit-text-stroke:1.25px rgba(229,227,220,.62)">a la realidad</span><span id="hero-fill" style="position:absolute;left:0;top:0;white-space:nowrap;clip-path:inset(0% 100% 0% 0%)">a la realidad</span></div></div>
             </h1>
-            <div id="hero-rule" style="height:1px;width:100%;background:rgba(229,227,220,.32);transform:scaleX(0);transform-origin:left center"></div>
-            <div class="hero-meta" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:0 clamp(18px,2.6vw,44px);align-items:end">
+            <div class="hero-meta" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(18px,2.6vw,44px);align-items:end;max-width:840px">
               <div class="hcell" style="display:flex;flex-direction:column;gap:9px">
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">SERVICIOS</span>
                 <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Residencial · Comercial · Remodelación</span>
@@ -277,105 +310,88 @@
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
                 <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Fracc. Reforma, Veracruz, Ver.</span>
               </div>
-              <div class="hcell" id="hero-cue" style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.85;padding-bottom:2px;transition:opacity .2s ease">
-                DESLIZA<span id="cue-line" style="width:38px;height:1px;background:currentColor;animation:cue 2.2s ease-in-out infinite"></span>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ══ 01 NOSOTROS ══ -->
-      <section id="sc-nosotros" class="scene" data-theme="light" data-label="01 NOSOTROS" data-screen-label="01 Nosotros" style="position:relative;flex:none;width:118vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
+      <!-- ══ 01 NOSOTROS — vacío mayor, primera liberación ══ -->
+      <section id="sc-nosotros" class="scene" data-theme="light" data-label="01 NOSOTROS" data-screen-label="01 Nosotros" style="position:relative;flex:none;width:128vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
-        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
-            <span style="display:flex;gap:14px"><span style="opacity:.55">01</span>QUIÉNES SOMOS</span>
-          </div>
-
-          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,29vw) minmax(0,25vw) 32vw;column-gap:clamp(32px,4.2vw,76px);align-items:end;flex:1;padding:clamp(20px,4vh,54px) 0 0">
-            <div data-rise="true" style="display:flex;flex-direction:column;gap:clamp(18px,3vh,32px);padding-bottom:clamp(6px,2vh,20px)">
-              <p style="margin:0;font-size:clamp(19px,1.62vw,26px);line-height:1.42;font-weight:500;max-width:26ch;text-wrap:pretty">Grupo Tejaz es una empresa de desarrollo y construcción con sede en Veracruz. Trabajamos cada proyecto desde el diseño hasta la entrega, cuidando el detalle en cada etapa del proceso.</p>
-              <div style="height:1px;width:70%;background:rgba(14,15,13,.2)"></div>
+        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
+          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,30vw) 24vw;column-gap:clamp(72px,8.5vw,160px);align-items:end;flex:1">
+            <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(24px,3.6vh,40px)">
+              <p style="margin:0;font-size:clamp(19px,1.62vw,26px);line-height:1.42;font-weight:500;max-width:24ch;text-wrap:pretty">Grupo Tejaz es una empresa de desarrollo y construcción con sede en Veracruz. Trabajamos cada proyecto desde el diseño hasta la entrega, cuidando el detalle en cada etapa del proceso.</p>
+              <div style="height:1px;width:40%;background:rgba(14,15,13,.2)"></div>
+              <p style="margin:0;font-size:16px;line-height:1.65;color:#3E4038;max-width:36ch;text-wrap:pretty">Construimos residencias, espacios comerciales y desarrollos de uso mixto. Calidad, cumplimiento y diseño a la medida en cada proyecto, con una relación cercana con cada cliente.</p>
             </div>
-            <div data-rise="true" style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,26px);padding-bottom:clamp(6px,2vh,20px)">
-              <p style="margin:0;font-size:16px;line-height:1.6;color:#3E4038;max-width:34ch;text-wrap:pretty">Construimos residencias, espacios comerciales y desarrollos de uso mixto, siempre con un enfoque en la calidad de los materiales y una relación cercana con cada cliente.</p>
-              <div style="display:flex;flex-direction:column">
-                <span style="display:flex;align-items:baseline;gap:14px;padding:15px 0;border-top:1px solid rgba(14,15,13,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em"><span style="font-family:'Archivo',sans-serif;font-size:17.5px;font-weight:600;letter-spacing:0">Calidad</span></span>
-                <span style="display:flex;align-items:baseline;gap:14px;padding:15px 0;border-top:1px solid rgba(14,15,13,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em"><span style="font-family:'Archivo',sans-serif;font-size:17.5px;font-weight:600;letter-spacing:0">Cumplimiento</span></span>
-                <span style="display:flex;align-items:baseline;gap:14px;padding:15px 0;border-top:1px solid rgba(14,15,13,.2);border-bottom:1px solid rgba(14,15,13,.2);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em"><span style="font-family:'Archivo',sans-serif;font-size:17.5px;font-weight:600;letter-spacing:0">Diseño a la medida</span></span>
-              </div>
-            </div>
-            <div id="nos-strip" style="position:relative;width:32vw;height:80vh;overflow:hidden;align-self:end;margin-bottom:calc(-1 * clamp(62px,9vh,92px))">
+            <div id="nos-strip" data-grade="true" style="position:relative;width:24vw;height:82vh;overflow:hidden;align-self:end">
               <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                 <img id="nosotros-bg" class="ph" src="nosotros-bg.jpg" alt="Obra o fachada Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
               </div>
             </div>
           </div>
+          <div id="nos-word" style="position:absolute;left:clamp(120px,17vw,340px);top:clamp(64px,9vh,116px);z-index:3;font-size:clamp(64px,11.6vw,208px);font-weight:800;font-variation-settings:'wdth' 120;line-height:.78;letter-spacing:-.03em;color:#E5E3DC;mix-blend-mode:difference;pointer-events:none">NOSOTROS</div>
         </div>
-        <div id="nos-word" style="position:absolute;left:clamp(150px,24vw,480px);top:clamp(60px,8.4vh,104px);z-index:3;font-size:clamp(52px,9.4vw,172px);font-weight:800;font-variation-settings:'wdth' 120;line-height:.8;letter-spacing:-.03em;color:#E5E3DC;mix-blend-mode:difference;pointer-events:none">NOSOTROS</div>
       </section>
 
-      <!-- ══ 02 HACEMOS ══ -->
-      <section id="sc-hacemos" class="scene" data-theme="dark" data-label="02 QUÉ HACEMOS" data-screen-label="02 Hacemos" style="position:relative;flex:none;width:190vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
+      <!-- ══ 02 HACEMOS — cuatro naves de peso desigual ══ -->
+      <section id="sc-hacemos" class="scene" data-theme="dark" data-label="02 HACEMOS" data-screen-label="02 Hacemos" style="position:relative;flex:none;width:172vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
-        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div class="hac-row" style="position:relative;display:flex;height:100%;gap:0">
-            <div id="hac-datum" data-line="true" style="position:absolute;left:32vw;right:0;top:54%;height:1px;background:rgba(229,227,220,.26);transform:scaleX(0);transform-origin:left center;pointer-events:none"></div>
-            <div id="hac-head" style="position:relative;z-index:1;flex:none;width:32vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(24px,3vw,54px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
-                <span style="display:flex;gap:14px"><span style="opacity:.55">02</span>SERVICIOS</span>
-              </div>
-              <div id="hac-title" data-vmask="true" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:clamp(34px,4.7vw,84px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.9;letter-spacing:-.02em;margin:clamp(18px,3vh,34px) 0">HACEMOS</div>
-              <p style="margin:0;font-size:14px;line-height:1.65;color:rgba(229,227,220,.7);max-width:30ch">Cuatro disciplinas, un mismo proceso: proyecto, obra y entrega bajo una sola dirección.</p>
+            <div id="hac-head" style="position:relative;z-index:1;flex:none;width:15vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(18px,2.2vw,36px);border-right:1px solid rgba(229,227,220,.16)">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55">HACEMOS</span>
+              <p style="margin:0;font-size:13px;line-height:1.6;color:rgba(229,227,220,.62);max-width:16ch">Cuatro disciplinas, una sola dirección.</p>
             </div>
 
-            <div class="col" data-cursor="01" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+            <!-- Residencial: la nave mayor -->
+            <div class="col" data-grade="true" data-cursor="01" style="position:relative;z-index:1;flex:none;width:47vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(26px,2.8vw,50px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,28px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">01</span>
-                <h3 data-rise="true" style="margin:0;font-size:clamp(26px,2.7vw,46px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Residencial</h3>
-                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Casas y desarrollos habitacionales diseñados a la medida.</p>
+                <h3 style="margin:0;font-size:clamp(34px,3.8vw,64px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.018em;color:var(--svc-h)">Residencial</h3>
+                <p style="margin:0;font-size:15px;line-height:1.62;color:var(--svc-p);max-width:30ch">Casas y desarrollos habitacionales diseñados a la medida.</p>
               </div>
-              <div class="ph-wrap" data-mask="true" data-drift="9" style="position:relative;height:46%;overflow:hidden">
+              <div class="ph-wrap" data-drift="9" style="position:relative;height:56%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-1" class="ph" src="ph-fachada.jpg" alt="Casa entregada" style="width:100%;height:100%;object-fit:cover">
                 </div>
               </div>
             </div>
 
-            <div class="col" data-cursor="02" style="position:relative;z-index:1;flex:none;width:41vw;display:flex;flex-direction:column-reverse;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+            <!-- Comercial: peso medio -->
+            <div class="col" data-grade="true" data-cursor="02" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
+              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">02</span>
-                <h3 data-rise="true" style="margin:0;font-size:clamp(28px,3.2vw,56px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
-                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Espacios comerciales funcionales, pensados para el negocio de cada cliente.</p>
+                <h3 style="margin:0;font-size:clamp(24px,2.5vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
+                <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p);max-width:26ch">Espacios comerciales funcionales para el negocio de cada cliente.</p>
               </div>
-              <div class="ph-wrap" data-mask="true" data-drift="-11" style="position:relative;height:54%;overflow:hidden">
+              <div class="ph-wrap" data-drift="-11" style="position:relative;height:58%;overflow:hidden">
                 <div data-par="6" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-2" class="ph" src="contacto-bg.jpg" alt="Espacio comercial" style="width:100%;height:100%;object-fit:cover">
                 </div>
               </div>
             </div>
 
-            <div class="col" data-cursor="03" style="position:relative;z-index:1;flex:none;width:31vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px);border-right:1px solid rgba(229,227,220,.16)">
-              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
-                <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
-                <h3 data-rise="true" style="margin:0;font-size:clamp(24px,2.4vw,41px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Remodelación</h3>
-                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Renovación y ampliación de espacios existentes, sin perder su esencia.</p>
-              </div>
-              <div class="ph-wrap" data-mask="true" data-drift="12" style="position:relative;height:32%;overflow:hidden">
+            <!-- Remodelación: nave angosta, vertical -->
+            <div class="col" data-grade="true" data-cursor="03" style="position:relative;z-index:1;flex:none;width:17vw;display:flex;flex-direction:column;justify-content:flex-end;padding:0 clamp(14px,1.6vw,28px);border-right:1px solid rgba(229,227,220,.16)">
+              <div class="ph-wrap" data-drift="12" style="position:relative;height:72%;overflow:hidden;margin-bottom:clamp(16px,2.4vh,26px)">
                 <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="svc-3" class="ph" src="ph-cocina-a.jpg" alt="Interior remodelado" style="width:100%;height:100%;object-fit:cover">
                 </div>
               </div>
+              <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
+              <h3 style="margin:6px 0 0;font-size:clamp(19px,1.9vw,29px);font-weight:700;font-variation-settings:'wdth' 108;line-height:1.02;letter-spacing:-.01em;color:var(--svc-h)">Remodelación</h3>
             </div>
 
-            <div class="col" data-cursor="04" style="position:relative;z-index:1;flex:none;width:43vw;display:flex;flex-direction:column-reverse;justify-content:space-between;padding:0 clamp(22px,2.6vw,46px)">
-              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
+            <!-- Desarrollos inmobiliarios: nave grande, contenida -->
+            <div class="col" data-grade="true" data-cursor="04" style="position:relative;z-index:1;flex:none;width:38vw;display:flex;flex-direction:column-reverse;justify-content:space-between;padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
+              <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);max-width:26ch">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">04</span>
-                <h3 data-rise="true" style="margin:0;font-size:clamp(27px,3vw,51px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
-                <p data-rise="true" style="margin:0;font-size:14.5px;line-height:1.62;color:var(--svc-p);max-width:30ch">Desarrollo integral de proyectos, del terreno a la entrega de llaves.</p>
+                <h3 style="margin:0;font-size:clamp(22px,2.2vw,36px);font-weight:700;font-variation-settings:'wdth' 110;line-height:1;letter-spacing:-.012em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
+                <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p)">Del terreno a la entrega de llaves, bajo una sola dirección.</p>
               </div>
-              <div class="ph-wrap" data-mask="true" data-drift="-8" style="position:relative;height:40%;overflow:hidden">
+              <div class="ph-wrap" data-drift="-8" style="position:relative;height:30%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
                   <img id="hacemos-bg" class="ph" src="hacemos-bg.jpg" alt="Desarrollo en proceso" style="width:100%;height:100%;object-fit:cover">
                 </div>
@@ -385,172 +401,150 @@
         </div>
       </section>
 
-      <!-- ══ 03 OBRAS ══ -->
-      <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:302vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
+      <!-- ══ 03 OBRAS — clímax, masa máxima ══ -->
+      <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:258vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
-        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:stretch;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
-          <div id="obras-head" style="position:relative;flex:none;width:44vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(24px,3vw,54px);border-right:1px solid rgba(229,227,220,.16)">
-            <div id="obras-axis" data-line="true" style="position:absolute;left:0;bottom:9%;width:58vw;height:1px;background:rgba(229,227,220,.26);transform:scaleX(0);transform-origin:left center;pointer-events:none"></div>
-            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
-              <span style="display:flex;gap:14px"><span style="opacity:.55">03</span>NUESTRAS OBRAS</span>
-              <span style="opacity:.55">2021 — 2024</span>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)">
-              <h2 id="obras-title" data-mask="true" style="margin:0;font-size:clamp(30px,3.9vw,72px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.9;letter-spacing:-.024em;text-transform:uppercase">Portafolio</h2>
-              <p style="margin:0;font-size:14px;line-height:1.65;color:rgba(229,227,220,.7);max-width:30ch">Obra propia en el estado de Veracruz. Cada lámina es un proyecto entregado.</p>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.64)">
-              <span id="obras-count">04</span> PROYECTOS
-            </div>
+        <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:stretch;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
+          <div id="obras-head" style="position:relative;flex:none;width:13vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(16px,2vw,32px);border-right:1px solid rgba(229,227,220,.16)">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55">OBRAS</span>
+            <span id="obras-count" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.64)">04</span>
           </div>
 
-          <div id="wheel-track" style="flex:none;width:250vw;height:100%;position:relative">
+          <div id="wheel-track" style="flex:none;width:232vw;height:100%;position:relative">
             <div id="wheel-pane" style="position:absolute;left:0;top:0;width:100vw;height:100%;will-change:transform">
               <div id="wheel-stage" style="position:relative;width:100%;height:100%">
                 <div id="wheel-3d" style="position:absolute;inset:0">
-                  <div id="wheel-datum" style="position:absolute;left:-34%;bottom:9%;width:150%;height:1px;background:rgba(229,227,220,.3);transform-origin:left center;pointer-events:none"></div>
-                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-1" class="ph" src="proj-1-bg.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO REFORMA · 2021</div>
                   </div>
-                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-2" class="ph" src="ph-cocina-b.jpg" alt="Proyecto Costa Verde" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO COSTA VERDE · 2022</div>
                   </div>
-                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-3" class="ph" src="ph-fachada.jpg" alt="Proyecto Malecón" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO MALECÓN · 2023</div>
                   </div>
-                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" style="position:absolute;left:44%;bottom:9%;width:min(48vw,96vh);height:56vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-4" class="ph" src="ubicaciones-bg.jpg" alt="Proyecto Arboledas" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO ARBOLEDAS · 2024</div>
                   </div>
                 </div>
-                <div id="wheel-data" style="position:absolute;right:3vw;bottom:9%;width:20vw;display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);opacity:0;pointer-events:none">
-                  <div id="wd-name" style="font-size:clamp(22px,2.1vw,38px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">Proyecto Reforma</div>
-                  <div style="display:flex;flex-direction:column">
-                    <span style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid rgba(229,227,220,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em"><span style="opacity:.5">AÑO</span><span id="wd-year">2021</span></span>
-                    <span style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid rgba(229,227,220,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em"><span style="opacity:.5">TIPOLOGÍA</span><span id="wd-type">Residencial</span></span>
-                    <span style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid rgba(229,227,220,.2);border-bottom:1px solid rgba(229,227,220,.2);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em"><span style="opacity:.5">UBICACIÓN</span><span id="wd-place">Veracruz, Ver.</span></span>
-                  </div>
+                <!-- Una sola declaración concisa por proyecto, tomada sólo de los datos
+                     reales del dataset (tipología, ubicación, año). No se inventan
+                     retos, materiales ni resultados.
+                     TODO: sustituir por la reseña real de cada proyecto cuando exista. -->
+                <div id="wheel-data" style="position:absolute;right:2.5vw;bottom:6%;width:19vw;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,18px);opacity:0;pointer-events:none">
+                  <span id="wd-idx" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.5)">01 / 04</span>
+                  <div id="wd-name" style="font-size:clamp(24px,2.3vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">Proyecto Reforma</div>
+                  <div id="wd-stat" style="font-size:14.5px;line-height:1.5;color:rgba(229,227,220,.72)">Residencial · Veracruz, Ver. · 2021</div>
                 </div>
-                <span id="wheel-idx" style="position:absolute;left:0;bottom:2.4%;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.5)">01 / 04</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ══ 04 ZONAS ══ -->
-      <section id="sc-zonas" class="scene" data-theme="light" data-label="04 DÓNDE CONSTRUIMOS" data-screen-label="04 Zonas" style="position:relative;flex:none;width:124vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
+      <!-- ══ 04 ZONAS — segunda liberación ══ -->
+      <section id="sc-zonas" class="scene" data-theme="light" data-label="04 ZONAS" data-screen-label="04 Zonas" style="position:relative;flex:none;width:120vw;height:100%;overflow:hidden;background:#E5E3DC;color:#0E0F0D">
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(14,15,13,.22);z-index:5"></div>
-        <div data-grid="true" style="position:absolute;inset:0;opacity:var(--gridop);background-image:repeating-linear-gradient(90deg,rgba(14,15,13,.06) 0 1px,transparent 1px 112px),repeating-linear-gradient(180deg,rgba(14,15,13,.05) 0 1px,transparent 1px 112px);pointer-events:none"></div>
-        <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
-            <div style="display:flex;flex-direction:column;gap:clamp(12px,2vh,22px)">
-              <span style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em"><span style="opacity:.55">04</span>COBERTURA</span>
-              <h2 data-mask="true" style="margin:0;font-size:clamp(34px,4.4vw,82px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.92;letter-spacing:-.026em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
-            </div>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.6;white-space:nowrap">05 CIUDADES · EDO. DE VERACRUZ</span>
+            <h2 data-mask="true" style="margin:0;font-size:clamp(30px,3.8vw,68px);font-weight:800;font-variation-settings:'wdth' 118;line-height:.94;letter-spacing:-.024em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55;white-space:nowrap">05 CIUDADES</span>
           </div>
 
           <div style="display:flex;flex-direction:column;width:100%">
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">01</span>
-              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Veracruz</span>
+              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Veracruz</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:22%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">19°10′N 96°08′W</span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°10′N 96°08′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">02</span>
-              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Boca del Río</span>
+              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Boca del Río</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:41%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">19°06′N 96°06′W</span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°06′N 96°06′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">03</span>
-              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Xalapa</span>
+              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Xalapa</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:63%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">19°32′N 96°55′W</span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°32′N 96°55′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">04</span>
-              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Córdoba</span>
+              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Córdoba</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:34%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">18°53′N 96°56′W</span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°53′N 96°56′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(10px,1.9vh,20px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
+            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(14px,2.4vh,26px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
               <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">05</span>
-              <span class="zn zname" style="font-size:clamp(22px,2.6vw,44px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.015em;white-space:nowrap">Coatzacoalcos</span>
+              <span class="zn zname" style="font-size:clamp(30px,3.6vw,60px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Coatzacoalcos</span>
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:78%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:#33362E;text-align:right">18°08′N 94°25′W</span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°08′N 94°25′W</span>
             </a>
           </div>
 
-          <div style="display:flex;align-items:flex-end;justify-content:flex-end;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.58">
-            <span>GOLFO DE MÉXICO</span>
-          </div>
+          <div style="height:1px"></div>
         </div>
       </section>
 
-      <!-- ══ 05 CONTACTO ══ -->
+      <!-- ══ 05 CONTACTO — resolución, masa contenida ══ -->
       <section id="sc-contacto" class="scene" data-theme="dark" data-label="05 CONTACTO" data-screen-label="05 Contacto" style="position:relative;flex:none;width:114vw;height:100%;overflow:hidden;background:#0E0F0D;color:#E5E3DC">
         <div data-seam="true" style="position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(229,227,220,.22);z-index:5"></div>
         <div style="position:absolute;inset:0;overflow:hidden">
           <div data-par="6" style="position:absolute;top:-5%;left:-7%;width:114%;height:110%">
             <img id="contacto-bg" class="ph" src="ubicaciones-bg.jpg" alt="Oficina o proyecto Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
           </div>
-          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.92) 0%,rgba(14,15,13,.78) 44%,rgba(14,15,13,.6) 100%)"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.94) 0%,rgba(14,15,13,.82) 44%,rgba(14,15,13,.64) 100%)"></div>
         </div>
 
-        <div class="sc-in" style="position:relative;z-index:2;width:100vw;margin-left:auto;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) clamp(62px,9vh,92px)">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em">
-            <span style="display:flex;gap:14px"><span style="opacity:.55">05</span>CONTACTO</span>
-          </div>
-
+        <div class="sc-in" style="position:relative;z-index:2;width:100vw;margin-left:auto;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div class="con-grid" style="display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:clamp(30px,4.4vw,86px);align-items:start;max-width:1240px">
             <div data-rise="true" style="display:flex;flex-direction:column;gap:14px">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
               <p style="margin:0;font-size:clamp(17px,1.42vw,23px);line-height:1.46;font-weight:500;max-width:20ch;text-wrap:pretty">Pinzón 1, Esq. Simón Bolívar, Fracc. Reforma, Veracruz, Ver.</p>
             </div>
-            <div data-rise="true" style="display:flex;flex-direction:column;gap:14px">
+            <div data-rise="true" style="display:flex;flex-direction:column;gap:6px">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">ESCRÍBENOS</span>
-              <div style="display:flex;flex-direction:column">
-                <a href="mailto:rafael@grupotejaz.com" onclick="markDone()" class="clink" data-cursor="ESCRIBIR" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;font-size:clamp(16px,1.5vw,23px);font-weight:500">
-                  <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
-                  <span>rafael@grupotejaz.com</span>
-                  <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
-                </a>
-                <a href="mailto:ricardo@grupotejaz.com" onclick="markDone()" class="clink" data-cursor="ESCRIBIR" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid rgba(229,227,220,.24);font-size:clamp(16px,1.5vw,23px);font-weight:500">
-                  <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
-                  <span>ricardo@grupotejaz.com</span>
-                  <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
-                </a>
-              </div>
-              <a href="#" id="cta-write" onclick="writeUs(event)" data-cursor="ESCRIBIR" class="clink" style="display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:clamp(16px,2.6vh,30px);padding:13px clamp(14px,1.2vw,20px);background:var(--accent);color:#E5E3DC;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em">ESCRIBIR<span class="ca" style="font-size:13px;opacity:.75">→</span></a>
+              <a href="mailto:rafael@grupotejaz.com" onclick="markDone()" class="clink" data-cursor="ESCRIBIR" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;font-size:clamp(16px,1.5vw,23px);font-weight:500">
+                <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                <span>rafael@grupotejaz.com</span>
+                <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+              </a>
+              <a href="mailto:ricardo@grupotejaz.com" onclick="markDone()" class="clink" data-cursor="ESCRIBIR" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;font-size:clamp(16px,1.5vw,23px);font-weight:500">
+                <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                <span>ricardo@grupotejaz.com</span>
+                <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+              </a>
+              <a href="#" id="cta-write" onclick="writeUs(event)" data-cursor="ESCRIBIR" class="clink" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;font-size:clamp(16px,1.5vw,23px);font-weight:700;color:var(--accent-soft)">
+                <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                <span>Escribir a la oficina</span>
+                <span class="ca" style="opacity:.7;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+              </a>
             </div>
           </div>
 
           <div id="con-close" style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px">
-            <div id="con-mask" style="overflow:hidden;flex:1;min-width:0;font-size:clamp(38px,8.2vw,146px);padding-block:.26em;margin-block:-.26em">
-              <div id="con-word" data-up="true" style="font-size:1em;font-weight:800;font-variation-settings:'wdth' 122;line-height:.84;letter-spacing:-.03em;text-transform:uppercase">Contáctenos</div>
+            <div id="con-mask" style="overflow:hidden;flex:1;min-width:0;font-size:clamp(40px,8.4vw,156px);padding-block:.24em;margin-block:-.24em">
+              <div id="con-word" data-grade="true" style="font-size:1em;font-weight:800;font-variation-settings:'wdth' 122;line-height:.82;letter-spacing:-.03em;text-transform:uppercase">Contáctenos</div>
             </div>
-            <div id="con-end" style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:12px;text-align:right">
-              <span id="con-flag" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:0;transition:opacity .2s ease;color:var(--accent-soft)">RECORRIDO COMPLETO</span>
-              <a href="#" onclick="goHero(event)" data-cursor="INICIO" class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.75">↑ VOLVER AL INICIO</a>
-            </div>
+            <a href="#" onclick="goHero(event)" data-cursor="INICIO" class="nlink" style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.75">↑ VOLVER AL INICIO</a>
           </div>
 
           <div id="foot" style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:clamp(14px,2.4vh,26px);border-top:1px solid rgba(229,227,220,.18);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(229,227,220,.62)">
-            <span style="display:flex;align-items:center;gap:10px"><img src="logo-tejaz.png" alt="" style="height:16px;width:auto;filter:brightness(0) invert(1);opacity:.8">GRUPO TEJAZ — DESARROLLO Y CONSTRUCCIÓN</span>
+            <span style="display:flex;align-items:center;gap:10px"><img src="logo-tejaz.png" alt="" style="height:16px;width:auto;filter:brightness(0) invert(1);opacity:.8">GRUPO TEJAZ · DESARROLLO Y CONSTRUCCIÓN</span>
             <span>© 2026 GRUPO TEJAZ. TODOS LOS DERECHOS RESERVADOS.</span>
           </div>
         </div>
@@ -568,7 +562,6 @@
   var menuOpen = false;
   var done = false;
   var _theme = null;
-  var _cueOff = false;
   var _wheel = null;
   var _cols = null;
   var _activeCol = null;
@@ -577,8 +570,117 @@
   var master = null;
   var _reduce = false;
   var _intro = null;
+  var _railKF = null;
+  var _elevKF = null;
+  var _maxX = 1;
+  var _anchorOut = {};
+
+  // ── Recorrido: dónde se detiene la lámina y qué cota marca cada parada ──
+  // Un solo plan de datos gobierna dos cosas: el paso no-lineal del carril
+  // (retenciones reales, no adornos) y la lectura de cota del chrome inferior.
+  // Ambos leen la MISMA posición de scroll cruda, así que la cota se congela
+  // exactamente cuando la composición se congela.
+  // frac=0 ancla al borde izquierdo de la escena (donde su propio contenido
+  // asume que empieza el viewport); frac=1 ancla a su borde derecho. Hacemos
+  // y Obras son más anchos que el viewport y su contenido corre continuo por
+  // todo el ancho, así que un punto intermedio no recorta nada. Contacto
+  // reserva espacio vacío a la izquierda (su .sc-in nace con margin-left:auto),
+  // así que necesita frac=1 para alinear el viewport exactamente con su
+  // contenido real.
+  var JOURNEY = [
+    { id: 'sc-hero',     frac: 0.00, weight: 1.10, elev: 2.20 },
+    { id: 'sc-nosotros', frac: 0.00, weight: 0.38, elev: 0.55 },
+    { id: 'sc-hacemos',  frac: 0.46, weight: 0.68, elev: 2.65 },
+    { id: 'sc-obras',    frac: null, weight: 1.60, elev: 4.10 },
+    { id: 'sc-zonas',    frac: 0.00, weight: 0.34, elev: 0.60 },
+    { id: 'sc-contacto', frac: 1.00, weight: 0.85, elev: 1.35 }
+  ];
 
   function isDesk() { return window.innerWidth > 1180; }
+
+  function smooth(t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); }
+
+  function evalKF(p, kf) {
+    if (!kf || !kf.length) return p;
+    if (p <= kf[0][0]) return kf[0][1];
+    for (var i = 0; i < kf.length - 1; i++) {
+      if (p <= kf[i + 1][0]) {
+        var span = kf[i + 1][0] - kf[i][0];
+        var t = span > 0 ? (p - kf[i][0]) / span : 1;
+        return kf[i][1] + (kf[i + 1][1] - kf[i][1]) * smooth(t);
+      }
+    }
+    return kf[kf.length - 1][1];
+  }
+
+  function railEase(p) { return evalKF(p, _railKF); }
+
+  // Búsqueda binaria: dado un valor de salida deseado (dónde debe quedar el
+  // carril), encuentra el progreso de scroll crudo que lo produce. Sin esto,
+  // la navegación (nav, menú, flechas) apuntaría a la posición de scroll
+  // antigua y lineal, que ya no coincide con el carril no-lineal.
+  function inverseEase(target, kf) {
+    var lo = 0, hi = 1;
+    for (var i = 0; i < 32; i++) {
+      var mid = (lo + hi) / 2;
+      if (evalKF(mid, kf) < target) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+
+  // Construye las paradas del recorrido a partir de la geometría real del
+  // carril (ancho de cada escena) y, para Obras, de la geometría real de la
+  // rueda (un tercio de giro = un proyecto centrado y resuelto).
+  function buildJourney() {
+    var rail = _rail;
+    if (!rail) return;
+    var vw = window.innerWidth;
+    var maxX = Math.max(1, rail.scrollWidth - vw);
+    _maxX = maxX;
+    var pts = [];
+    _anchorOut = {};
+    JOURNEY.forEach(function (s) {
+      var sc = document.getElementById(s.id);
+      if (!sc) return;
+      var anchorX;
+      if (s.id === 'sc-obras' && _wheel) {
+        anchorX = _wheel.trackL + _wheel.len * (1 / 3);
+      } else {
+        var excess = Math.max(0, sc.offsetWidth - vw);
+        anchorX = sc.offsetLeft + (s.frac || 0) * excess;
+      }
+      var out = Math.max(0, Math.min(1, anchorX / maxX));
+      _anchorOut[s.id] = out;
+      pts.push({ out: out, weight: s.weight, elev: s.elev });
+    });
+    // MAXP reserva un margen al final del recorrido para la rampa de cierre:
+    // ninguna parada puede extenderse hasta donde el scroll real no puede
+    // llegar (progress nunca pasa de 1), o la parada nunca soltaría y la cota
+    // jamás resolvería a la referencia.
+    var BASE = 0.05, MAXP = 0.985;
+    var kf = [], ekf = [];
+    var cursor = 0;
+    pts.forEach(function (pt) {
+      var half = pt.weight * BASE / 2;
+      var p0 = Math.min(MAXP, Math.max(cursor, pt.out - half));
+      var p1 = Math.min(MAXP, Math.max(p0 + 0.002, pt.out + half));
+      kf.push([p0, pt.out]); kf.push([p1, pt.out]);
+      ekf.push([p0, pt.elev]); ekf.push([p1, pt.elev]);
+      cursor = p1;
+    });
+    // El carril tiene una obligación física: en p=0 debe estar en x=0. Si la
+    // primera parada ya vive ahí, se ajusta a 0 exacto; si no, se antepone
+    // un punto (0,0) real. La cota no tiene esa obligación: si la primera
+    // parada empieza después de 0, su propio valor se sostiene hacia atrás
+    // hasta el inicio, para que la lectura de la parada aparezca desde el
+    // primer instante en que se puede alcanzar.
+    if (kf[0][0] > 0.0005) kf.unshift([0, 0]); else kf[0][0] = 0;
+    if (ekf[0][0] > 0.0005) ekf.unshift([0, ekf[0][1]]); else ekf[0][0] = 0;
+    var lastP = kf[kf.length - 1][0];
+    kf.push([Math.max(lastP + 0.002, 1), 1]);
+    ekf.push([Math.max(ekf[ekf.length - 1][0] + 0.002, 1), 0]);
+    _railKF = kf; _elevKF = ekf;
+  }
 
   function go(id) {
     var sc = document.getElementById(id);
@@ -588,7 +690,12 @@
       window.scrollTo({ top: sc.getBoundingClientRect().top + window.scrollY - 64, behavior: 'smooth' });
       return;
     }
-    window.scrollTo({ top: scroller.offsetTop + sc.offsetLeft, behavior: 'smooth' });
+    // Se navega a la PARADA de la escena (su lectura de cota, ya resuelta),
+    // no a su borde izquierdo crudo: con el carril no-lineal, ambos ya no
+    // coinciden en el mismo progreso de scroll.
+    var out = _anchorOut[id];
+    var p = out != null ? inverseEase(out, _railKF) : (sc.offsetLeft / _maxX);
+    window.scrollTo({ top: scroller.offsetTop + p * _maxX, behavior: 'smooth' });
   }
 
   function toggleMenu() {
@@ -615,12 +722,12 @@
   function goZonasM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-zonas'); }, 60); }
   function goContactoM(e) { e.preventDefault(); closeMenu(); setTimeout(function () { go('sc-contacto'); }, 60); }
 
-  // Acuse del gesto: la línea inferior engrosa una vez y vuelve. Nada más.
+  // Acuse del gesto: la lectura de cota destella una vez y vuelve. Nada más.
   function markDone() {
     if (done) return;
     done = true;
-    var f = document.getElementById('pfill');
-    if (f && window.gsap) window.gsap.fromTo(f, { height: 3 }, { height: 7, duration: .09, yoyo: true, repeat: 1, ease: 'power2.out' });
+    var n = document.getElementById('elev-read');
+    if (n && window.gsap) window.gsap.fromTo(n, { opacity: 1 }, { opacity: .35, duration: .1, yoyo: true, repeat: 1, ease: 'power2.out' });
   }
 
   function writeUs(e) {
@@ -630,28 +737,20 @@
   }
 
   function paint(p) {
-    var n = document.getElementById('pct');
-    if (n) n.textContent = String(Math.round(p * 100)).padStart(2, '0') + '%';
-    var f = document.getElementById('pfill');
-    if (f) f.style.transform = 'scaleX(' + p + ')';
-    var flag = document.getElementById('con-flag');
-    if (flag) flag.style.opacity = p >= 0.985 ? '1' : '0';
-    if (!_cueOff && p > 0.012) {
-      _cueOff = true;
-      var cue = document.getElementById('hero-cue');
-      if (cue) cue.style.opacity = '0';
-      var line = document.getElementById('cue-line');
-      if (line) line.style.animation = 'none';
+    var n = document.getElementById('elev-read');
+    if (n) {
+      var elev = evalKF(p, _elevKF);
+      n.textContent = (elev >= -0.001 ? '+' : '') + elev.toFixed(2);
     }
   }
 
   function setScene(sc) {
-    var label = document.getElementById('scene-label');
-    if (label && sc.dataset.label) label.textContent = sc.dataset.label;
     document.querySelectorAll('[data-nav]').forEach(function (a) {
       a.setAttribute('data-on', a.getAttribute('data-nav') === sc.id ? '1' : '0');
       a.style.opacity = a.getAttribute('data-nav') === sc.id ? '1' : '0.62';
     });
+    var er = document.getElementById('elev-read');
+    if (er) er.classList.toggle('climax', sc.id === 'sc-obras');
     setTheme(sc.dataset.theme || 'dark');
   }
 
@@ -666,32 +765,12 @@
     if (gsap) gsap.to([top, bot].filter(Boolean), { color: fg, duration: .28, ease: 'power1.out', overwrite: 'auto' });
     var mark = document.getElementById('nav-mark');
     if (mark) mark.style.filter = dark ? 'brightness(0) invert(1)' : 'none';
-    var hair = document.querySelector('#chrome-bot [data-hair]');
-    if (hair && gsap) gsap.to(hair, { backgroundColor: dark ? 'rgba(229,227,220,0.22)' : 'rgba(14,15,13,0.2)', duration: .28 });
-    var fill = document.getElementById('pfill');
-    if (fill) fill.style.background = dark ? 'var(--accent-soft)' : 'var(--accent)';
     document.querySelectorAll('#cursor span').forEach(function (s) { s.style.background = fg; s.style.color = fg; });
     var lbl = document.getElementById('cursor-label');
     if (lbl) { lbl.style.background = 'transparent'; lbl.style.color = fg; }
   }
 
-  function buildTicks() {
-    var row = document.getElementById('tickrow');
-    var rail = document.getElementById('rail');
-    if (!row || !rail) return;
-    var total = rail.scrollWidth;
-    row.innerHTML = '';
-    scenes.forEach(function (id, i) {
-      if (!i) return;
-      var sc = document.getElementById(id);
-      if (!sc) return;
-      var t = document.createElement('span');
-      t.style.cssText = 'position:absolute;top:-4px;width:1px;height:9px;background:currentColor;opacity:.4;left:' + ((sc.offsetLeft / total) * 100) + '%';
-      row.appendChild(t);
-    });
-  }
-
-  // ── Rueda cerrada del portafolio ─────────────────────────────────────────
+  // ── Rueda del portafolio ──────────────────────────────────────────────
   function initWheel(scroller) {
     var track = document.getElementById('wheel-track');
     var pane = document.getElementById('wheel-pane');
@@ -699,13 +778,10 @@
     if (!track || !pane || !plates.length) return;
     _wheel = {
       track: track, pane: pane, plates: plates, scroller: scroller,
-      datum: document.getElementById('wheel-datum'),
-      idx: document.getElementById('wheel-idx'),
+      idx: document.getElementById('wd-idx'),
       data: document.getElementById('wheel-data'),
       dName: document.getElementById('wd-name'),
-      dYear: document.getElementById('wd-year'),
-      dType: document.getElementById('wd-type'),
-      dPlace: document.getElementById('wd-place'),
+      dStat: document.getElementById('wd-stat'),
       frames: plates.map(function (p) { return p.querySelector('.wframe'); }),
       caps: plates.map(function (p) { return p.querySelector('.wcap'); }),
       Rx: 0, rise: 0, len: 1, trackL: 0, active: -1
@@ -727,14 +803,17 @@
     var rail = _rail;
     st.trackL = rail ? st.track.getBoundingClientRect().left - rail.getBoundingClientRect().left : st.track.offsetLeft;
     st.len = Math.max(1, st.track.offsetWidth - vw);
-    st.Rx = vw * 0.24;
-    st.rise = window.innerHeight * 0.035;
+    st.Rx = vw * 0.26;
+    st.rise = window.innerHeight * 0.04;
   }
 
   function focusPlate(i) {
     var st = _wheel;
     if (!st) return;
-    window.scrollTo({ top: st.scroller.offsetTop + st.trackL + st.len * (i / 3), behavior: 'smooth' });
+    var targetX = st.trackL + st.len * (i / 3);
+    var out = Math.max(0, Math.min(1, targetX / _maxX));
+    var p = inverseEase(out, _railKF);
+    window.scrollTo({ top: st.scroller.offsetTop + p * _maxX, behavior: 'smooth' });
   }
 
   function wheelUpdate(rel) {
@@ -789,19 +868,13 @@
       });
       var d = st.plates[best].dataset;
       if (st.dName) st.dName.textContent = d.name || '';
-      if (st.dYear) st.dYear.textContent = d.year || '';
-      if (st.dType) st.dType.textContent = d.type || '';
-      if (st.dPlace) st.dPlace.textContent = d.place || '';
+      if (st.dStat) st.dStat.textContent = (d.type || '') + ' · ' + (d.place || '') + ' · ' + (d.year || '');
       if (st.idx) st.idx.textContent = String(best + 1).padStart(2, '0') + ' / 04';
     }
     if (st.data) {
       var on = Math.min(1, Math.max(0, (D - 0.88) / 0.12) * rest);
       st.data.style.opacity = on.toFixed(3);
       st.data.style.transform = 'translateY(' + ((1 - on) * 16).toFixed(1) + 'px)';
-    }
-    if (st.datum) {
-      st.datum.style.transform = 'scaleX(' + (0.3 + 0.7 * D).toFixed(3) + ')';
-      st.datum.style.opacity = (0.16 + 0.62 * D).toFixed(3);
     }
   }
 
@@ -838,7 +911,7 @@
     var ScrollTrigger = window.ScrollTrigger;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     _reduce = reduce;
-    if (!gsap || !ScrollTrigger) return;
+    if (!gsap || !ScrollTrigger) { document.documentElement.classList.add('no-gsap'); return; }
     gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.getAll().forEach(function (t) { t.kill(true); });
 
@@ -851,18 +924,29 @@
       document.addEventListener('keydown', play, { once: true });
     }
 
-    // Apertura: la imagen se abre como un obturador y el titular sube detrás.
+    // Apertura: el obturador se abre, la cota se traza y el titular se
+    // levanta desde ella. La retención de scroll sostiene la composición
+    // antes de que el recorrido horizontal empiece: un plano de
+    // establecimiento real, no un fotograma de paso.
+    var deskIntro = isDesk() && !reduce;
+    if (deskIntro) document.documentElement.classList.add('intro-lock');
+
     if (_intro) _intro.kill();
     _intro = reduce
       ? gsap.timeline()
           .set('#hero-mask', { clipPath: 'inset(0% 0% 0% 0%)' })
-          .set('#hero-rule', { scaleX: 1 })
+          .set('#datum-line', { scaleX: 1 })
           .fromTo('#hero-copy', { opacity: 0 }, { opacity: 1, duration: .3, ease: 'power2.out' })
-      : gsap.timeline({ delay: .1 })
-          .fromTo('#hero-mask', { clipPath: 'inset(44% 0% 44% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' })
-          .fromTo('.hl', { yPercent: 118 }, { yPercent: 0, duration: 1.25, stagger: .09, ease: 'expo.out' }, '-=.95')
-          .fromTo('#hero-rule', { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power3.inOut' }, '-=.8')
-          .fromTo('.hcell', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: .7, stagger: .07, ease: 'power3.out' }, '-=.85');
+      : gsap.timeline({
+          delay: .1,
+          onComplete: function () {
+            if (deskIntro) setTimeout(function () { document.documentElement.classList.remove('intro-lock'); }, 420);
+          }
+        })
+          .fromTo('#hero-mask', { clipPath: 'inset(30% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' })
+          .fromTo('#datum-line', { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power3.inOut' }, '-=.85')
+          .fromTo('.hl', { clipPath: 'inset(100% 0% 0% 0%)', y: 16 }, { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.15, stagger: .12, ease: 'power4.out' }, '-=.6')
+          .fromTo('.hcell', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .6, stagger: .06, ease: 'power3.out' }, '-=.7');
 
     var mm = gsap.matchMedia();
 
@@ -874,19 +958,21 @@
       var sizeIt = function () { scroller.style.height = (window.innerHeight + maxX()) + 'px'; };
       sizeIt();
 
+      _rail = rail;
+      initWheel(scroller);
+      buildJourney();
+
       var masterTween = gsap.to(rail, {
-        x: function () { return -maxX(); }, ease: 'none',
+        x: function () { return -maxX(); }, ease: railEase,
         scrollTrigger: {
           trigger: scroller, start: 'top top', end: function () { return '+=' + maxX(); },
           scrub: .65, invalidateOnRefresh: true,
-          onRefreshInit: sizeIt,
+          onRefreshInit: function () { sizeIt(); buildJourney(); },
           onUpdate: function (self) { paint(self.progress); }
         }
       });
       master = masterTween;
       var ca = masterTween;
-      _rail = rail;
-      initWheel(scroller);
       gsap.ticker.add(tick);
 
       // Fondos que se quedan atrás; primeros planos que se adelantan.
@@ -912,6 +998,17 @@
           scrollTrigger: { trigger: el, containerAnimation: ca, start: s, end: e, scrub: .35 }
         });
       };
+      // Cota Cero, verbo único: la masa principal de cada escena se extruye
+      // desde la cota (clip-path de abajo hacia arriba) en vez de deslizarse
+      // o desvanecerse. Reservado a la pieza estructural de cada escena;
+      // los elementos secundarios usan [data-rise], más ligero.
+      gsap.utils.toArray('[data-grade]').forEach(function (el) {
+        if (reduce) { fade(el, 'left 92%', 'left 66%'); return; }
+        gsap.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)', y: 18 }, {
+          clipPath: 'inset(0% 0% 0% 0%)', y: 0, ease: 'none',
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 92%', end: 'left 56%', scrub: .4 }
+        });
+      });
       gsap.utils.toArray('[data-mask]').forEach(function (el) {
         if (reduce) { fade(el, 'left 94%', 'left 74%'); return; }
         gsap.fromTo(el, { clipPath: 'inset(0% 100% 0% 0%)' }, {
@@ -919,30 +1016,10 @@
           scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 94%', end: 'left 66%', scrub: .35 }
         });
       });
-      gsap.utils.toArray('[data-vmask]').forEach(function (el) {
-        if (reduce) { fade(el, 'left 92%', 'left 72%'); return; }
-        gsap.fromTo(el, { clipPath: 'inset(0% 0% 100% 0%)' }, {
-          clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
-          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 92%', end: 'left 62%', scrub: .35 }
-        });
-      });
       gsap.utils.toArray('[data-rise]').forEach(function (el) {
-        gsap.fromTo(el, { y: reduce ? 0 : 40, opacity: 0 }, {
+        gsap.fromTo(el, { y: reduce ? 0 : 34, opacity: 0 }, {
           y: 0, opacity: 1, ease: 'none',
-          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 100%', end: 'left 55%', scrub: .5 }
-        });
-      });
-      gsap.utils.toArray('[data-line]').forEach(function (el) {
-        gsap.fromTo(el, { scaleX: 0 }, {
-          scaleX: 1, ease: 'none',
-          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 94%', end: 'right 44%', scrub: .3 }
-        });
-      });
-      gsap.utils.toArray('[data-up]').forEach(function (el) {
-        if (reduce) { fade(el, 'left 90%', 'left 70%'); return; }
-        gsap.fromTo(el, { yPercent: 104 }, {
-          yPercent: 0, ease: 'none',
-          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 90%', end: 'left 54%', scrub: .35 }
+          scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 100%', end: 'left 58%', scrub: .5 }
         });
       });
 
@@ -953,14 +1030,16 @@
         scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'left left', end: 'left -30%', scrub: .3 }
       });
 
+      // Recede: la masa de Portada cede dominio (retrocede y se desvanece)
+      // mientras la lámina avanza; Nosotros crece dentro del vacío que deja.
       var copy = document.getElementById('hero-copy');
       if (copy) gsap.to(copy, {
-        xPercent: reduce ? 0 : -11, opacity: .2, ease: 'none',
+        xPercent: reduce ? 0 : -9, opacity: .15, ease: 'none',
         scrollTrigger: { trigger: '#sc-hero', containerAnimation: ca, start: 'left left', end: 'right left', scrub: true }
       });
       var word = document.getElementById('nos-word');
-      if (word && !reduce) gsap.fromTo(word, { xPercent: 7 }, {
-        xPercent: -7, ease: 'none',
+      if (word && !reduce) gsap.fromTo(word, { xPercent: 6 }, {
+        xPercent: -6, ease: 'none',
         scrollTrigger: { trigger: '#sc-nosotros', containerAnimation: ca, start: 'left right', end: 'right left', scrub: true }
       });
 
@@ -973,8 +1052,8 @@
         });
       });
 
-      buildTicks();
       setScene(document.getElementById('sc-hero'));
+      paint(0);
 
       // Trackpad: el gesto horizontal también avanza el recorrido.
       var onWheel = function (e) {
@@ -1000,7 +1079,7 @@
       };
       window.addEventListener('keydown', onKey);
 
-      var onResize = function () { sizeIt(); buildTicks(); layoutWheel(); };
+      var onResize = function () { sizeIt(); layoutWheel(); buildJourney(); };
       window.addEventListener('resize', onResize);
 
       return function () {
@@ -1015,7 +1094,8 @@
     });
 
     mm.add('(max-width: 1180px)', function () {
-      gsap.utils.toArray('[data-mask],[data-vmask],[data-rise],[data-up]').forEach(function (el) {
+      document.documentElement.classList.remove('intro-lock');
+      gsap.utils.toArray('[data-mask],[data-rise],[data-grade]').forEach(function (el) {
         gsap.fromTo(el, { y: reduce ? 0 : 26, opacity: 0 }, {
           y: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: reduce ? .3 : .9, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 90%' }
@@ -1068,7 +1148,7 @@
       }
     }
 
-    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); }, 400);
+    setTimeout(function () { ScrollTrigger.refresh(); layoutWheel(); buildJourney(); }, 400);
   }
 
   window.goHero = goHero;
