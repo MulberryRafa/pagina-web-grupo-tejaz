@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proyectos · Grupo Tejaz</title>
+<meta name="description" content="Archivo completo de proyectos de Grupo Tejaz — desarrollo y construcción en Veracruz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent:#3F5C28; --accent-soft:#BCCB93;
+    --phf: grayscale(1) contrast(1.14) saturate(1) brightness(0.87);
+    --phn: grayscale(0.72) contrast(1.06) saturate(1.15) brightness(0.99);
+    --dark: #0E0F0D; --bone: #E5E3DC;
+    --safe-x: clamp(32px,3vw,72px);
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--dark); color:var(--bone); font-family:'Archivo',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  ::selection { background:var(--accent); color:var(--bone); }
+
+  .ph { filter: var(--phf); transition: filter .35s ease; }
+  @media (hover:hover) and (pointer:fine) {
+    .item:hover .ph, .item:focus-visible .ph { filter: var(--phn); }
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 1px solid currentColor; outline-offset: 4px;
+  }
+  #skip-link {
+    position: fixed; top: -100px; left: 18px; z-index: 999;
+    background: var(--dark); color: var(--bone); padding: 12px 18px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .16em;
+    transition: top 200ms cubic-bezier(.23,1,.32,1);
+  }
+  #skip-link:focus { top: 18px; }
+
+  .nlink { position:relative; }
+  .nlink::after { content:''; position:absolute; left:0; right:0; bottom:-6px; height:1px; background:currentColor; transform:scaleX(0); transform-origin:left center; transition:transform .2s cubic-bezier(.23,1,.32,1); }
+  @media (hover:hover) and (pointer:fine) { .nlink:hover::after { transform:scaleX(1); } }
+
+  header#chrome-top {
+    position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between;
+    gap:24px; padding:20px clamp(18px,2.4vw,34px); background:linear-gradient(180deg,rgba(14,15,13,.92) 0%,rgba(14,15,13,0) 100%);
+  }
+  header#chrome-top .brand { display:flex; align-items:center; gap:10px; }
+  header#chrome-top img { height:20px; width:auto; filter:brightness(0) invert(1); }
+  header#chrome-top .brand span { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.26em; text-transform:uppercase; }
+  header#chrome-top .back { font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.18em; opacity:.75; }
+
+  main { padding: 0 var(--safe-x) 120px; }
+
+  .p-hero { padding: clamp(48px,9vh,110px) 0 clamp(28px,4vh,48px); display:flex; flex-direction:column; gap:14px; }
+  .p-hero h1 {
+    margin:0; font-size:clamp(44px,7.4vw,120px); font-weight:800; font-variation-settings:'wdth' 116;
+    line-height:.92; letter-spacing:-.02em; text-transform:uppercase;
+    opacity:0; transform:translateY(18px); transition:opacity .7s cubic-bezier(.23,1,.32,1), transform .7s cubic-bezier(.23,1,.32,1);
+  }
+  .p-hero h1.in { opacity:1; transform:translateY(0); }
+  .p-hero .count { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; opacity:.6; }
+
+  .archive {
+    display:grid; grid-template-columns:repeat(12,1fr); gap:clamp(14px,1.6vw,28px);
+  }
+  .item {
+    grid-column: span 6; position:relative; border:none; background:none; padding:0; margin:0;
+    display:block; width:100%; cursor:pointer; text-align:left; color:inherit;
+    opacity:0; transform:translateY(22px); transition:opacity .6s cubic-bezier(.23,1,.32,1), transform .6s cubic-bezier(.23,1,.32,1);
+  }
+  .item.in { opacity:1; transform:translateY(0); }
+  .item.gi-wide { grid-column: span 8; }
+  .item.gi-narrow { grid-column: span 4; }
+  .item .frame { position:relative; width:100%; overflow:hidden; background:#000; }
+  .item .frame img { width:100%; height:100%; object-fit:cover; display:block; }
+  .item .cap { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding-top:12px; }
+  .item .cap .name { font-size:clamp(16px,1.35vw,22px); font-weight:700; font-variation-settings:'wdth' 110; letter-spacing:-.01em; }
+  .item .cap .meta { font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.14em; opacity:.55; white-space:nowrap; }
+
+  @media (hover:hover) and (pointer:fine) {
+    .item:hover .name, .item:focus-visible .name { color: var(--accent-soft); }
+  }
+
+  @media (max-width:900px) {
+    .archive { grid-template-columns:1fr; gap:34px; }
+    .item, .item.gi-wide, .item.gi-narrow { grid-column: span 1; }
+    .p-hero { padding-top:88px; }
+  }
+
+  .back-home { display:flex; justify-content:flex-start; padding-top:40px; }
+  .back-home a { font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.18em; opacity:.75; }
+
+  /* ── Lightbox ─────────────────────────────────────────────────────── */
+  #lb {
+    position:fixed; inset:0; z-index:100; background:rgba(10,11,10,.97);
+    display:none; align-items:center; justify-content:center; flex-direction:column;
+  }
+  #lb.open { display:flex; }
+  #lb .lb-stage { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:70px clamp(20px,6vw,90px) 96px; }
+  #lb .lb-stage img { max-width:100%; max-height:100%; object-fit:contain; user-select:none; }
+  #lb .lb-top { position:absolute; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:20px clamp(18px,2.4vw,34px); }
+  #lb .lb-name { font-size:15px; font-weight:600; }
+  #lb .lb-idx { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.16em; opacity:.6; }
+  #lb .lb-close { background:none; border:none; color:var(--bone); font-size:22px; line-height:1; cursor:pointer; padding:6px; }
+  #lb .lb-nav { position:absolute; top:0; bottom:0; width:15%; min-width:56px; background:none; border:none; color:var(--bone); cursor:pointer; display:flex; align-items:center; font-size:30px; opacity:.55; transition:opacity .2s ease; }
+  #lb .lb-nav:hover, #lb .lb-nav:focus-visible { opacity:1; }
+  #lb .lb-prev { left:0; justify-content:flex-start; padding-left:14px; }
+  #lb .lb-next { right:0; justify-content:flex-end; padding-right:14px; }
+  #lb .lb-nav[disabled] { opacity:.15; cursor:default; pointer-events:none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .p-hero h1, .item { transition:none !important; opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#archive" id="skip-link">SALTAR AL ARCHIVO</a>
+
+<header id="chrome-top">
+  <a href="index.html" class="brand">
+    <img src="logo-tejaz.png" alt="">
+    <span>Grupo Tejaz</span>
+  </a>
+  <a href="index.html" class="back nlink">VOLVER ↙</a>
+</header>
+
+<main>
+  <div class="p-hero">
+    <h1 id="p-title">PROYECTOS</h1>
+    <span class="count" id="p-count"></span>
+  </div>
+
+  <div class="archive" id="archive"></div>
+
+  <div class="back-home">
+    <a href="index.html" class="nlink">↑ VOLVER AL INICIO</a>
+  </div>
+</main>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Galería de proyecto">
+  <div class="lb-top">
+    <div>
+      <div class="lb-name" id="lbName"></div>
+      <div class="lb-idx" id="lbIdx"></div>
+    </div>
+    <button class="lb-close" id="lbClose" aria-label="Cerrar galería">&times;</button>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Foto anterior">&#8249;</button>
+    <img id="lbImg" src="" alt="">
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Foto siguiente">&#8250;</button>
+  </div>
+</div>
+
+<script id="projects-data" type="application/json">{
+  "_readme": "Fuente de datos de produccion de proyectos Grupo Tejaz. Consumida por el home (pieza MAS PROYECTOS) y por /proyectos.html. Imagenes optimizadas en img/proyectos/. Reconciliado en Fase 3B (auditoria fotografica exhaustiva del 100% del material original), 2026-08-27. Ver PROJECTS-PHOTO-AUDIT.md para el detalle de la revision.",
+  "projects": [
+    {
+      "id": "casa-caracas-455-mayo-2013",
+      "name": "CASA CARACAS 455",
+      "slug": "casa-caracas-455-mayo-2013",
+      "cover": "img/proyectos/casa-caracas-455-mayo-2013/primary.jpg",
+      "coverWidth": 1650,
+      "coverHeight": 2200,
+      "images": [
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/primary.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-01.jpg",
+          "width": 2200,
+          "height": 984
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-02.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-03.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-04.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-05.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-06.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-07.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-08.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-09.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-10.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-11.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-12.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-13.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-14.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-15.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-16.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-17.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-18.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-19.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-20.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-21.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-22.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-caracas-455-mayo-2013/alt-23.jpg",
+          "width": 1650,
+          "height": 2200
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-l147-enero-2026",
+      "name": "CASA L147",
+      "slug": "casa-l147-enero-2026",
+      "cover": "img/proyectos/casa-l147-enero-2026/primary.jpg",
+      "coverWidth": 1280,
+      "coverHeight": 960,
+      "images": [
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/primary.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-01.jpg",
+          "width": 1600,
+          "height": 1200
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-02.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-03.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-04.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-05.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-06.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-07.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-08.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-09.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-10.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-11.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-12.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-13.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-14.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-15.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-16.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-l147-enero-2026/alt-17.jpg",
+          "width": 960,
+          "height": 1280
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-l81-marzo-2026",
+      "name": "CASA L81",
+      "slug": "casa-l81-marzo-2026",
+      "cover": "img/proyectos/casa-l81-marzo-2026/primary.jpg",
+      "coverWidth": 1284,
+      "coverHeight": 1444,
+      "images": [
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/primary.jpg",
+          "width": 1284,
+          "height": 1444
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-01.jpg",
+          "width": 1284,
+          "height": 1377
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-02.jpg",
+          "width": 1284,
+          "height": 1466
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-03.jpg",
+          "width": 1050,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-04.jpg",
+          "width": 1096,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-05.jpg",
+          "width": 1178,
+          "height": 1558
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-06.jpg",
+          "width": 1110,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-07.jpg",
+          "width": 1004,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-08.jpg",
+          "width": 1048,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-09.jpg",
+          "width": 1094,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-10.jpg",
+          "width": 802,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-l81-marzo-2026/alt-11.jpg",
+          "width": 836,
+          "height": 1600
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-l90-marzo-2023",
+      "name": "CASA L90",
+      "slug": "casa-l90-marzo-2023",
+      "cover": "img/proyectos/casa-l90-marzo-2023/primary.jpg",
+      "coverWidth": 1080,
+      "coverHeight": 1080,
+      "images": [
+        {
+          "src": "img/proyectos/casa-l90-marzo-2023/primary.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l90-marzo-2023/alt-01.jpg",
+          "width": 1080,
+          "height": 1080
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-l91-diciembre-2025",
+      "name": "CASA L91",
+      "slug": "casa-l91-diciembre-2025",
+      "cover": "img/proyectos/casa-l91-diciembre-2025/primary.jpg",
+      "coverWidth": 1600,
+      "coverHeight": 1201,
+      "images": [
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/primary.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-01.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-02.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-03.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-04.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-05.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-06.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-07.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-08.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-09.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-10.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-11.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-12.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-13.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-l91-diciembre-2025/alt-14.jpg",
+          "width": 1600,
+          "height": 1201
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-l95-marzo-2023",
+      "name": "CASA L95",
+      "slug": "casa-l95-marzo-2023",
+      "cover": "img/proyectos/casa-l95-marzo-2023/primary.jpg",
+      "coverWidth": 1080,
+      "coverHeight": 1080,
+      "images": [
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/primary.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-01.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-02.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-03.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-04.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-05.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-06.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-07.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l95-marzo-2023/alt-08.jpg",
+          "width": 1080,
+          "height": 1080
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-l97-marzo-2023",
+      "name": "CASA L97",
+      "slug": "casa-l97-marzo-2023",
+      "cover": "img/proyectos/casa-l97-marzo-2023/primary.jpg",
+      "coverWidth": 1080,
+      "coverHeight": 1080,
+      "images": [
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/primary.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-01.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-02.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-03.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-04.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-05.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-06.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-l97-marzo-2023/alt-07.jpg",
+          "width": 1080,
+          "height": 1080
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-ladoga-125-diciembre-2021",
+      "name": "CASA LADOGA 125",
+      "slug": "casa-ladoga-125-diciembre-2021",
+      "cover": "img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg",
+      "coverWidth": 1200,
+      "coverHeight": 1600,
+      "images": [
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-01.jpg",
+          "width": 1600,
+          "height": 1200
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-02.jpg",
+          "width": 1600,
+          "height": 1200
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-03.jpg",
+          "width": 1600,
+          "height": 1200
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-04.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-05.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-06.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-07.jpg",
+          "width": 1206,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-08.jpg",
+          "width": 1120,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-09.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-10.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-11.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-12.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-13.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-14.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-15.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-16.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-17.jpg",
+          "width": 1600,
+          "height": 1200
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-18.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-19.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-20.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-21.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-22.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-23.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-24.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-25.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-26.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-27.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-28.jpg",
+          "width": 1200,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-29.jpg",
+          "width": 1200,
+          "height": 1600
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-lii-agosto-2023",
+      "name": "CASA LII",
+      "slug": "casa-lii-agosto-2023",
+      "cover": "img/proyectos/casa-lii-agosto-2023/primary.jpg",
+      "coverWidth": 1600,
+      "coverHeight": 1201,
+      "images": [
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/primary.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-01.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-02.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-03.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-04.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-05.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-06.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-07.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-08.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-09.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-10.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-11.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-12.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-lii-agosto-2023/alt-13.jpg",
+          "width": 1600,
+          "height": 1201
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-mango-10-enero-2023",
+      "name": "CASA MANGO 10",
+      "slug": "casa-mango-10-enero-2023",
+      "cover": "img/proyectos/casa-mango-10-enero-2023/primary.jpg",
+      "coverWidth": 1080,
+      "coverHeight": 1080,
+      "images": [
+        {
+          "src": "img/proyectos/casa-mango-10-enero-2023/primary.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-mango-10-enero-2023/alt-01.jpg",
+          "width": 1080,
+          "height": 1080
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-mg-julio-2026",
+      "name": "CASA MG",
+      "slug": "casa-mg-julio-2026",
+      "cover": "img/proyectos/casa-mg-julio-2026/primary.jpg",
+      "coverWidth": 1280,
+      "coverHeight": 960,
+      "images": [
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/primary.jpg",
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-01.jpg",
+          "width": 960,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-02.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-03.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-04.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-05.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-06.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-07.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-08.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-09.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-10.jpg",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-11.jpg",
+          "width": 720,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-12.jpg",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "src": "img/proyectos/casa-mg-julio-2026/alt-13.jpg",
+          "width": 720,
+          "height": 1280
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-mi-febrero-2024",
+      "name": "CASA MI",
+      "slug": "casa-mi-febrero-2024",
+      "cover": "img/proyectos/casa-mi-febrero-2024/primary.jpg",
+      "coverWidth": 1600,
+      "coverHeight": 1201,
+      "images": [
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/primary.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-01.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-02.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-03.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-04.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-05.jpg",
+          "width": 1600,
+          "height": 1158
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-06.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-07.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-08.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-09.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-10.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-11.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-12.jpg",
+          "width": 1201,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-13.jpg",
+          "width": 1201,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-14.jpg",
+          "width": 1201,
+          "height": 1600
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-15.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-16.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-17.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-18.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-19.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-20.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-21.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-22.jpg",
+          "width": 1600,
+          "height": 1201
+        },
+        {
+          "src": "img/proyectos/casa-mi-febrero-2024/alt-23.jpg",
+          "width": 1600,
+          "height": 1201
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-odesa-65-marzo-2015",
+      "name": "CASA ODESA 65",
+      "slug": "casa-odesa-65-marzo-2015",
+      "cover": "img/proyectos/casa-odesa-65-marzo-2015/primary.jpg",
+      "coverWidth": 2200,
+      "coverHeight": 1650,
+      "images": [
+        {
+          "src": "img/proyectos/casa-odesa-65-marzo-2015/primary.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-65-marzo-2015/alt-01.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-65-marzo-2015/alt-02.jpg",
+          "width": 1280,
+          "height": 1280
+        },
+        {
+          "src": "img/proyectos/casa-odesa-65-marzo-2015/alt-03.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-65-marzo-2015/alt-04.jpg",
+          "width": 2200,
+          "height": 1650
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-odesa-66-febrero-2017",
+      "name": "CASA ODESA 66",
+      "slug": "casa-odesa-66-febrero-2017",
+      "cover": "img/proyectos/casa-odesa-66-febrero-2017/primary.jpg",
+      "coverWidth": 724,
+      "coverHeight": 543,
+      "images": [
+        {
+          "src": "img/proyectos/casa-odesa-66-febrero-2017/primary.jpg",
+          "width": 724,
+          "height": 543
+        },
+        {
+          "src": "img/proyectos/casa-odesa-66-febrero-2017/alt-01.jpg",
+          "width": 724,
+          "height": 543
+        },
+        {
+          "src": "img/proyectos/casa-odesa-66-febrero-2017/alt-02.jpg",
+          "width": 724,
+          "height": 543
+        },
+        {
+          "src": "img/proyectos/casa-odesa-66-febrero-2017/alt-03.jpg",
+          "width": 724,
+          "height": 543
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-odesa-67-octubre-2015",
+      "name": "CASA ODESA 67",
+      "slug": "casa-odesa-67-octubre-2015",
+      "cover": "img/proyectos/casa-odesa-67-octubre-2015/primary.jpg",
+      "coverWidth": 2200,
+      "coverHeight": 1650,
+      "images": [
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/primary.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-01.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-02.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-03.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-04.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-05.jpg",
+          "width": 1136,
+          "height": 852
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-06.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-07.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-08.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-09.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-10.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-11.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-12.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-13.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-14.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-15.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-16.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-17.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-18.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-19.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-odesa-67-octubre-2015/alt-20.jpg",
+          "width": 1650,
+          "height": 2200
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-oli-enero-2018",
+      "name": "CASA OLI",
+      "slug": "casa-oli-enero-2018",
+      "cover": "img/proyectos/casa-oli-enero-2018/primary.jpg",
+      "coverWidth": 1024,
+      "coverHeight": 724,
+      "images": [
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/primary.jpg",
+          "width": 1024,
+          "height": 724
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-01.jpg",
+          "width": 1024,
+          "height": 768
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-02.jpg",
+          "width": 1024,
+          "height": 604
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-03.jpg",
+          "width": 1024,
+          "height": 768
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-04.jpg",
+          "width": 768,
+          "height": 1024
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-05.jpg",
+          "width": 768,
+          "height": 1024
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-06.jpg",
+          "width": 768,
+          "height": 1024
+        },
+        {
+          "src": "img/proyectos/casa-oli-enero-2018/alt-07.jpg",
+          "width": 768,
+          "height": 1024
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-palmas-47-agosto-2024",
+      "name": "CASA PALMAS 47",
+      "slug": "casa-palmas-47-agosto-2024",
+      "cover": "img/proyectos/casa-palmas-47-agosto-2024/primary.jpg",
+      "coverWidth": 1080,
+      "coverHeight": 1080,
+      "images": [
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/primary.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-01.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-02.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-03.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-04.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-05.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-06.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-07.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-08.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-09.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-10.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-11.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-12.jpg",
+          "width": 1080,
+          "height": 1080
+        },
+        {
+          "src": "img/proyectos/casa-palmas-47-agosto-2024/alt-13.jpg",
+          "width": 1080,
+          "height": 1080
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-roque-enero-2017",
+      "name": "CASA ROQUE",
+      "slug": "casa-roque-enero-2017",
+      "cover": "img/proyectos/casa-roque-enero-2017/primary.jpg",
+      "coverWidth": 951,
+      "coverHeight": 835,
+      "images": [
+        {
+          "src": "img/proyectos/casa-roque-enero-2017/primary.jpg",
+          "width": 951,
+          "height": 835
+        },
+        {
+          "src": "img/proyectos/casa-roque-enero-2017/alt-01.jpg",
+          "width": 768,
+          "height": 1024
+        },
+        {
+          "src": "img/proyectos/casa-roque-enero-2017/alt-02.jpg",
+          "width": 768,
+          "height": 1024
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-tamesi-151-diciembre-2017",
+      "name": "CASA TAMESI 151",
+      "slug": "casa-tamesi-151-diciembre-2017",
+      "cover": "img/proyectos/casa-tamesi-151-diciembre-2017/primary.jpg",
+      "coverWidth": 560,
+      "coverHeight": 640,
+      "images": [
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/primary.jpg",
+          "width": 560,
+          "height": 640
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-01.jpg",
+          "width": 256,
+          "height": 320
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-02.jpg",
+          "width": 640,
+          "height": 480
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-03.jpg",
+          "width": 640,
+          "height": 480
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-04.jpg",
+          "width": 480,
+          "height": 640
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-05.jpg",
+          "width": 480,
+          "height": 640
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-06.jpg",
+          "width": 480,
+          "height": 640
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-07.jpg",
+          "width": 480,
+          "height": 640
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-08.jpg",
+          "width": 240,
+          "height": 320
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-tamesi-155-septiembre-2019",
+      "name": "CASA TAMESI 155",
+      "slug": "casa-tamesi-155-septiembre-2019",
+      "cover": "img/proyectos/casa-tamesi-155-septiembre-2019/primary.jpg",
+      "coverWidth": 2200,
+      "coverHeight": 1887,
+      "images": [
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/primary.jpg",
+          "width": 2200,
+          "height": 1887
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-01.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-02.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-03.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-04.jpg",
+          "width": 768,
+          "height": 1024
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-05.jpg",
+          "width": 768,
+          "height": 1024
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-06.jpg",
+          "width": 1024,
+          "height": 768
+        },
+        {
+          "src": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-07.jpg",
+          "width": 1024,
+          "height": 768
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    },
+    {
+      "id": "casa-valencia-77-diciembre-2015",
+      "name": "CASA VALENCIA 77",
+      "slug": "casa-valencia-77-diciembre-2015",
+      "cover": "img/proyectos/casa-valencia-77-diciembre-2015/primary.jpg",
+      "coverWidth": 1650,
+      "coverHeight": 2200,
+      "images": [
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/primary.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-01.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-02.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-03.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-04.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-05.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-06.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-07.jpg",
+          "width": 1650,
+          "height": 2200
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-08.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-09.jpg",
+          "width": 2200,
+          "height": 1650
+        },
+        {
+          "src": "img/proyectos/casa-valencia-77-diciembre-2015/alt-10.jpg",
+          "width": 2200,
+          "height": 1650
+        }
+      ],
+      "location": null,
+      "year": null,
+      "category": null,
+      "featured": false
+    }
+  ]
+}</script>
+<script>
+(function () {
+  var PROJECTS = JSON.parse(document.getElementById('projects-data').textContent).projects;
+
+  var countEl = document.getElementById('p-count');
+  countEl.textContent = PROJECTS.length + ' PROYECTOS';
+
+  var archive = document.getElementById('archive');
+
+  function sizeClass(w, h) {
+    if (!w || !h) return '';
+    var r = w / h;
+    if (r >= 1.55) return 'gi-wide';
+    if (r <= 0.8) return 'gi-narrow';
+    return '';
+  }
+
+  function metaLine(p) {
+    var parts = [];
+    if (p.category) parts.push(p.category);
+    if (p.location) parts.push(p.location);
+    if (p.year) parts.push(p.year);
+    return parts.join(' · ');
+  }
+
+  PROJECTS.forEach(function (p, i) {
+    var btn = document.createElement('button');
+    btn.className = 'item ' + sizeClass(p.coverWidth, p.coverHeight);
+    btn.type = 'button';
+    btn.dataset.idx = i;
+    btn.setAttribute('aria-label', 'Ver galería de ' + p.name + ' — Grupo Tejaz');
+
+    var meta = metaLine(p);
+    var ratio = (p.coverWidth && p.coverHeight) ? (p.coverWidth + ' / ' + p.coverHeight) : '4 / 3';
+
+    btn.innerHTML =
+      '<div class="frame" style="aspect-ratio:' + ratio + '">' +
+        '<img class="ph" src="' + p.cover + '" alt="' + p.name + ' — Grupo Tejaz" loading="lazy" width="' + (p.coverWidth || '') + '" height="' + (p.coverHeight || '') + '">' +
+      '</div>' +
+      '<div class="cap">' +
+        '<span class="name">' + p.name + '</span>' +
+        (meta ? '<span class="meta">' + meta + '</span>' : '') +
+      '</div>';
+
+    btn.addEventListener('click', function () { openLB(i, btn); });
+    archive.appendChild(btn);
+  });
+
+  // ── Reveal sutil al entrar en viewport (sin GSAP) ──────────────────
+  var revealTargets = document.querySelectorAll('.p-hero h1, .item');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    revealTargets.forEach(function (el) { io.observe(el); });
+  } else {
+    revealTargets.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // ── Lightbox ─────────────────────────────────────────────────────
+  var lb = document.getElementById('lb');
+  var lbImg = document.getElementById('lbImg');
+  var lbName = document.getElementById('lbName');
+  var lbIdx = document.getElementById('lbIdx');
+  var lbPrev = document.getElementById('lbPrev');
+  var lbNext = document.getElementById('lbNext');
+  var lbClose = document.getElementById('lbClose');
+
+  var curProject = -1, curImg = 0, lastTrigger = null;
+
+  function renderLB() {
+    var p = PROJECTS[curProject];
+    var img = p.images[curImg];
+    lbImg.src = img.src;
+    lbImg.alt = p.name + ' — Grupo Tejaz (' + (curImg + 1) + '/' + p.images.length + ')';
+    lbName.textContent = p.name;
+    lbIdx.textContent = String(curImg + 1).padStart(2, '0') + ' / ' + String(p.images.length).padStart(2, '0');
+    lbPrev.disabled = curImg === 0;
+    lbNext.disabled = curImg === p.images.length - 1;
+  }
+
+  function openLB(i, trigger) {
+    curProject = i; curImg = 0; lastTrigger = trigger || null;
+    renderLB();
+    lb.classList.add('open');
+    document.documentElement.style.overflow = 'hidden';
+    lbClose.focus();
+    history.replaceState(null, '', '#' + PROJECTS[i].id);
+  }
+
+  function closeLB() {
+    lb.classList.remove('open');
+    document.documentElement.style.overflow = '';
+    history.replaceState(null, '', location.pathname + location.search);
+    if (lastTrigger) lastTrigger.focus();
+  }
+
+  function step(d) {
+    var p = PROJECTS[curProject];
+    var n = curImg + d;
+    if (n < 0 || n > p.images.length - 1) return;
+    curImg = n;
+    renderLB();
+  }
+
+  lbClose.addEventListener('click', closeLB);
+  lbPrev.addEventListener('click', function () { step(-1); });
+  lbNext.addEventListener('click', function () { step(1); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) closeLB(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') { closeLB(); }
+    else if (e.key === 'ArrowLeft') { step(-1); }
+    else if (e.key === 'ArrowRight') { step(1); }
+    else if (e.key === 'Tab') {
+      // Focus trap simple: dos focales (cerrar, imagen actual vía botones nav).
+      var focusables = [lbClose, lbPrev, lbNext].filter(function (el) { return !el.disabled; });
+      var first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // Swipe básico en móvil
+  var touchX = null;
+  lb.addEventListener('touchstart', function (e) { touchX = e.changedTouches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', function (e) {
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) step(dx > 0 ? -1 : 1);
+    touchX = null;
+  }, { passive: true });
+
+  // Deep link básico: #casa-l81-marzo-2026 abre esa galería al cargar.
+  function tryOpenFromHash() {
+    var id = location.hash.replace('#', '');
+    if (!id) return;
+    var idx = PROJECTS.findIndex(function (p) { return p.id === id; });
+    if (idx >= 0) openLB(idx, null);
+  }
+  tryOpenFromHash();
+})();
+</script>
+</body>
+</html>

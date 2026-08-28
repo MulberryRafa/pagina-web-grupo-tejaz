@@ -111,6 +111,17 @@
   #datum-line { position:absolute; left:0; right:0; top:var(--datum-y); height:1px; background:var(--datum-c); mix-blend-mode:difference; opacity:.88; transform:scaleX(0); transform-origin:left center; pointer-events:none; z-index:3; will-change:transform; }
   .hl, [data-grade] { will-change: clip-path, transform; }
 
+  /* Portada, colchón inferior: SERVICIOS/COBERTURA/OFICINA vive anclado al
+     fondo de .sc-in (justify-content:space-between), mientras --datum-y
+     (76vh) es una proporción fija de arriba. Con el padding-bottom genérico
+     (var(--clear), hasta 22vh) el bloque queda por debajo de la cota en
+     TODA altura de escritorio — nunca hay margen real, la línea siempre
+     atraviesa el renglón. Portada necesita su propio colchón, mayor que el
+     genérico, para que el bloque quede siempre por encima de la cota. */
+  @media (min-width:1181px) {
+    #sc-hero .sc-in { padding-bottom:clamp(210px,27vh,300px) !important; }
+  }
+
   /* Retención de apertura: el scroll queda en pausa mientras Portada se
      levanta, para que la composición se sostenga antes de que el recorrido
      continúe (sólo escritorio; se libera solo al terminar la intro). */
@@ -158,7 +169,7 @@
      toque no debe encender un estado que el dedo no puede sostener. */
   @media (hover:hover) and (pointer:fine) {
     html.cur-on, html.cur-on * { cursor:none !important; }
-    .col:hover .ph, .wplate:hover .ph,
+    .col:hover .ph, .wplate:hover .ph, #obras-more:hover .ph, #obras-more:focus-visible .ph,
     .col:hover [classname~="ph"], .wplate:hover [classname~="ph"] { filter: var(--phn); }
     .col:hover { --svc-h: #E5E3DC; --svc-p: rgba(229,227,220,.8); }
     .col:hover .cnum { color: var(--accent-soft); }
@@ -186,6 +197,13 @@
 
   @media (min-width:1181px) and (max-height:780px) {
     .sc-in { padding-top:82px !important; padding-bottom:min(180px,20vh) !important; }
+    /* Portada: a esta altura el titular a tamaño completo, más su gap actual
+       hacia SERVICIOS/COBERTURA/OFICINA, dejaría muy poco margen entre la
+       cabecera y el bloque inferior (ver colchón real más abajo, fuera de
+       este quiebre). Se reduce el titular sólo aquí para conservar aire
+       arriba, sin tocar el resto de la tipografía del sitio. */
+    #sc-hero h1 { font-size:clamp(38px,6.2vw,92px) !important; }
+    #hero-copy { gap:clamp(14px,2.2vh,26px) !important; }
     #hac-head p { display:none !important; }
     .col .ph-wrap { max-height:38vh; }
     #con-mask { font-size:clamp(36px,6.2vw,108px) !important; }
@@ -249,6 +267,7 @@
     .wplate { height:auto !important; }
     .wplate .wframe { position:relative !important; inset:auto !important; height:64vw !important; filter:none !important; clip-path:none !important; }
     .wplate .wcap { position:relative !important; top:auto !important; margin-top:12px !important; font-size:11px !important; white-space:normal !important; }
+    #obras-more { width:100% !important; height:64vw !important; flex:none !important; margin-top:40px !important; }
     #obras-mob-stats { display:flex !important; }
     #hero-out { -webkit-text-stroke-width:0 !important; }
     #hero-fill { clip-path:inset(0 0 0 0) !important; }
@@ -372,18 +391,18 @@
               <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em"><div class="hl">tus proyectos</div></div>
               <div style="overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em;padding-left:clamp(24px,5.6vw,108px)"><div class="hl" style="position:relative"><span id="hero-out" style="color:transparent;-webkit-text-stroke:1.25px rgba(229,227,220,.62)">a la realidad</span><span id="hero-fill" style="position:absolute;left:0;top:0;white-space:nowrap;clip-path:inset(0% 100% 0% 0%)">a la realidad</span></div></div>
             </h1>
-            <div class="hero-meta" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(18px,2.6vw,44px);align-items:end;max-width:840px">
+            <div class="hero-meta" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(18px,2.6vw,44px);align-items:start;max-width:840px">
               <div class="hcell" style="display:flex;flex-direction:column;gap:9px">
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">SERVICIOS</span>
-                <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Residencial · Comercial · Remodelación</span>
+                <span style="font-size:clamp(12.5px,1.05vw,14.5px);font-weight:500;line-height:1.45;opacity:.95">Residencial · Comercial · Remodelación</span>
               </div>
               <div class="hcell" style="display:flex;flex-direction:column;gap:9px;padding-left:clamp(18px,2.6vw,44px);border-left:1px solid rgba(229,227,220,.18)">
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">COBERTURA</span>
-                <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Veracruz · Boca del Río · Xalapa</span>
+                <span style="font-size:clamp(12.5px,1.05vw,14.5px);font-weight:500;line-height:1.45;opacity:.95">Veracruz · Boca del Río · Xalapa</span>
               </div>
               <div class="hcell" style="display:flex;flex-direction:column;gap:9px;padding-left:clamp(18px,2.6vw,44px);border-left:1px solid rgba(229,227,220,.18)">
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
-                <span style="font-size:14.5px;font-weight:500;line-height:1.45;opacity:.95">Fracc. Reforma, Veracruz, Ver.</span>
+                <span style="font-size:clamp(12.5px,1.05vw,14.5px);font-weight:500;line-height:1.45;opacity:.95">Fracc. Reforma, Veracruz, Ver.</span>
               </div>
             </div>
           </div>
@@ -482,7 +501,7 @@
       </section>
 
       <!-- ══ 03 OBRAS — clímax, masa máxima ══ -->
-      <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:258vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
+      <section id="sc-obras" class="scene" data-theme="dark" data-label="03 OBRAS" data-screen-label="03 Obras" style="position:relative;flex:none;width:282vw;height:100%;overflow:hidden;background:#0A0B0A;color:#E5E3DC">
         <span class="sheet-id">A-03 / OBRAS</span>
         <div class="sc-in" style="position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:stretch;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div id="obras-head" style="position:relative;flex:none;width:13vw;display:flex;flex-direction:column;justify-content:space-between;padding-right:clamp(16px,2vw,32px);border-right:1px solid rgba(229,227,220,.16)">
@@ -506,25 +525,25 @@
                   </div>
                   <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Reforma" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-1" class="ph" src="proj-1-bg.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-1" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO REFORMA · 2021</div>
                   </div>
                   <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" tabindex="0" role="button" aria-label="Centrar Proyecto Costa Verde" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-2" class="ph" src="ph-cocina-b.jpg" alt="Proyecto Costa Verde" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-2" class="ph" src="img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg" alt="Proyecto Costa Verde" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO COSTA VERDE · 2022</div>
                   </div>
                   <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Malecón" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-3" class="ph" src="ph-fachada.jpg" alt="Proyecto Malecón" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-3" class="ph" src="img/proyectos/casa-mi-febrero-2024/primary.jpg" alt="Proyecto Malecón" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO MALECÓN · 2023</div>
                   </div>
                   <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" tabindex="0" role="button" aria-label="Centrar Proyecto Arboledas" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-4" class="ph" src="ubicaciones-bg.jpg" alt="Proyecto Arboledas" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-4" class="ph" src="img/proyectos/casa-l91-diciembre-2025/primary.jpg" alt="Proyecto Arboledas" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO ARBOLEDAS · 2024</div>
                   </div>
@@ -541,6 +560,23 @@
               </div>
             </div>
           </div>
+
+          <!-- Última pieza del carrusel de Obras: no es un proyecto, es la puerta
+               al archivo completo (21 proyectos reales). Vive fuera de #wheel-track
+               a propósito — no participa de la rotación de la rueda ni de su
+               geometría (n=4, un cuarto de giro por proyecto), así que los cuatro
+               proyectos existentes no cambian de comportamiento, tamaño ni timing.
+               Reutiliza el único verbo de revelado del sitio (data-grade, cota
+               cero) y el único gesto de hover (grado fotográfico + hilo nlink):
+               ninguna timeline nueva. -->
+          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver los 21 proyectos de Grupo Tejaz" style="flex:none;width:24vw;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
+            <img class="ph" src="img/proyectos/casa-caracas-455-mayo-2013/primary.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,10,.1) 0%,rgba(10,11,10,.82) 100%)"></div>
+            <div style="position:relative;z-index:1;padding:0 clamp(18px,1.8vw,30px) 8% clamp(18px,1.8vw,30px);display:flex;flex-direction:column;gap:12px">
+              <span style="font-size:clamp(26px,2.9vw,46px);font-weight:800;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.02em;text-transform:uppercase">MÁS<br>PROYECTOS ↗</span>
+              <span class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(229,227,220,.68)">VER LOS 21 PROYECTOS</span>
+            </div>
+          </a>
         </div>
       </section>
 
@@ -736,18 +772,27 @@
     JOURNEY.forEach(function (s) {
       var sc = document.getElementById(s.id);
       if (!sc) return;
-      var anchorX;
+      var ownSpan = Math.max(0.01, sc.offsetWidth / maxX);
+      // Obras tiene cuatro proyectos, no una sola parada: repartir la
+      // retención de la escena en cuatro anclas iguales (una por cada
+      // cuarto de giro de la rueda) para que ningún proyecto se quede
+      // fijo más tiempo que los demás.
       if (s.id === 'sc-obras' && _wheel) {
-        anchorX = _wheel.trackL + _wheel.len * (1 / 3);
-      } else {
-        var excess = Math.max(0, sc.offsetWidth - vw);
-        anchorX = sc.offsetLeft + (s.frac || 0) * excess;
+        var n = 4, per = s.holdPct / n;
+        for (var i = 0; i < n; i++) {
+          var ax = _wheel.trackL + _wheel.len * (i / (n - 1));
+          var out2 = Math.max(0, Math.min(1, ax / maxX));
+          if (i === 0) _anchorOut[s.id] = out2;
+          pts.push({ out: out2, half: (per * ownSpan) / 2, elev: s.elev });
+        }
+        return;
       }
+      var excess = Math.max(0, sc.offsetWidth - vw);
+      var anchorX = sc.offsetLeft + (s.frac || 0) * excess;
       var out = Math.max(0, Math.min(1, anchorX / maxX));
       // Retención en fracción del propio recorrido de la escena, no del
       // sitio entero: una escena angosta y una ancha con el mismo holdPct
       // deben sentirse proporcionalmente iguales, no en píxeles absolutos.
-      var ownSpan = Math.max(0.01, sc.offsetWidth / maxX);
       _anchorOut[s.id] = out;
       pts.push({ out: out, half: (s.holdPct * ownSpan) / 2, elev: s.elev });
     });
@@ -1072,7 +1117,7 @@
       ? gsap.timeline()
           .set('#hero-mask', { clipPath: 'inset(0% 0% 0% 0%)' })
           .set('#datum-line', { scaleX: 1 })
-          .fromTo('#hero-copy', { opacity: 0 }, { opacity: 1, duration: .3, ease: 'power2.out' })
+          .set('#hero-copy', { opacity: 1 })
       : gsap.timeline({
           delay: .1,
           onComplete: function () {
@@ -1186,18 +1231,59 @@
       // Interpolación de color determinista, sin blur, sin degradado con
       // pluma — el mismo mecanismo que ya usa el resto del archivo para
       // el color de #chrome-top/#chrome-bot en setTheme().
+      // Zonas es tema claro (título y fila activa en #0E0F0D fijo, sin fundido
+      // propio). El stop de fondo hacia Contacto (más abajo) lo pasa a oscuro;
+      // sin este fundido, ese texto oscuro queda ilegible sobre fondo ahora
+      // también oscuro — se lee como pantalla en negro. Atado al mismo tween
+      // de color vía onUpdate (no a una copia de sus mismos start/end): con
+      // varios stops de fondo compitiendo por la misma propiedad, dos
+      // ScrollTriggers con etiquetas idénticas no garantizan el mismo avance
+      // real; leer el progreso del propio tween sí.
+      var zonRows = Array.from(document.querySelectorAll('#sc-zonas .zrow'));
+      var zonInactive = zonRows.slice(0, -1);
+      var zonTitle = document.querySelector('#sc-zonas h2[data-mask]');
+      var zonLastRow = zonRows[zonRows.length - 1];
+      var zonFadeTargets = [zonTitle, zonLastRow].filter(Boolean);
+      if (zonInactive.length) {
+        gsap.to(zonInactive, {
+          opacity: .12, ease: 'none',
+          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 92%', end: 'left 58%', scrub: .4 }
+        });
+      }
+
       var stageBg = document.getElementById('stage-bg');
       if (stageBg) {
+        // Cada stop declara también su color de ORIGEN (el resultado del stop
+        // anterior; #0E0F0D — var(--dark) — para el primero, el tono real de
+        // #stage-bg antes de cualquier scroll). Con gsap.to() puro, el "from"
+        // de cada tween se captura implícito en el momento en que init() lo
+        // crea (antes de que exista scroll alguno) — para Contacto eso
+        // coincidía por casualidad con su propio "to" (#0E0F0D, igual que el
+        // estado inicial), volviendo el tween un no-op que de todas formas
+        // SOBRESCRIBE el color claro de Zonas en cuanto su ScrollTrigger se
+        // activa, sin relación con su propio progreso real — el fondo salta
+        // a oscuro casi de golpe en vez de atenuarse. fromTo() con el origen
+        // explícito hace que cada stop interpole desde el tono real anterior.
         var bgStops = [
-          { trig: '#sc-nosotros', to: '#E5E3DC' },
-          { trig: '#sc-hacemos', to: '#0E0F0D' },
-          { trig: '#sc-zonas', to: '#E5E3DC' },
-          { trig: '#sc-contacto', to: '#0E0F0D' }
+          { trig: '#sc-nosotros', from: '#0E0F0D', to: '#E5E3DC' },
+          { trig: '#sc-hacemos', from: '#E5E3DC', to: '#0E0F0D' },
+          { trig: '#sc-zonas', from: '#0E0F0D', to: '#E5E3DC' },
+          { trig: '#sc-contacto', from: '#E5E3DC', to: '#0E0F0D' }
         ];
         bgStops.forEach(function (s) {
-          gsap.to(stageBg, {
-            backgroundColor: s.to, ease: 'none',
-            scrollTrigger: { trigger: s.trig, containerAnimation: ca, start: 'left 90%', end: 'left 45%', scrub: .4 }
+          gsap.fromTo(stageBg, { backgroundColor: s.from }, {
+            backgroundColor: s.to, ease: 'none', overwrite: 'auto',
+            // Ventana amplia (vs. la anterior 90%→45%): en el carril no-lineal
+            // con retenciones, una ventana angosta cae en el tramo más
+            // empinado de la curva y el fondo salta de golpe en vez de
+            // atenuarse. Estirarla reparte el cambio de tono sobre la mayor
+            // parte del recorrido real entre escenas.
+            scrollTrigger: {
+              trigger: s.trig, containerAnimation: ca, start: 'left 98%', end: 'left 12%', scrub: .4,
+              onUpdate: (s.trig === '#sc-contacto' && zonFadeTargets.length) ? function (self) {
+                gsap.set(zonFadeTargets, { opacity: 1 - self.progress });
+              } : undefined
+            }
           });
         });
       }
@@ -1235,14 +1321,8 @@
       // propia regla juntos, nunca un esqueleto de línea vacía — mientras
       // la fila activa (la última, Coatzacoalcos) permanece y su
       // extensión (seam-5a, ver capa de trazo abajo) viaja hacia Contacto.
-      var zonRows = Array.from(document.querySelectorAll('#sc-zonas .zrow'));
-      var zonInactive = zonRows.slice(0, -1);
-      if (zonInactive.length && !reduce) {
-        gsap.to(zonInactive, {
-          opacity: .12, ease: 'none',
-          scrollTrigger: { trigger: '#sc-contacto', containerAnimation: ca, start: 'left 92%', end: 'left 58%', scrub: .4 }
-        });
-      }
+      // (zonInactive y el fundido del título/fila activa quedaron declarados
+      // más arriba, junto al stop de fondo que los dispara — ver comentario ahí.)
 
       var t4top = document.getElementById('seam-4-top');
       if (t4top) {

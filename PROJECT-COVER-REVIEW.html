@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Revisión de portadas — Grupo Tejaz (herramienta local)</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#141414; --panel:#1c1c1c; --panel-2:#232323; --line:#333;
+    --text:#eee; --muted:#9a9a9a; --accent:#e0a13d; --ok:#3d8b5f; --warn:#c0392b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0 0 80px 0;
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
+  header{
+    position:sticky; top:0; z-index:20;
+    background:#0f0f0f; border-bottom:1px solid var(--line);
+    padding:18px 28px;
+  }
+  header h1{ margin:0 0 4px 0; font-size:20px; font-weight:600; }
+  header p{ margin:0; color:var(--muted); font-size:13px; }
+  header .badge{
+    display:inline-block; background:var(--accent); color:#141414;
+    font-weight:700; font-size:11px; padding:2px 8px; border-radius:4px;
+    letter-spacing:.04em; margin-left:8px; vertical-align:middle;
+  }
+  .toc{
+    max-width:1400px; margin:20px auto 0; padding:0 28px;
+    display:flex; flex-wrap:wrap; gap:6px; font-size:12px;
+  }
+  .toc a{
+    color:var(--muted); text-decoration:none; border:1px solid var(--line);
+    padding:4px 8px; border-radius:4px; background:var(--panel);
+  }
+  .toc a.has-issue{ border-color:var(--warn); color:#e28b83; }
+  .toc a:hover{ color:var(--text); border-color:var(--accent); }
+
+  main{ max-width:1400px; margin:0 auto; padding:0 28px; }
+
+  section.project{
+    padding:36px 0; border-bottom:1px solid var(--line);
+  }
+  section.project:first-of-type{ padding-top:24px; }
+
+  .project-head{
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+    margin-bottom:4px;
+  }
+  .project-head h2{ margin:0; font-size:19px; font-weight:600; }
+  .project-head .idx{ color:var(--muted); font-size:13px; }
+  .source-folder{ color:var(--muted); font-size:12.5px; margin:0 0 16px 0; font-family:Consolas,monospace; }
+
+  .cards{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:18px;
+  }
+  @media (min-width:900px){
+    .cards{ grid-template-columns:repeat(3, 1fr); }
+  }
+  @media (max-width:899px) and (min-width:640px){
+    .cards{ grid-template-columns:repeat(2, 1fr); }
+  }
+
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+  .card.primary{
+    border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), 0 6px 20px rgba(224,161,61,.15);
+  }
+  .card-label{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; font-size:11.5px; font-weight:700; letter-spacing:.06em;
+    color:var(--muted); background:var(--panel-2); border-bottom:1px solid var(--line);
+  }
+  .card.primary .card-label{ color:#141414; background:var(--accent); }
+  .card-label .tag-current{
+    font-size:10px; font-weight:700; background:#141414; color:var(--accent);
+    padding:2px 6px; border-radius:3px; letter-spacing:.04em;
+  }
+  .thumb-wrap{
+    background:#000; display:flex; align-items:center; justify-content:center;
+    min-height:260px; max-height:420px; overflow:hidden; cursor:zoom-in;
+  }
+  .thumb-wrap img{ width:100%; height:100%; object-fit:contain; display:block; max-height:420px; }
+  .card-meta{ padding:10px 12px 14px; font-size:12.5px; color:var(--muted); line-height:1.6; }
+  .card-meta .fname{ color:var(--text); font-family:Consolas,monospace; font-size:12px; word-break:break-all; display:block; margin-bottom:4px; }
+  .card-meta .row{ display:flex; justify-content:space-between; gap:8px; }
+
+  .no-alt{
+    display:flex; align-items:center; justify-content:center; min-height:260px;
+    color:var(--muted); font-size:13px; border:1px dashed var(--line); border-radius:8px;
+    background:var(--panel);
+  }
+
+  .issue{
+    margin-top:16px; padding:14px 16px; border:1px solid var(--warn);
+    background:rgba(192,57,43,.1); border-radius:8px; font-size:13.5px;
+  }
+  .issue .flag{ color:#e28b83; font-weight:800; letter-spacing:.03em; margin-right:8px; }
+
+  /* lightbox */
+  #lightbox{
+    position:fixed; inset:0; background:rgba(0,0,0,.92); display:none;
+    align-items:center; justify-content:center; z-index:100; padding:40px; flex-direction:column;
+  }
+  #lightbox.open{ display:flex; }
+  #lightbox img{ max-width:100%; max-height:82vh; object-fit:contain; }
+  #lightbox .lb-caption{ color:#ccc; font-size:13px; margin-top:14px; font-family:Consolas,monospace; text-align:center; }
+  #lightbox .lb-close{
+    position:absolute; top:18px; right:26px; color:#fff; font-size:30px; cursor:pointer;
+    line-height:1; user-select:none;
+  }
+  #lightbox .lb-close:hover{ color:var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Revisión de portadas de proyectos <span class="badge">HERRAMIENTA LOCAL — NO ES PRODUCCIÓN</span></h1>
+  <p>21 proyectos · PRIMARY = coverCandidate actual en projects-source.json · ALT 01 / ALT 02 = mejores alternativas disponibles. Clic en una foto para ampliarla.</p>
+</header>
+
+<nav class="toc" id="toc"></nav>
+
+<main id="main"></main>
+
+<div id="lightbox">
+  <span class="lb-close" id="lbClose">&times;</span>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-caption" id="lbCaption"></div>
+</div>
+
+<script>
+const DATA = [
+    {
+        "id":  "casa-caracas-455-mayo-2013",
+        "name":  "CASA CARACAS 455 MAYO 2013",
+        "sourceFolder":  "CASA CARACAS 455 MAYO 2013",
+        "primary":  {
+                        "originalName":  "IMG_0960.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  5908,
+                        "height":  2470,
+                        "sizeBytes":  6437911
+                    },
+        "alt01":  {
+                      "originalName":  "IMG_0959.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  5380,
+                      "height":  2406,
+                      "sizeBytes":  5776546
+                  },
+        "alt02":  {
+                      "originalName":  "IMG_2124.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  2448,
+                      "height":  3264,
+                      "sizeBytes":  1854052
+                  }
+    },
+    {
+        "id":  "casa-l147-enero-2026",
+        "name":  "CASA L147  ENERO 2026",
+        "sourceFolder":  "CASA L147  ENERO 2026",
+        "primary":  {
+                        "originalName":  "PHOTO-2026-06-02-22-33-00.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1600,
+                        "height":  1200,
+                        "sizeBytes":  314498
+                    },
+        "alt01":  {
+                      "originalName":  "PHOTO-2026-06-02-22-32-52.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  960,
+                      "height":  1280,
+                      "sizeBytes":  52393
+                  },
+        "alt02":  {
+                      "originalName":  "PHOTO-2026-06-02-22-32-50 (1).jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  960,
+                      "height":  1280,
+                      "sizeBytes":  60173
+                  }
+    },
+    {
+        "id":  "casa-l81-marzo-2026",
+        "name":  "CASA L81 MARZO 2026",
+        "sourceFolder":  "CASA L81 MARZO 2026",
+        "primary":  {
+                        "originalName":  "PHOTO-2026-07-14-18-04-50 (2).jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1284,
+                        "height":  1466,
+                        "sizeBytes":  193075
+                    },
+        "alt01":  {
+                      "originalName":  "PHOTO-2026-07-14-18-04-50 (1).jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1284,
+                      "height":  1444,
+                      "sizeBytes":  152469
+                  },
+        "alt02":  {
+                      "originalName":  "PHOTO-2026-07-14-18-06-00 (3).jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1178,
+                      "height":  1558,
+                      "sizeBytes":  152380
+                  }
+    },
+    {
+        "id":  "casa-l90-marzo-2023",
+        "name":  "CASA L90 MARZO 2023",
+        "sourceFolder":  "CASA L90 MARZO 2023",
+        "primary":  {
+                        "originalName":  "482209156_1178599157386676_7873665790872584223_n.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1080,
+                        "height":  1080,
+                        "sizeBytes":  113362
+                    },
+        "alt01":  {
+                      "originalName":  "482209538_1178301937416398_2948883463891387472_n.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  138640
+                  },
+        "alt02":  null
+    },
+    {
+        "id":  "casa-l91-diciembre-2025",
+        "name":  "CASA L91 DICIEMBRE 2025",
+        "sourceFolder":  "CASA L91 DICIEMBRE 2025",
+        "primary":  {
+                        "originalName":  "FACHADA PRINCIPAL.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1600,
+                        "height":  1201,
+                        "sizeBytes":  205560
+                    },
+        "alt01":  {
+                      "originalName":  "FACHADA POSTERIOR.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1600,
+                      "height":  1201,
+                      "sizeBytes":  113502
+                  },
+        "alt02":  {
+                      "originalName":  "COCINA.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1600,
+                      "height":  1201,
+                      "sizeBytes":  107902
+                  }
+    },
+    {
+        "id":  "casa-l95-marzo-2023",
+        "name":  "CASA L95 MARZO 2023",
+        "sourceFolder":  "CASA L95 MARZO 2023",
+        "primary":  {
+                        "originalName":  "482065629_1179078570672068_8532407326916551727_n.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1080,
+                        "height":  1080,
+                        "sizeBytes":  140276
+                    },
+        "alt01":  {
+                      "originalName":  "482238954_1179078544005404_6706781408940430976_n.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  103796
+                  },
+        "alt02":  {
+                      "originalName":  "482225461_1179078214005437_34399228542783411_n.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  78389
+                  }
+    },
+    {
+        "id":  "casa-l97-marzo-2023",
+        "name":  "CASA L97 MARZO 2023",
+        "sourceFolder":  "CASA L97 MARZO 2023",
+        "primary":  {
+                        "originalName":  "484045271_1179722437274348_9001902398991210813_n.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1080,
+                        "height":  1080,
+                        "sizeBytes":  71609
+                    },
+        "alt01":  {
+                      "originalName":  "483957560_1179722430607682_4775390238820615876_n.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  85618
+                  },
+        "alt02":  {
+                      "originalName":  "483614510_1179722450607680_7968596500536066106_n.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  111078
+                  }
+    },
+    {
+        "id":  "casa-ladoga-125-diciembre-2021",
+        "name":  "CASA LADOGA 125 DICIEMBRE 2021",
+        "sourceFolder":  "CASA LADOGA 125 DICIEMBRE 2021",
+        "primary":  {
+                        "originalName":  "WhatsApp Image 2021-12-06 at 1.45.10 PM.jpeg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1206,
+                        "height":  1600,
+                        "sizeBytes":  309132
+                    },
+        "alt01":  {
+                      "originalName":  "WhatsApp Image 2021-12-06 at 1.46.38 PM.jpeg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1200,
+                      "height":  1600,
+                      "sizeBytes":  242071
+                  },
+        "alt02":  {
+                      "originalName":  "WhatsApp Image 2021-12-06 at 1.46.39 PM.jpeg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1200,
+                      "height":  1600,
+                      "sizeBytes":  196449
+                  }
+    },
+    {
+        "id":  "casa-lii-agosto-2023",
+        "name":  "CASA LII AGOSTO 2023",
+        "sourceFolder":  "CASA LII AGOSTO 2023",
+        "primary":  {
+                        "originalName":  "TERRAZA.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1600,
+                        "height":  1201,
+                        "sizeBytes":  369293
+                    },
+        "alt01":  {
+                      "originalName":  "ESCALERA 2.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1600,
+                      "height":  1201,
+                      "sizeBytes":  192426
+                  },
+        "alt02":  {
+                      "originalName":  "COMEDOR.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1600,
+                      "height":  1201,
+                      "sizeBytes":  139216
+                  }
+    },
+    {
+        "id":  "casa-mango-10-enero-2023",
+        "name":  "CASA MANGO 10 ENERO 2023",
+        "sourceFolder":  "CASA MANGO 10 ENERO 2023",
+        "primary":  {
+                        "originalName":  "482980344_1177916027454989_474034608136564199_n.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1080,
+                        "height":  1080,
+                        "sizeBytes":  137343
+                    },
+        "alt01":  {
+                      "originalName":  "482200271_1177916034121655_5855595987090451947_n.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  140779
+                  },
+        "alt02":  null
+    },
+    {
+        "id":  "casa-mg-julio-2026",
+        "name":  "CASA MG JULIO 2026",
+        "sourceFolder":  "CASA MG JULIO 2026",
+        "primary":  {
+                        "originalName":  "PHOTO-2026-08-04-09-41-29 (1).jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  960,
+                        "height":  1280,
+                        "sizeBytes":  80983
+                    },
+        "alt01":  {
+                      "originalName":  "PHOTO-2026-08-04-09-41-29 (3).jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1280,
+                      "height":  960,
+                      "sizeBytes":  108817
+                  },
+        "alt02":  {
+                      "originalName":  "PHOTO-2026-08-04-09-38-58 (5).jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  720,
+                      "height":  1280,
+                      "sizeBytes":  53386
+                  }
+    },
+    {
+        "id":  "casa-mi-febrero-2024",
+        "name":  "CASA MI FEBRERO 2024",
+        "sourceFolder":  "CASA MI FEBRERO 2024",
+        "primary":  {
+                        "originalName":  "FACHADA PRINCIPAL.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1600,
+                        "height":  1201,
+                        "sizeBytes":  266824
+                    },
+        "alt01":  {
+                      "originalName":  "BAÑO PRINCIPAL.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1600,
+                      "height":  1201,
+                      "sizeBytes":  120132
+                  },
+        "alt02":  {
+                      "originalName":  "BAÑO PRINCIPAL LAVABO.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1600,
+                      "height":  1201,
+                      "sizeBytes":  130608
+                  }
+    },
+    {
+        "id":  "casa-odesa-65-marzo-2015",
+        "name":  "CASA ODESA 65 MARZO 2015",
+        "sourceFolder":  "CASA ODESA 65 MARZO 2015",
+        "primary":  {
+                        "originalName":  "ROMAN 4.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  3264,
+                        "height":  2448,
+                        "sizeBytes":  2314734
+                    },
+        "alt01":  {
+                      "originalName":  "ROMAN 3.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  3264,
+                      "height":  2448,
+                      "sizeBytes":  2695839
+                  },
+        "alt02":  {
+                      "originalName":  "ROMAN 1 (2).jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  3264,
+                      "height":  2448,
+                      "sizeBytes":  2441399
+                  }
+    },
+    {
+        "id":  "casa-odesa-66-febrero-2017",
+        "name":  "CASA ODESA 66 FEBRERO 2017",
+        "sourceFolder":  "CASA ODESA 66 FEBRERO 2017",
+        "primary":  {
+                        "originalName":  "foto_3_patio_alberca_sin_marca.png",
+                        "copiedAs":  "primary.png",
+                        "width":  724,
+                        "height":  543,
+                        "sizeBytes":  543353
+                    },
+        "alt01":  {
+                      "originalName":  "foto_4_terraza_alberca_sin_marca.png",
+                      "copiedAs":  "alt-01.png",
+                      "width":  724,
+                      "height":  543,
+                      "sizeBytes":  742716
+                  },
+        "alt02":  {
+                      "originalName":  "foto_1_fachada_sin_marca.png",
+                      "copiedAs":  "alt-02.png",
+                      "width":  724,
+                      "height":  543,
+                      "sizeBytes":  589762
+                  }
+    },
+    {
+        "id":  "casa-odesa-67-octubre-2015",
+        "name":  "CASA ODESA 67 OCTUBRE 2015",
+        "sourceFolder":  "CASA ODESA 67 OCTUBRE 2015",
+        "primary":  {
+                        "originalName":  "IMG_4992 (20).jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  4032,
+                        "height":  3024,
+                        "sizeBytes":  2447100
+                    },
+        "alt01":  {
+                      "originalName":  "IMG_4992.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  4032,
+                      "height":  3024,
+                      "sizeBytes":  2447100
+                  },
+        "alt02":  {
+                      "originalName":  "IMG_4991.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  4032,
+                      "height":  3024,
+                      "sizeBytes":  2358848
+                  }
+    },
+    {
+        "id":  "casa-oli-enero-2018",
+        "name":  "CASA OLI ENERO 2018",
+        "sourceFolder":  "CASA OLI ENERO 2018",
+        "primary":  {
+                        "originalName":  "IMG-20210614-WA0048.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1024,
+                        "height":  824,
+                        "sizeBytes":  109347
+                    },
+        "alt01":  {
+                      "originalName":  "IMG-20210614-WA0044.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  768,
+                      "height":  1024,
+                      "sizeBytes":  67424
+                  },
+        "alt02":  {
+                      "originalName":  "IMG-20210614-WA0043.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1024,
+                      "height":  768,
+                      "sizeBytes":  95174
+                  }
+    },
+    {
+        "id":  "casa-palmas-47-agosto-2024",
+        "name":  "CASA PALMAS 47 AGOSTO 2024",
+        "sourceFolder":  "CASA PALMAS 47 AGOSTO 2024",
+        "primary":  {
+                        "originalName":  "FACHADA PRINCIPAL.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  1080,
+                        "height":  1080,
+                        "sizeBytes":  126036
+                    },
+        "alt01":  {
+                      "originalName":  "TV.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  93275
+                  },
+        "alt02":  {
+                      "originalName":  "COCINA.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  1080,
+                      "height":  1080,
+                      "sizeBytes":  105530
+                  }
+    },
+    {
+        "id":  "casa-roque-enero-2017",
+        "name":  "CASA ROQUE ENERO 2017",
+        "sourceFolder":  "CASA ROQUE ENERO 2017",
+        "primary":  {
+                        "originalName":  "IMG-20210614-WA0069.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  768,
+                        "height":  1024,
+                        "sizeBytes":  62369
+                    },
+        "alt01":  {
+                      "originalName":  "IMG-20210614-WA0075.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  768,
+                      "height":  1024,
+                      "sizeBytes":  65881
+                  },
+        "alt02":  null
+    },
+    {
+        "id":  "casa-tamesi-151-diciembre-2017",
+        "name":  "CASA TAMESI 151 DICIEMBRE 2017",
+        "sourceFolder":  "CASA TAMESI 151 DICIEMBRE 2017",
+        "primary":  {
+                        "originalName":  "IMG_0125.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  560,
+                        "height":  640,
+                        "sizeBytes":  108193
+                    },
+        "alt01":  {
+                      "originalName":  "IMG_0279.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  480,
+                      "height":  640,
+                      "sizeBytes":  75093
+                  },
+        "alt02":  {
+                      "originalName":  "IMG_0281.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  480,
+                      "height":  640,
+                      "sizeBytes":  47410
+                  }
+    },
+    {
+        "id":  "casa-tamesi-155-septiembre-2019",
+        "name":  "CASA TAMESI 155 SEPTIEMBRE 2019",
+        "sourceFolder":  "CASA TAMESI 155 SEPTIEMBRE 2019",
+        "primary":  {
+                        "originalName":  "IMG_1972.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  3024,
+                        "height":  4032,
+                        "sizeBytes":  3640211
+                    },
+        "alt01":  {
+                      "originalName":  "IMG_1771.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  4032,
+                      "height":  3024,
+                      "sizeBytes":  3488932
+                  },
+        "alt02":  {
+                      "originalName":  "IMG_1971.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  3024,
+                      "height":  4032,
+                      "sizeBytes":  3410456
+                  }
+    },
+    {
+        "id":  "casa-valencia-77-diciembre-2015",
+        "name":  "CASA VALENCIA 77 DICIEMBRE 2015",
+        "sourceFolder":  "CASA VALENCIA 77 DICIEMBRE 2015",
+        "primary":  {
+                        "originalName":  "IMG_5225.jpg",
+                        "copiedAs":  "primary.jpg",
+                        "width":  3264,
+                        "height":  2448,
+                        "sizeBytes":  1936491
+                    },
+        "alt01":  {
+                      "originalName":  "IMG_5226.jpg",
+                      "copiedAs":  "alt-01.jpg",
+                      "width":  2448,
+                      "height":  3264,
+                      "sizeBytes":  2128502
+                  },
+        "alt02":  {
+                      "originalName":  "IMG_5227.jpg",
+                      "copiedAs":  "alt-02.jpg",
+                      "width":  2448,
+                      "height":  3264,
+                      "sizeBytes":  2207758
+                  }
+    }
+]
+;
+
+const ISSUES = {
+  "casa-l90-marzo-2023": "Solo existen 2 fotografías reales en todo el proyecto (sin ALT 02). Material insuficiente para elegir con confianza.",
+  "casa-mango-10-enero-2023": "Solo 2 fotografías reales disponibles (el resto de la carpeta son renders/planos). Material insuficiente para elegir con confianza.",
+  "casa-roque-enero-2017": "Solo existen 2 fotografías reales utilizables (el resto son planos PDF y una captura de pantalla). Material insuficiente.",
+  "casa-odesa-66-febrero-2017": "Las 3 opciones están alrededor de 724×543 (~0.39MP). Baja resolución para una portada grande — usable solo en tamaños pequeños.",
+  "casa-tamesi-151-diciembre-2017": "Las 3 opciones están entre 480×640 y 560×640 (menos de 0.36MP). Baja resolución, se verán pixeladas si se amplían."
+};
+
+function fmtBytes(b){
+  if(!b) return "—";
+  if(b < 1024*1024) return (b/1024).toFixed(0) + " KB";
+  return (b/(1024*1024)).toFixed(2) + " MB";
+}
+function fmtRatio(w,h){
+  if(!w || !h) return "—";
+  const r = w/h;
+  if(Math.abs(r-1) < 0.03) return "1:1 · cuadrada";
+  if(r > 1) return r.toFixed(2) + ":1 · horizontal";
+  return "1:" + (h/w).toFixed(2) + " · vertical";
+}
+
+function card(kind, label, cand, projId){
+  if(!cand){
+    return `<div class="no-alt">Sin ${label} disponible</div>`;
+  }
+  const src = `_review/project-covers/${projId}/${cand.copiedAs}`;
+  const isPrimary = kind === "primary";
+  return `
+  <div class="card ${isPrimary ? 'primary' : ''}">
+    <div class="card-label">
+      <span>${label}</span>
+      ${isPrimary ? '<span class="tag-current">SELECCIÓN ACTUAL</span>' : ''}
+    </div>
+    <div class="thumb-wrap" data-src="${src}" data-caption="${cand.originalName.replace(/"/g,'&quot;')} — ${cand.width}×${cand.height}">
+      <img src="${src}" alt="${label} - ${projId}" loading="lazy">
+    </div>
+    <div class="card-meta">
+      <span class="fname">${cand.originalName}</span>
+      <div class="row"><span>Resolución</span><span>${cand.width}×${cand.height}px</span></div>
+      <div class="row"><span>Proporción</span><span>${fmtRatio(cand.width, cand.height)}</span></div>
+      <div class="row"><span>Tamaño</span><span>${fmtBytes(cand.sizeBytes)}</span></div>
+    </div>
+  </div>`;
+}
+
+const toc = document.getElementById('toc');
+const main = document.getElementById('main');
+
+DATA.forEach((p, i) => {
+  const hasIssue = ISSUES.hasOwnProperty(p.id);
+
+  const a = document.createElement('a');
+  a.href = '#' + p.id;
+  a.textContent = (i+1) + '. ' + p.name.trim();
+  if(hasIssue) a.className = 'has-issue';
+  toc.appendChild(a);
+
+  const section = document.createElement('section');
+  section.className = 'project';
+  section.id = p.id;
+  section.innerHTML = `
+    <div class="project-head">
+      <span class="idx">${String(i+1).padStart(2,'0')}</span>
+      <h2>${p.name.trim()}</h2>
+    </div>
+    <p class="source-folder">Carpeta fuente: CASAS TEJAZ / ${p.sourceFolder}</p>
+    <div class="cards">
+      ${card('primary','PRIMARY', p.primary, p.id)}
+      ${card('alt01','ALT 01', p.alt01, p.id)}
+      ${card('alt02','ALT 02', p.alt02, p.id)}
+    </div>
+    ${hasIssue ? `<div class="issue"><span class="flag">⚠ COVER QUALITY ISSUE</span>${ISSUES[p.id]}</div>` : ''}
+  `;
+  main.appendChild(section);
+});
+
+// lightbox
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+document.addEventListener('click', (e) => {
+  const wrap = e.target.closest('.thumb-wrap');
+  if(wrap){
+    lbImg.src = wrap.dataset.src;
+    lbCaption.textContent = wrap.dataset.caption;
+    lb.classList.add('open');
+  }
+});
+document.getElementById('lbClose').addEventListener('click', () => lb.classList.remove('open'));
+lb.addEventListener('click', (e) => { if(e.target === lb) lb.classList.remove('open'); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') lb.classList.remove('open'); });
+</script>
+</body>
+</html>

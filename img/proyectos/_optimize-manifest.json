@@ -1,0 +1,2147 @@
+[
+  {
+    "id": "casa-caracas-455-mayo-2013",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/primary.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2547792,
+        "dstBytes": 560903
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-01.jpg",
+        "width": 2200,
+        "height": 984,
+        "srcBytes": 5776546,
+        "dstBytes": 596089
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-02.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2575461,
+        "dstBytes": 565772
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-03.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2811567,
+        "dstBytes": 626950
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-04.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 3277743,
+        "dstBytes": 775989
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-05.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2889546,
+        "dstBytes": 673409
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-06.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2537206,
+        "dstBytes": 559638
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-07.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2781179,
+        "dstBytes": 627544
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-08.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2245220,
+        "dstBytes": 460060
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-09.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2321761,
+        "dstBytes": 466549
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-10.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2218573,
+        "dstBytes": 446312
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-11.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1739388,
+        "dstBytes": 330948
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-12.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1699478,
+        "dstBytes": 319744
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-13.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1556070,
+        "dstBytes": 273903
+      },
+      {
+        "kind": "alt-14",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-14.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1328073,
+        "dstBytes": 223875
+      },
+      {
+        "kind": "alt-15",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-15.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1652716,
+        "dstBytes": 314086
+      },
+      {
+        "kind": "alt-16",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-16.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2237289,
+        "dstBytes": 460821
+      },
+      {
+        "kind": "alt-17",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-17.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2303975,
+        "dstBytes": 460953
+      },
+      {
+        "kind": "alt-18",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-18.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2398149,
+        "dstBytes": 516591
+      },
+      {
+        "kind": "alt-19",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-19.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1629606,
+        "dstBytes": 364136
+      },
+      {
+        "kind": "alt-20",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-20.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1320445,
+        "dstBytes": 283772
+      },
+      {
+        "kind": "alt-21",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-21.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1359391,
+        "dstBytes": 289529
+      },
+      {
+        "kind": "alt-22",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-22.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1926419,
+        "dstBytes": 384010
+      },
+      {
+        "kind": "alt-23",
+        "file": "img/proyectos/casa-caracas-455-mayo-2013/alt-23.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1658063,
+        "dstBytes": 357029
+      }
+    ]
+  },
+  {
+    "id": "casa-l147-enero-2026",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-l147-enero-2026/primary.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 120553,
+        "dstBytes": 167120
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-01.jpg",
+        "width": 1600,
+        "height": 1200,
+        "srcBytes": 314498,
+        "dstBytes": 347430
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-02.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 118035,
+        "dstBytes": 165285
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-03.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 114709,
+        "dstBytes": 158980
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-04.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 184426,
+        "dstBytes": 257270
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-05.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 71529,
+        "dstBytes": 96587
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-06.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 85164,
+        "dstBytes": 113104
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-07.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 79964,
+        "dstBytes": 106786
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-08.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 72591,
+        "dstBytes": 97545
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-09.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 80919,
+        "dstBytes": 107842
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-10.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 72817,
+        "dstBytes": 97657
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-11.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 66004,
+        "dstBytes": 86588
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-12.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 50845,
+        "dstBytes": 67696
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-13.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 51837,
+        "dstBytes": 70351
+      },
+      {
+        "kind": "alt-14",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-14.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 64948,
+        "dstBytes": 86042
+      },
+      {
+        "kind": "alt-15",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-15.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 52393,
+        "dstBytes": 70007
+      },
+      {
+        "kind": "alt-16",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-16.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 60173,
+        "dstBytes": 79558
+      },
+      {
+        "kind": "alt-17",
+        "file": "img/proyectos/casa-l147-enero-2026/alt-17.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 59518,
+        "dstBytes": 79345
+      }
+    ]
+  },
+  {
+    "id": "casa-l81-marzo-2026",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-l81-marzo-2026/primary.jpg",
+        "width": 1284,
+        "height": 1444,
+        "srcBytes": 152469,
+        "dstBytes": 171622
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-01.jpg",
+        "width": 1284,
+        "height": 1377,
+        "srcBytes": 146117,
+        "dstBytes": 159032
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-02.jpg",
+        "width": 1284,
+        "height": 1466,
+        "srcBytes": 193075,
+        "dstBytes": 218907
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-03.jpg",
+        "width": 1050,
+        "height": 1600,
+        "srcBytes": 164789,
+        "dstBytes": 181321
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-04.jpg",
+        "width": 1096,
+        "height": 1600,
+        "srcBytes": 104058,
+        "dstBytes": 114895
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-05.jpg",
+        "width": 1178,
+        "height": 1558,
+        "srcBytes": 152380,
+        "dstBytes": 170711
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-06.jpg",
+        "width": 1110,
+        "height": 1600,
+        "srcBytes": 146287,
+        "dstBytes": 163712
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-07.jpg",
+        "width": 1004,
+        "height": 1600,
+        "srcBytes": 137534,
+        "dstBytes": 153647
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-08.jpg",
+        "width": 1048,
+        "height": 1600,
+        "srcBytes": 117707,
+        "dstBytes": 134271
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-09.jpg",
+        "width": 1094,
+        "height": 1600,
+        "srcBytes": 98386,
+        "dstBytes": 103083
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-10.jpg",
+        "width": 802,
+        "height": 1600,
+        "srcBytes": 66380,
+        "dstBytes": 70931
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-l81-marzo-2026/alt-11.jpg",
+        "width": 836,
+        "height": 1600,
+        "srcBytes": 62689,
+        "dstBytes": 65263
+      }
+    ]
+  },
+  {
+    "id": "casa-l90-marzo-2023",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-l90-marzo-2023/primary.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 138640,
+        "dstBytes": 168251
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-l90-marzo-2023/alt-01.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 113362,
+        "dstBytes": 147581
+      }
+    ]
+  },
+  {
+    "id": "casa-l91-diciembre-2025",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-l91-diciembre-2025/primary.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 205560,
+        "dstBytes": 253204
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-01.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 184887,
+        "dstBytes": 231743
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-02.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 113502,
+        "dstBytes": 141331
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-03.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 112000,
+        "dstBytes": 145133
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-04.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 123093,
+        "dstBytes": 155301
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-05.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 122413,
+        "dstBytes": 150357
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-06.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 107902,
+        "dstBytes": 133270
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-07.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 74712,
+        "dstBytes": 94301
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-08.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 81887,
+        "dstBytes": 108746
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-09.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 90218,
+        "dstBytes": 113938
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-10.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 101969,
+        "dstBytes": 123142
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-11.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 101904,
+        "dstBytes": 123258
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-12.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 152515,
+        "dstBytes": 187100
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-13.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 1631905,
+        "dstBytes": 203745
+      },
+      {
+        "kind": "alt-14",
+        "file": "img/proyectos/casa-l91-diciembre-2025/alt-14.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 84119,
+        "dstBytes": 106998
+      }
+    ]
+  },
+  {
+    "id": "casa-l95-marzo-2023",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-l95-marzo-2023/primary.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 235721,
+        "dstBytes": 288416
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-01.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 100692,
+        "dstBytes": 127425
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-02.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 140276,
+        "dstBytes": 179695
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-03.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 78389,
+        "dstBytes": 100306
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-04.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 94210,
+        "dstBytes": 120439
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-05.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 103796,
+        "dstBytes": 134175
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-06.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 162301,
+        "dstBytes": 214372
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-07.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 100783,
+        "dstBytes": 131901
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-l95-marzo-2023/alt-08.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 86520,
+        "dstBytes": 113077
+      }
+    ]
+  },
+  {
+    "id": "casa-l97-marzo-2023",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-l97-marzo-2023/primary.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 107690,
+        "dstBytes": 135976
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-01.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 99296,
+        "dstBytes": 125428
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-02.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 111078,
+        "dstBytes": 140011
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-03.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 71609,
+        "dstBytes": 88573
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-04.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 75511,
+        "dstBytes": 94099
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-05.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 85618,
+        "dstBytes": 111013
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-06.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 77881,
+        "dstBytes": 98491
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-l97-marzo-2023/alt-07.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 92092,
+        "dstBytes": 117569
+      }
+    ]
+  },
+  {
+    "id": "casa-ladoga-125-diciembre-2021",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 292079,
+        "dstBytes": 318606
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-01.jpg",
+        "width": 1600,
+        "height": 1200,
+        "srcBytes": 212896,
+        "dstBytes": 232431
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-02.jpg",
+        "width": 1600,
+        "height": 1200,
+        "srcBytes": 291130,
+        "dstBytes": 317573
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-03.jpg",
+        "width": 1600,
+        "height": 1200,
+        "srcBytes": 225780,
+        "dstBytes": 246805
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-04.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 194024,
+        "dstBytes": 211445
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-05.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 239613,
+        "dstBytes": 262677
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-06.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 340068,
+        "dstBytes": 375628
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-07.jpg",
+        "width": 1206,
+        "height": 1600,
+        "srcBytes": 309132,
+        "dstBytes": 337370
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-08.jpg",
+        "width": 1120,
+        "height": 1600,
+        "srcBytes": 191787,
+        "dstBytes": 210050
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-09.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 160332,
+        "dstBytes": 175649
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-10.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 291840,
+        "dstBytes": 322236
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-11.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 309547,
+        "dstBytes": 339692
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-12.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 239545,
+        "dstBytes": 263499
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-13.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 180657,
+        "dstBytes": 198734
+      },
+      {
+        "kind": "alt-14",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-14.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 299715,
+        "dstBytes": 328481
+      },
+      {
+        "kind": "alt-15",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-15.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 251430,
+        "dstBytes": 275492
+      },
+      {
+        "kind": "alt-16",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-16.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 119564,
+        "dstBytes": 134755
+      },
+      {
+        "kind": "alt-17",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-17.jpg",
+        "width": 1600,
+        "height": 1200,
+        "srcBytes": 216207,
+        "dstBytes": 234782
+      },
+      {
+        "kind": "alt-18",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-18.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 175338,
+        "dstBytes": 191874
+      },
+      {
+        "kind": "alt-19",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-19.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 145840,
+        "dstBytes": 160617
+      },
+      {
+        "kind": "alt-20",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-20.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 179598,
+        "dstBytes": 195817
+      },
+      {
+        "kind": "alt-21",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-21.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 212031,
+        "dstBytes": 230539
+      },
+      {
+        "kind": "alt-22",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-22.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 212114,
+        "dstBytes": 231989
+      },
+      {
+        "kind": "alt-23",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-23.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 242071,
+        "dstBytes": 265726
+      },
+      {
+        "kind": "alt-24",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-24.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 136359,
+        "dstBytes": 152144
+      },
+      {
+        "kind": "alt-25",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-25.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 168138,
+        "dstBytes": 183155
+      },
+      {
+        "kind": "alt-26",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-26.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 196449,
+        "dstBytes": 212769
+      },
+      {
+        "kind": "alt-27",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-27.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 163871,
+        "dstBytes": 177116
+      },
+      {
+        "kind": "alt-28",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-28.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 132239,
+        "dstBytes": 144698
+      },
+      {
+        "kind": "alt-29",
+        "file": "img/proyectos/casa-ladoga-125-diciembre-2021/alt-29.jpg",
+        "width": 1200,
+        "height": 1600,
+        "srcBytes": 170201,
+        "dstBytes": 185372
+      }
+    ]
+  },
+  {
+    "id": "casa-lii-agosto-2023",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-lii-agosto-2023/primary.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 243305,
+        "dstBytes": 292464
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-01.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 338926,
+        "dstBytes": 402432
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-02.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 369293,
+        "dstBytes": 447654
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-03.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 204187,
+        "dstBytes": 252434
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-04.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 207357,
+        "dstBytes": 256028
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-05.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 192426,
+        "dstBytes": 236162
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-06.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 144912,
+        "dstBytes": 181317
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-07.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 139216,
+        "dstBytes": 175466
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-08.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 161434,
+        "dstBytes": 197943
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-09.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 157030,
+        "dstBytes": 190618
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-10.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 136535,
+        "dstBytes": 169822
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-11.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 102691,
+        "dstBytes": 127963
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-12.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 89752,
+        "dstBytes": 113831
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-lii-agosto-2023/alt-13.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 116374,
+        "dstBytes": 142155
+      }
+    ]
+  },
+  {
+    "id": "casa-mango-10-enero-2023",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-mango-10-enero-2023/primary.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 140779,
+        "dstBytes": 179185
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-mango-10-enero-2023/alt-01.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 137343,
+        "dstBytes": 175769
+      }
+    ]
+  },
+  {
+    "id": "casa-mg-julio-2026",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-mg-julio-2026/primary.jpg",
+        "width": 1280,
+        "height": 960,
+        "srcBytes": 108817,
+        "dstBytes": 141550
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-01.jpg",
+        "width": 960,
+        "height": 1280,
+        "srcBytes": 80983,
+        "dstBytes": 103193
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-02.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 94835,
+        "dstBytes": 129029
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-03.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 71326,
+        "dstBytes": 99505
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-04.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 56651,
+        "dstBytes": 74504
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-05.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 71844,
+        "dstBytes": 95511
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-06.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 79574,
+        "dstBytes": 105115
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-07.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 65078,
+        "dstBytes": 87723
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-08.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 56153,
+        "dstBytes": 76388
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-09.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 48311,
+        "dstBytes": 65543
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-10.jpg",
+        "width": 1280,
+        "height": 720,
+        "srcBytes": 66591,
+        "dstBytes": 85299
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-11.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 55934,
+        "dstBytes": 70868
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-12.jpg",
+        "width": 1280,
+        "height": 720,
+        "srcBytes": 62276,
+        "dstBytes": 79550
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-mg-julio-2026/alt-13.jpg",
+        "width": 720,
+        "height": 1280,
+        "srcBytes": 51789,
+        "dstBytes": 67996
+      }
+    ]
+  },
+  {
+    "id": "casa-mi-febrero-2024",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-mi-febrero-2024/primary.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 266824,
+        "dstBytes": 322728
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-01.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 190330,
+        "dstBytes": 228525
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-02.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 319506,
+        "dstBytes": 388940
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-03.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 148591,
+        "dstBytes": 181771
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-04.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 176563,
+        "dstBytes": 222404
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-05.jpg",
+        "width": 1600,
+        "height": 1158,
+        "srcBytes": 133675,
+        "dstBytes": 159691
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-06.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 108466,
+        "dstBytes": 135980
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-07.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 123324,
+        "dstBytes": 152860
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-08.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 152445,
+        "dstBytes": 186664
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-09.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 173050,
+        "dstBytes": 209237
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-10.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 135313,
+        "dstBytes": 164607
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-11.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 202061,
+        "dstBytes": 247570
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-12.jpg",
+        "width": 1201,
+        "height": 1600,
+        "srcBytes": 100326,
+        "dstBytes": 124137
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-13.jpg",
+        "width": 1201,
+        "height": 1600,
+        "srcBytes": 160042,
+        "dstBytes": 205524
+      },
+      {
+        "kind": "alt-14",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-14.jpg",
+        "width": 1201,
+        "height": 1600,
+        "srcBytes": 215919,
+        "dstBytes": 258817
+      },
+      {
+        "kind": "alt-15",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-15.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 153049,
+        "dstBytes": 188460
+      },
+      {
+        "kind": "alt-16",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-16.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 120132,
+        "dstBytes": 150051
+      },
+      {
+        "kind": "alt-17",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-17.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 130608,
+        "dstBytes": 159764
+      },
+      {
+        "kind": "alt-18",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-18.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 130320,
+        "dstBytes": 161303
+      },
+      {
+        "kind": "alt-19",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-19.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 173539,
+        "dstBytes": 212933
+      },
+      {
+        "kind": "alt-20",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-20.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 126164,
+        "dstBytes": 156225
+      },
+      {
+        "kind": "alt-21",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-21.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 103551,
+        "dstBytes": 127775
+      },
+      {
+        "kind": "alt-22",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-22.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 135315,
+        "dstBytes": 164054
+      },
+      {
+        "kind": "alt-23",
+        "file": "img/proyectos/casa-mi-febrero-2024/alt-23.jpg",
+        "width": 1600,
+        "height": 1201,
+        "srcBytes": 118078,
+        "dstBytes": 143063
+      }
+    ]
+  },
+  {
+    "id": "casa-odesa-65-marzo-2015",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-odesa-65-marzo-2015/primary.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2441399,
+        "dstBytes": 547566
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-odesa-65-marzo-2015/alt-01.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2314734,
+        "dstBytes": 500548
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-odesa-65-marzo-2015/alt-02.jpg",
+        "width": 1280,
+        "height": 1280,
+        "srcBytes": 311228,
+        "dstBytes": 222462
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-odesa-65-marzo-2015/alt-03.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2082604,
+        "dstBytes": 440446
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-odesa-65-marzo-2015/alt-04.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2106364,
+        "dstBytes": 431655
+      }
+    ]
+  },
+  {
+    "id": "casa-odesa-66-febrero-2017",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-odesa-66-febrero-2017/primary.jpg",
+        "width": 724,
+        "height": 543,
+        "srcBytes": 589762,
+        "dstBytes": 73594
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-odesa-66-febrero-2017/alt-01.jpg",
+        "width": 724,
+        "height": 543,
+        "srcBytes": 543353,
+        "dstBytes": 73083
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-odesa-66-febrero-2017/alt-02.jpg",
+        "width": 724,
+        "height": 543,
+        "srcBytes": 651410,
+        "dstBytes": 90112
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-odesa-66-febrero-2017/alt-03.jpg",
+        "width": 724,
+        "height": 543,
+        "srcBytes": 742716,
+        "dstBytes": 110357
+      }
+    ]
+  },
+  {
+    "id": "casa-odesa-67-octubre-2015",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/primary.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2108262,
+        "dstBytes": 421471
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-01.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2447100,
+        "dstBytes": 519077
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-02.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2358848,
+        "dstBytes": 498528
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-03.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2225839,
+        "dstBytes": 469152
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-04.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2028075,
+        "dstBytes": 424182
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-05.jpg",
+        "width": 1136,
+        "height": 852,
+        "srcBytes": 104345,
+        "dstBytes": 111978
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-06.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2526828,
+        "dstBytes": 560045
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-07.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 3040616,
+        "dstBytes": 664072
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-08.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2287842,
+        "dstBytes": 493154
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-09.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1491882,
+        "dstBytes": 295227
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-10.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1290583,
+        "dstBytes": 245659
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-11.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1470517,
+        "dstBytes": 271415
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-12.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1714908,
+        "dstBytes": 357341
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-13.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1606900,
+        "dstBytes": 321882
+      },
+      {
+        "kind": "alt-14",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-14.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1984998,
+        "dstBytes": 398158
+      },
+      {
+        "kind": "alt-15",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-15.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1464288,
+        "dstBytes": 270302
+      },
+      {
+        "kind": "alt-16",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-16.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1699778,
+        "dstBytes": 336024
+      },
+      {
+        "kind": "alt-17",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-17.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2230778,
+        "dstBytes": 484034
+      },
+      {
+        "kind": "alt-18",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-18.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1295535,
+        "dstBytes": 229543
+      },
+      {
+        "kind": "alt-19",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-19.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1542876,
+        "dstBytes": 291842
+      },
+      {
+        "kind": "alt-20",
+        "file": "img/proyectos/casa-odesa-67-octubre-2015/alt-20.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1435502,
+        "dstBytes": 319619
+      }
+    ]
+  },
+  {
+    "id": "casa-oli-enero-2018",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-oli-enero-2018/primary.jpg",
+        "width": 1024,
+        "height": 724,
+        "srcBytes": 99702,
+        "dstBytes": 109374
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-01.jpg",
+        "width": 1024,
+        "height": 768,
+        "srcBytes": 82174,
+        "dstBytes": 90504
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-02.jpg",
+        "width": 1024,
+        "height": 604,
+        "srcBytes": 75695,
+        "dstBytes": 82496
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-03.jpg",
+        "width": 1024,
+        "height": 768,
+        "srcBytes": 95174,
+        "dstBytes": 105495
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-04.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 112477,
+        "dstBytes": 123831
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-05.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 48978,
+        "dstBytes": 54948
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-06.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 67424,
+        "dstBytes": 73983
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-oli-enero-2018/alt-07.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 68912,
+        "dstBytes": 75774
+      }
+    ]
+  },
+  {
+    "id": "casa-palmas-47-agosto-2024",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/primary.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 126036,
+        "dstBytes": 163897
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-01.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 155729,
+        "dstBytes": 195495
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-02.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 197878,
+        "dstBytes": 248857
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-03.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 179521,
+        "dstBytes": 232961
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-04.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 55378,
+        "dstBytes": 69748
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-05.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 95384,
+        "dstBytes": 118592
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-06.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 94522,
+        "dstBytes": 120016
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-07.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 105530,
+        "dstBytes": 133898
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-08.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 90420,
+        "dstBytes": 115705
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-09.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 111619,
+        "dstBytes": 143142
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-10.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 109970,
+        "dstBytes": 139004
+      },
+      {
+        "kind": "alt-11",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-11.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 93275,
+        "dstBytes": 117112
+      },
+      {
+        "kind": "alt-12",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-12.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 88252,
+        "dstBytes": 111226
+      },
+      {
+        "kind": "alt-13",
+        "file": "img/proyectos/casa-palmas-47-agosto-2024/alt-13.jpg",
+        "width": 1080,
+        "height": 1080,
+        "srcBytes": 87920,
+        "dstBytes": 109137
+      }
+    ]
+  },
+  {
+    "id": "casa-roque-enero-2017",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-roque-enero-2017/primary.jpg",
+        "width": 951,
+        "height": 835,
+        "srcBytes": 564972,
+        "dstBytes": 61824
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-roque-enero-2017/alt-01.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 65881,
+        "dstBytes": 73506
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-roque-enero-2017/alt-02.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 62369,
+        "dstBytes": 69760
+      }
+    ]
+  },
+  {
+    "id": "casa-tamesi-151-diciembre-2017",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/primary.jpg",
+        "width": 560,
+        "height": 640,
+        "srcBytes": 108193,
+        "dstBytes": 76642
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-01.jpg",
+        "width": 256,
+        "height": 320,
+        "srcBytes": 31082,
+        "dstBytes": 14643
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-02.jpg",
+        "width": 640,
+        "height": 480,
+        "srcBytes": 94502,
+        "dstBytes": 67323
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-03.jpg",
+        "width": 640,
+        "height": 480,
+        "srcBytes": 64092,
+        "dstBytes": 44294
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-04.jpg",
+        "width": 480,
+        "height": 640,
+        "srcBytes": 57586,
+        "dstBytes": 40779
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-05.jpg",
+        "width": 480,
+        "height": 640,
+        "srcBytes": 75093,
+        "dstBytes": 52372
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-06.jpg",
+        "width": 480,
+        "height": 640,
+        "srcBytes": 64592,
+        "dstBytes": 46164
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-07.jpg",
+        "width": 480,
+        "height": 640,
+        "srcBytes": 47410,
+        "dstBytes": 33084
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-tamesi-151-diciembre-2017/alt-08.jpg",
+        "width": 240,
+        "height": 320,
+        "srcBytes": 20464,
+        "dstBytes": 8977
+      }
+    ]
+  },
+  {
+    "id": "casa-tamesi-155-septiembre-2019",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/primary.jpg",
+        "width": 2200,
+        "height": 1887,
+        "srcBytes": 3445534,
+        "dstBytes": 855731
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-01.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 3488932,
+        "dstBytes": 597870
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-02.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 3640211,
+        "dstBytes": 576696
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-03.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 3410456,
+        "dstBytes": 586605
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-04.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 94061,
+        "dstBytes": 102440
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-05.jpg",
+        "width": 768,
+        "height": 1024,
+        "srcBytes": 66831,
+        "dstBytes": 72825
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-06.jpg",
+        "width": 1024,
+        "height": 768,
+        "srcBytes": 93085,
+        "dstBytes": 101645
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-tamesi-155-septiembre-2019/alt-07.jpg",
+        "width": 1024,
+        "height": 768,
+        "srcBytes": 64792,
+        "dstBytes": 71494
+      }
+    ]
+  },
+  {
+    "id": "casa-valencia-77-diciembre-2015",
+    "images": [
+      {
+        "kind": "primary",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/primary.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1865344,
+        "dstBytes": 379441
+      },
+      {
+        "kind": "alt-01",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-01.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2454148,
+        "dstBytes": 538990
+      },
+      {
+        "kind": "alt-02",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-02.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1936491,
+        "dstBytes": 394557
+      },
+      {
+        "kind": "alt-03",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-03.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 2207758,
+        "dstBytes": 467959
+      },
+      {
+        "kind": "alt-04",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-04.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1841815,
+        "dstBytes": 361261
+      },
+      {
+        "kind": "alt-05",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-05.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1770740,
+        "dstBytes": 384259
+      },
+      {
+        "kind": "alt-06",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-06.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1688065,
+        "dstBytes": 378772
+      },
+      {
+        "kind": "alt-07",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-07.jpg",
+        "width": 1650,
+        "height": 2200,
+        "srcBytes": 1284906,
+        "dstBytes": 257110
+      },
+      {
+        "kind": "alt-08",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-08.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 2078037,
+        "dstBytes": 485752
+      },
+      {
+        "kind": "alt-09",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-09.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1878096,
+        "dstBytes": 420029
+      },
+      {
+        "kind": "alt-10",
+        "file": "img/proyectos/casa-valencia-77-diciembre-2015/alt-10.jpg",
+        "width": 2200,
+        "height": 1650,
+        "srcBytes": 1258164,
+        "dstBytes": 242206
+      }
+    ]
+  }
+]
