@@ -1,0 +1,11 @@
+{
+  "name": "grupo-tejaz-web",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/sync-projects.mjs && node scripts/check-site.mjs && node scripts/package-site.mjs",
+    "check": "node scripts/sync-projects.mjs --check && node scripts/check-site.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

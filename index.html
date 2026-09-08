@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Grupo Tejaz · Desarrollo y Construcción</title>
+<meta name="description" content="Grupo Tejaz: diseño, desarrollo y construcción residencial y comercial en Veracruz, Boca del Río y Xalapa. Conoce nuestros proyectos y remodelaciones.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,15 +23,35 @@
   #datum-line { display:none !important; }
 </style>
 </noscript>
+<script>
+(function(){
+  try {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = sessionStorage.getItem('tejazIntroPlayed');
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (!seen && !reduce && !saveData) document.documentElement.classList.add('tj-video-intro-on');
+    sessionStorage.setItem('tejazIntroPlayed', '1');
+  } catch (e) {}
+})();
+</script>
 <style>
   :root {
     --accent:#3F5C28; --accent-soft:#BCCB93; --datum-c:#8C8C7E;
-    /* Grado único: en reposo, monocromo casi total; en foco, se recupera un
-       color contenido, nunca la saturación completa. --phc es la única
-       excepción, reservada al proyecto centrado de Obras (el clímax). */
-    --phf: grayscale(1) contrast(1.14) saturate(1) brightness(0.87);
-    --phn: grayscale(0.72) contrast(1.06) saturate(1.15) brightness(0.99);
-    --phc: grayscale(0.4) contrast(1.05) saturate(1.12) brightness(1.01);
+    /* Verde real del logo, muestreado directo de img/site/logo-tejaz.png
+       (rgb(0,65,0) / #004100) — distinto de --accent, que es una versión
+       atenuada para UI (hover, selección). La compuerta usa este, no ese. */
+    --logo-green: #004100;
+    /* Superficie de la compuerta: grafito derivado del fondo real detrás de
+       Servicios (--dark, el mismo tono al que ya cruza #stage-bg en el stop
+       de Hacemos, ver bgStops en init()) con un matiz de --logo-green al 8%.
+       No es un color inventado: ambos ingredientes ya existen en el sistema. */
+    --curtain-surface: color-mix(in srgb, var(--dark) 92%, var(--logo-green) 8%);
+    /* Grado único de reposo: "cristal ahumado" — oscuro, desaturado, sin
+       tinte de color (ni verde ni de otro tipo), la foto sigue siendo
+       claramente visible. Se aplica directo sobre la imagen vía filter,
+       nunca ocultándola con un panel u overlay. Se revela por clic (ver
+       [data-revealed] / .wplate[data-active]), nunca por hover. */
+    --phf: grayscale(70%) saturate(45%) brightness(48%) contrast(105%);
     --datum-y: 76vh; --clear: clamp(150px,22vh,270px);
     --safe-x: clamp(32px,3vw,72px);
     --dark: #0E0F0D; --bone: #E5E3DC;
@@ -56,10 +77,81 @@
   #skip-link:focus { top: 18px; }
 
   /* Tratamiento fotográfico único: todo el material (renders y fotos de obra)
-     pasa por el mismo grado para que la lámina se lea como una sola serie. */
-  .ph, [classname~="ph"] { filter: var(--phf); transition: filter .35s ease; }
-  .col[data-active="1"] .ph, .col[data-active="1"] [classname~="ph"] { filter: var(--phn); }
-  .wplate[data-active="1"] .ph, .wplate[data-active="1"] [classname~="ph"] { filter: var(--phc); }
+     pasa por el mismo grado para que la lámina se lea como una sola serie.
+     El revelado es un cambio de filter (grayscale/saturate/brightness →
+     none), nunca un panel ni una máscara: la foto nunca cambia de tamaño,
+     posición ni recorte, solo de "grado". Se activa por clic/teclado (o
+     data-active en la rueda de Obras), nunca por hover. */
+  .ph, [classname~="ph"] { filter: var(--phf); transition: filter .6s ease; }
+  [data-revealed="1"] .ph,
+  .wplate[data-active="1"] .ph { filter: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .ph, [classname~="ph"] { transition: none; }
+  }
+
+  /* Compuerta arquitectónica (Servicios): capa opaca independiente sobre
+     la fotografía, animada por scroll (ver [data-gate] en init()). No
+     toca el filtro/tratamiento de la imagen de arriba en absoluto: vive
+     por encima, cubre solo el área de la foto (nunca título/número/
+     descripción, que viven fuera de .ph-wrap), y al retirarse deja
+     exactamente el comportamiento de .ph intacto debajo. Superficie
+     grafito (--curtain-surface), no el verde puro — ese queda reservado
+     para el filo de 2px de abajo. Variación tonal vertical de ~3-4%
+     (blend con blanco/negro puros, no un color nuevo) para que la placa
+     no se lea como un color plano de Paint; sigue sin gradiente visible,
+     sombra, blend-mode, transparencia ni borde curvo. */
+  .gate {
+    position: absolute; inset: 0;
+    box-sizing: border-box;
+    background: var(--curtain-surface);
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--curtain-surface) 100%, white 3%),
+      color-mix(in srgb, var(--curtain-surface) 100%, black 4%)
+    );
+    border: 1px solid rgba(229, 227, 220, .16);
+    opacity: 1;
+    mix-blend-mode: normal;
+    pointer-events: none;
+    will-change: transform;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Único uso de verde puro: el filo inferior de la propia compuerta, su
+     borde móvil durante el revelado. Pseudo-elemento posicionado (fuera
+     del flex layout que centra el logo), hijo visual de .gate: sube y
+     baja con ella por la misma transformación, sin timeline propia, y
+     sale de vista con el panel al terminar el revelado. */
+  .gate::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--logo-green);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gate { display: none; }
+  }
+  html.no-gsap .gate { display: none; }
+
+  /* Marca oficial aplicada sobre la placa: mismo archivo real del logo,
+     recoloreado a --bone (blanco cálido, ya usado en el resto del sitio)
+     conservando su alpha original como máscara, así que la proporción y
+     el trazo son 100% los del asset, nunca redibujados. Es hijo de .gate,
+     así que sube/baja con el panel como una sola pieza, sin timeline
+     propia; al salir la compuerta, el logo sale con ella. */
+  .gate-mark {
+    width: clamp(34px, 25%, 168px);
+    max-height: 42%;
+    height: auto;
+    object-fit: contain;
+    pointer-events: none;
+    display: block;
+  }
+  @media (max-width: 1180px) {
+    .gate-mark { width: clamp(30px, 20%, 110px); max-height: 38%; }
+  }
 
   /* Portada: negros con detalle y altas luces sin quemar. */
   #hero-video { filter: var(--phf) contrast(1.05) brightness(.94); }
@@ -169,8 +261,6 @@
      toque no debe encender un estado que el dedo no puede sostener. */
   @media (hover:hover) and (pointer:fine) {
     html.cur-on, html.cur-on * { cursor:none !important; }
-    .col:hover .ph, .wplate:hover .ph, #obras-more:hover .ph, #obras-more:focus-visible .ph,
-    .col:hover [classname~="ph"], .wplate:hover [classname~="ph"] { filter: var(--phn); }
     .col:hover { --svc-h: #E5E3DC; --svc-p: rgba(229,227,220,.8); }
     .col:hover .cnum { color: var(--accent-soft); }
     .nlink:hover::after { transform: scaleX(1); }
@@ -294,8 +384,111 @@
   html.no-gsap #hero-mask { clip-path: inset(0% 0% 0% 0%) !important; }
   html.no-gsap #datum-line { display:none !important; }
 </style>
+<style>
+  /* ══ Intro — video de bienvenida ═══════════════════════════════════════
+     Overlay fullscreen con video/floorplan.mp4, una sola vez por sesión
+     (sessionStorage: tejazIntroPlayed). Al terminar el video, el overlay
+     se desvanece revelando el home ya cargado detrás; nunca se oculta de
+     golpe ni corta a negro. */
+  #tejaz-video-intro { display:none; }
+  html.tj-video-intro-on #tejaz-video-intro { display:block; }
+  html.tj-video-intro-on, html.tj-video-intro-on body { overflow:hidden !important; }
+
+  #tejaz-video-intro {
+    position:fixed; inset:0; z-index:2000; overflow:hidden;
+    width:100vw; height:100vh; background:#000;
+    opacity:1; transition:opacity .55s cubic-bezier(.4,0,.2,1);
+  }
+  #tejaz-video-intro.tj-video-intro-hide { opacity:0; }
+  #tejaz-video-intro video {
+    position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.tj-video-intro-on #tejaz-video-intro { display:none !important; }
+    html.tj-video-intro-on, html.tj-video-intro-on body { overflow:visible !important; }
+  }
+</style>
 </head>
 <body>
+
+<div id="tejaz-video-intro" aria-hidden="true">
+  <video muted autoplay playsinline webkit-playsinline disablepictureinpicture preload="auto"></video>
+</div>
+
+<script>
+(function(){
+  var html = document.documentElement;
+  if (!html.classList.contains('tj-video-intro-on')) return;
+
+  var overlay = document.getElementById('tejaz-video-intro');
+  var video = overlay ? overlay.querySelector('video') : null;
+  var startupTimer, playbackTimer;
+  var finished = false;
+  var introMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var introConnection = navigator.connection;
+
+  function preferencesChanged() {
+    if (introMotion.matches || (introConnection && introConnection.saveData)) finish();
+  }
+
+  function finish() {
+    if (finished) return;
+    finished = true;
+    clearTimeout(startupTimer);
+    clearTimeout(playbackTimer);
+    if (introMotion.removeEventListener) introMotion.removeEventListener('change', preferencesChanged);
+    else if (introMotion.removeListener) introMotion.removeListener(preferencesChanged);
+    if (introConnection && introConnection.removeEventListener) introConnection.removeEventListener('change', preferencesChanged);
+    if (video) {
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+    }
+    if (overlay) overlay.style.display = 'none';
+    html.classList.remove('tj-video-intro-on');
+    document.dispatchEvent(new Event('tejaz:intro-finished'));
+  }
+
+  if (!video) { finish(); return; }
+  if (introMotion.addEventListener) introMotion.addEventListener('change', preferencesChanged);
+  else if (introMotion.addListener) introMotion.addListener(preferencesChanged);
+  if (introConnection && introConnection.addEventListener) introConnection.addEventListener('change', preferencesChanged);
+
+  var done = false;
+  function fadeOut() {
+    if (done || finished) return;
+    done = true;
+    overlay.classList.add('tj-video-intro-hide');
+    var cleaned = false;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
+      finish();
+    }
+    overlay.addEventListener('transitionend', cleanup, { once: true });
+    setTimeout(cleanup, 700); // respaldo si transitionend no llega a disparar
+  }
+
+  video.addEventListener('ended', fadeOut);
+  video.addEventListener('error', finish);
+  // La portada sigue disponible aunque la conexión nunca entregue metadatos.
+  startupTimer = setTimeout(finish, 5000);
+  video.addEventListener('playing', function () { clearTimeout(startupTimer); }, { once: true });
+
+  // Respaldo: si por algún motivo 'ended' nunca dispara (video atascado),
+  // cierra igual poco después de la duración real reportada por el video.
+  video.addEventListener('loadedmetadata', function () {
+    if (isFinite(video.duration) && video.duration > 0) {
+      playbackTimer = setTimeout(fadeOut, (video.duration * 1000) + 1500);
+    }
+  });
+
+  video.src = 'video/floorplan.mp4';
+  var playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(finish);
+})();
+</script>
 
 <a href="#sc-hero" id="skip-link">SALTAR AL CONTENIDO</a>
 
@@ -305,7 +498,7 @@
 
   <header id="chrome-top" style="position:fixed;top:0;left:0;right:0;z-index:92;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px clamp(18px,2.4vw,34px);color:#E5E3DC;pointer-events:none">
     <a href="#" onclick="goHero(event)" data-cursor="INICIO" style="display:flex;align-items:center;gap:10px;pointer-events:auto">
-      <img id="nav-mark" src="logo-tejaz.png" alt="" style="height:20px;width:auto;filter:brightness(0) invert(1)">
+      <img id="nav-mark" src="img/site/logo-tejaz.png" alt="" style="height:20px;width:auto;filter:brightness(0) invert(1)">
       <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase">Grupo Tejaz</span>
     </a>
     <nav id="nav-index" class="desk" style="display:flex;align-items:center;gap:clamp(14px,2vw,30px);pointer-events:auto">
@@ -370,8 +563,7 @@
         <span class="sheet-id">A-00 / PORTADA</span>
         <div id="hero-mask" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(30% 0% 0% 0%)">
           <div data-par="5" style="position:absolute;top:-4%;left:-6%;width:112%;height:108%">
-            <video id="hero-video" class="ph" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover">
-              <source src="hero-bg.mp4" type="video/mp4">
+            <video id="hero-video" class="ph" muted loop playsinline preload="none" poster="video/hero-poster.jpg" data-desktop-src="video/hero-desktop.mp4" data-mobile-src="video/hero-mobile.mp4" aria-hidden="true" style="width:100%;height:100%;object-fit:cover">
             </video>
           </div>
           <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.9) 0%,rgba(14,15,13,.3) 32%,rgba(14,15,13,.06) 58%,rgba(14,15,13,.62) 100%)"></div>
@@ -425,7 +617,7 @@
             </div>
             <div id="nos-strip" data-grade="true" style="position:relative;width:28vw;height:50vh;overflow:hidden;align-self:end">
               <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
-                <img id="nosotros-bg" class="ph" src="nosotros-bg.jpg" alt="Obra o fachada Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
+                <img id="nosotros-bg" class="ph" src="img/site/nosotros-bg.jpg" alt="Obra o fachada Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
               </div>
             </div>
           </div>
@@ -449,9 +641,12 @@
                 <h3 style="margin:0;font-size:clamp(34px,3.8vw,64px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.018em;color:var(--svc-h)">Residencial</h3>
                 <p style="margin:0;font-size:15px;line-height:1.62;color:var(--svc-p);max-width:30ch">Casas y desarrollos habitacionales diseñados a la medida.</p>
               </div>
-              <div class="ph-wrap" data-drift="9" style="position:relative;height:56%;overflow:hidden">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Residencial" data-drift="9" style="position:relative;height:56%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
-                  <img id="svc-1" class="ph" src="ph-fachada.jpg" alt="Casa entregada" style="width:100%;height:100%;object-fit:cover">
+                  <img id="svc-1" class="ph" src="img/proyectos/casa-mg-julio-2026/primary.jpg" alt="Casa entregada" style="width:100%;height:100%;object-fit:cover">
+                </div>
+                <div class="gate" data-gate aria-hidden="true">
+                  <img class="gate-mark" src="img/site/logo-tejaz-mark.png" alt="" aria-hidden="true">
                 </div>
               </div>
             </div>
@@ -463,9 +658,12 @@
                 <h3 style="margin:0;font-size:clamp(24px,2.5vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
                 <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p);max-width:26ch">Espacios comerciales funcionales para el negocio de cada cliente.</p>
               </div>
-              <div class="ph-wrap" data-drift="-11" style="position:relative;height:58%;overflow:hidden">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Comercial" data-drift="-11" style="position:relative;height:58%;overflow:hidden">
                 <div data-par="6" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
-                  <img id="svc-2" class="ph" src="contacto-bg.jpg" alt="Espacio comercial" style="width:100%;height:100%;object-fit:cover">
+                  <img id="svc-2" class="ph" src="img/site/contacto-bg.jpg" alt="Espacio comercial" style="width:100%;height:100%;object-fit:cover">
+                </div>
+                <div class="gate" data-gate aria-hidden="true">
+                  <img class="gate-mark" src="img/site/logo-tejaz-mark.png" alt="" aria-hidden="true">
                 </div>
               </div>
             </div>
@@ -476,9 +674,12 @@
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
                 <h3 style="margin:0;font-size:clamp(19px,1.9vw,29px);font-weight:700;font-variation-settings:'wdth' 108;line-height:1.02;letter-spacing:-.01em;color:var(--svc-h)">Remodelación</h3>
               </div>
-              <div class="ph-wrap" data-drift="12" style="position:relative;height:64%;overflow:hidden">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Remodelación" data-drift="12" style="position:relative;height:64%;overflow:hidden">
                 <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
-                  <img id="svc-3" class="ph" src="ph-cocina-a.jpg" alt="Interior remodelado" style="width:100%;height:100%;object-fit:cover">
+                  <img id="svc-3" class="ph" src="img/site/ph-cocina-a.jpg" alt="Interior remodelado" style="width:100%;height:100%;object-fit:cover">
+                </div>
+                <div class="gate" data-gate aria-hidden="true">
+                  <img class="gate-mark" src="img/site/logo-tejaz-mark.png" alt="" aria-hidden="true">
                 </div>
               </div>
             </div>
@@ -490,9 +691,12 @@
                 <h3 style="margin:0;font-size:clamp(22px,2.2vw,36px);font-weight:700;font-variation-settings:'wdth' 110;line-height:1;letter-spacing:-.012em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
                 <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p)">Del terreno a la entrega de llaves, bajo una sola dirección.</p>
               </div>
-              <div class="ph-wrap" data-drift="-8" style="position:relative;height:30%;overflow:hidden">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Desarrollos inmobiliarios" data-drift="-8" style="position:relative;height:30%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
-                  <img id="hacemos-bg" class="ph" src="hacemos-bg.jpg" alt="Desarrollo en proceso" style="width:100%;height:100%;object-fit:cover">
+                  <img id="hacemos-bg" class="ph" src="img/site/hacemos-bg.jpg" alt="Desarrollo en proceso" style="width:100%;height:100%;object-fit:cover">
+                </div>
+                <div class="gate" data-gate aria-hidden="true">
+                  <img class="gate-mark" src="img/site/logo-tejaz-mark.png" alt="" aria-hidden="true">
                 </div>
               </div>
             </div>
@@ -521,41 +725,42 @@
                        encuadre, nunca dos imágenes en posiciones distintas
                        compitiendo por dominio. -->
                   <div id="hac-obr-outgoing" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform:translateX(-50%);overflow:hidden;opacity:0;pointer-events:none;z-index:50">
-                    <img class="ph" src="hacemos-bg.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+                    <img class="ph" src="img/site/hacemos-bg.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
                   </div>
-                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Proyecto Reforma" data-year="2021" data-type="Residencial" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Reforma" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Casa Odesa 67" tabindex="0" role="button" aria-label="Centrar Casa Odesa 67" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-1" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Proyecto Reforma" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-1" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Casa Odesa 67" style="width:100%;height:100%;object-fit:cover">
                     </div>
-                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO REFORMA · 2021</div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA ODESA 67</div>
                   </div>
-                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Proyecto Costa Verde" data-year="2022" data-type="Residencial" data-place="Boca del Río" tabindex="0" role="button" aria-label="Centrar Proyecto Costa Verde" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Casa Ladoga 125" tabindex="0" role="button" aria-label="Centrar Casa Ladoga 125" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-2" class="ph" src="img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg" alt="Proyecto Costa Verde" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-2" class="ph" src="img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg" alt="Casa Ladoga 125" style="width:100%;height:100%;object-fit:cover">
                     </div>
-                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO COSTA VERDE · 2022</div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA LADOGA 125</div>
                   </div>
-                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Proyecto Malecón" data-year="2023" data-type="Uso mixto" data-place="Veracruz, Ver." tabindex="0" role="button" aria-label="Centrar Proyecto Malecón" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Casa MI" tabindex="0" role="button" aria-label="Centrar Casa MI" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-3" class="ph" src="img/proyectos/casa-mi-febrero-2024/primary.jpg" alt="Proyecto Malecón" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-3" class="ph" src="img/proyectos/casa-mi-febrero-2024/primary.jpg" alt="Casa MI" style="width:100%;height:100%;object-fit:cover">
                     </div>
-                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO MALECÓN · 2023</div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA MI</div>
                   </div>
-                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Proyecto Arboledas" data-year="2024" data-type="Residencial" data-place="Xalapa" tabindex="0" role="button" aria-label="Centrar Proyecto Arboledas" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Casa L91" tabindex="0" role="button" aria-label="Centrar Casa L91" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-4" class="ph" src="img/proyectos/casa-l91-diciembre-2025/primary.jpg" alt="Proyecto Arboledas" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-4" class="ph" src="img/proyectos/casa-l91-diciembre-2025/primary.jpg" alt="Casa L91" style="width:100%;height:100%;object-fit:cover">
                     </div>
-                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">PROYECTO ARBOLEDAS · 2024</div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA L91</div>
                   </div>
                 </div>
-                <!-- Una sola declaración concisa por proyecto, tomada sólo de los datos
-                     reales del dataset (tipología, ubicación, año). No se inventan
-                     retos, materiales ni resultados.
-                     TODO: sustituir por la reseña real de cada proyecto cuando exista. -->
+                <!-- Nombre real del proyecto, tomado del propio dataset (projects.json).
+                     Tipología/ubicación/año no existen para estos 4 en el dataset (null
+                     en los 21 proyectos, no solo estos 4), así que wd-stat se arma solo
+                     con los campos que sí existen; ver renderWheel(). No se inventan
+                     retos, materiales ni resultados. -->
                 <div id="wheel-data" style="position:absolute;right:2.5vw;bottom:6%;width:19vw;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,18px);opacity:0;pointer-events:none">
                   <span id="wd-idx" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.5)">01 / 04</span>
-                  <div id="wd-name" style="font-size:clamp(24px,2.3vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">Proyecto Reforma</div>
-                  <div id="wd-stat" style="font-size:14.5px;line-height:1.5;color:rgba(229,227,220,.72)">Residencial · Veracruz, Ver. · 2021</div>
+                  <div id="wd-name" style="font-size:clamp(24px,2.3vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">Casa Odesa 67</div>
+                  <div id="wd-stat" style="font-size:14.5px;line-height:1.5;color:rgba(229,227,220,.72)"></div>
                 </div>
               </div>
             </div>
@@ -586,7 +791,7 @@
         <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
           <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
             <h2 data-mask="true" style="margin:0;font-size:clamp(30px,3.8vw,68px);font-weight:800;font-variation-settings:'wdth' 108;line-height:.94;letter-spacing:-.02em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55;white-space:nowrap">05 CIUDADES</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55;white-space:nowrap">04 CIUDADES</span>
           </div>
 
           <div style="display:flex;flex-direction:column;width:100%">
@@ -608,17 +813,11 @@
               <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:63%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
               <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">19°32′N 96°55′W</span>
             </a>
-            <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22)">
-              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">04</span>
-              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Córdoba</span>
-              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:34%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°53′N 96°56′W</span>
-            </a>
             <a href="#" onclick="noop(event)" class="zrow" data-cursor="ZONA" style="display:grid;grid-template-columns:56px minmax(0,auto) minmax(0,1fr) 150px;align-items:center;gap:clamp(14px,2vw,32px);padding:clamp(12px,2.2vh,22px) 0;border-top:1px solid rgba(14,15,13,.22);border-bottom:1px solid rgba(14,15,13,.22)">
-              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">05</span>
-              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Coatzacoalcos</span>
-              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:78%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
-              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">18°08′N 94°25′W</span>
+              <span class="zi" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;opacity:.55">04</span>
+              <span class="zn zname" style="font-size:clamp(28px,3.4vw,54px);font-weight:700;font-variation-settings:'wdth' 112;letter-spacing:-.018em;white-space:nowrap">Medellín</span>
+              <span class="zrule" style="position:relative;height:1px"><span class="zh" style="position:absolute;inset:0;background:rgba(14,15,13,.22);display:block"></span><span class="zm" style="position:absolute;left:52%;top:-3px;width:7px;height:7px;background:#0E0F0D;display:block"></span></span>
+              <span class="zcoord" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--accent);text-align:right">06°15′N 75°35′W</span>
             </a>
           </div>
 
@@ -631,7 +830,7 @@
         <span class="sheet-id">A-05 / CONTACTO</span>
         <div style="position:absolute;inset:0;overflow:hidden">
           <div data-par="6" style="position:absolute;top:-5%;left:-7%;width:114%;height:110%">
-            <img id="contacto-bg" class="ph" src="ubicaciones-bg.jpg" alt="Oficina o proyecto Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
+            <img id="contacto-bg" class="ph" src="img/site/ubicaciones-bg.jpg" alt="Oficina o proyecto Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
           </div>
           <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.94) 0%,rgba(14,15,13,.82) 44%,rgba(14,15,13,.64) 100%)"></div>
         </div>
@@ -654,6 +853,17 @@
                 <span>ricardo@grupotejaz.com</span>
                 <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
               </a>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62;margin-top:8px">WHATSAPP</span>
+              <a href="https://wa.me/522299283128" target="_blank" rel="noopener" onclick="markDone()" class="clink" data-cursor="WHATSAPP" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:9px 0;font-size:clamp(15px,1.3vw,20px);font-weight:500">
+                <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                <span>Rafael · 229 928 3128</span>
+                <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+              </a>
+              <a href="https://wa.me/522299150908" target="_blank" rel="noopener" onclick="markDone()" class="clink" data-cursor="WHATSAPP" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:9px 0;font-size:clamp(15px,1.3vw,20px);font-weight:500">
+                <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
+                <span>Ricardo · 229 915 0908</span>
+                <span class="ca" style="opacity:.45;font-family:'IBM Plex Mono',monospace;font-size:13px">→</span>
+              </a>
               <a href="#" id="cta-write" onclick="writeUs(event)" data-cursor="ESCRIBIR" class="clink" style="position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:18px 0 14px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.2em;font-weight:500">
                 <span class="cr" style="position:absolute;left:0;right:0;top:0;height:1px;background:rgba(229,227,220,.24)"></span>
                 <span>ESCRIBIR</span>
@@ -670,7 +880,7 @@
           </div>
 
           <footer id="foot" style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:clamp(14px,2.4vh,26px);border-top:1px solid rgba(229,227,220,.18);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:rgba(229,227,220,.62)">
-            <span style="display:flex;align-items:center;gap:10px"><img src="logo-tejaz.png" alt="" style="height:16px;width:auto;filter:brightness(0) invert(1);opacity:.8">GRUPO TEJAZ · DESARROLLO Y CONSTRUCCIÓN</span>
+            <span style="display:flex;align-items:center;gap:10px"><img src="img/site/logo-tejaz.png" alt="" style="height:16px;width:auto;filter:brightness(0) invert(1);opacity:.8">GRUPO TEJAZ · DESARROLLO Y CONSTRUCCIÓN</span>
             <span>© 2026 GRUPO TEJAZ. TODOS LOS DERECHOS RESERVADOS.</span>
           </footer>
         </div>
@@ -1049,7 +1259,7 @@
       });
       var d = st.plates[best].dataset;
       if (st.dName) st.dName.textContent = d.name || '';
-      if (st.dStat) st.dStat.textContent = (d.type || '') + ' · ' + (d.place || '') + ' · ' + (d.year || '');
+      if (st.dStat) st.dStat.textContent = [d.type, d.place, d.year].filter(Boolean).join(' · ');
       if (st.idx) st.idx.textContent = String(best + 1).padStart(2, '0') + ' / 04';
     }
     if (st.data) {
@@ -1095,15 +1305,6 @@
     if (!gsap || !ScrollTrigger) { document.documentElement.classList.add('no-gsap'); return; }
     gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.getAll().forEach(function (t) { t.kill(true); });
-
-    var video = document.getElementById('hero-video');
-    if (video) {
-      video.muted = true; video.defaultMuted = true;
-      var play = function () { video.play().catch(function () {}); };
-      play();
-      document.addEventListener('pointerdown', play, { once: true });
-      document.addEventListener('keydown', play, { once: true });
-    }
 
     // Apertura: el obturador se abre, la cota se traza y el titular se
     // levanta desde ella. La retención de scroll sostiene la composición
@@ -1204,6 +1405,29 @@
           scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 100%', end: 'left 58%', scrub: .5 }
         });
       });
+
+      // Compuerta arquitectónica (Servicios): capa opaca independiente,
+      // nunca el filtro/tratamiento de la foto (ver .gate arriba). Cada
+      // tarjeta activa la suya propia según su propia posición en el
+      // carril — mismo verbo que [data-mask]/[data-grade], mismo
+      // containerAnimation, sin un segundo sistema de scroll. yPercent en
+      // vez de height/top (GPU, sin reflow); ease:'none' porque el
+      // movimiento está directamente ligado al scroll, el único suavizado
+      // es el scrub. start/end traducen "entra por el último 25-30%
+      // derecho, termina antes del centro" a la sintaxis left% ya usada
+      // por el resto del carril (72% ≈ borde izquierdo del elemento
+      // entrando por el último ~28% del viewport; 50% = centro). Bajo
+      // prefers-reduced-motion la compuerta ni se crea: .gate ya tiene
+      // display:none por CSS, la foto se ve directo con su tratamiento
+      // normal.
+      if (!reduce) {
+        gsap.utils.toArray('[data-gate]').forEach(function (el) {
+          gsap.fromTo(el, { yPercent: 0 }, {
+            yPercent: -101, ease: 'none',
+            scrollTrigger: { trigger: el, containerAnimation: ca, start: 'left 72%', end: 'left 50%', scrub: .4 }
+          });
+        });
+      }
 
       var fill = document.getElementById('hero-fill');
       if (fill && reduce) gsap.set(fill, { clipPath: 'inset(0% 0% 0% 0%)' });
@@ -1317,10 +1541,10 @@
       });
 
       // ── Zonas → Contacto ────────────────────────────────────────────────
-      // Las cuatro filas que no continúan ceden en bloque — texto y su
-      // propia regla juntos, nunca un esqueleto de línea vacía — mientras
-      // la fila activa (la última, Coatzacoalcos) permanece y su
-      // extensión (seam-5a, ver capa de trazo abajo) viaja hacia Contacto.
+      // Las filas que no continúan ceden en bloque — texto y su propia
+      // regla juntos, nunca un esqueleto de línea vacía — mientras la fila
+      // activa (la última, Medellín) permanece y su extensión (seam-5a, ver
+      // capa de trazo abajo) viaja hacia Contacto.
       // (zonInactive y el fundido del título/fila activa quedaron declarados
       // más arriba, junto al stop de fondo que los dispara — ver comentario ahí.)
 
@@ -1342,7 +1566,7 @@
       // Documento: el escenario de la rueda pierde saturación conforme
       // Obras cede hacia Zonas — sin medir qué placa está activa, sólo el
       // conjunto entero, que para entonces siempre muestra el último
-      // proyecto (Arboledas) por cómo termina el giro de la rueda.
+      // proyecto (Casa L91) por cómo termina el giro de la rueda.
       if (!reduce) {
         gsap.fromTo('#wheel-stage', { filter: 'saturate(1)' }, {
           filter: 'saturate(.28)', ease: 'none',
@@ -1480,6 +1704,18 @@
           scrollTrigger: { trigger: el, start: 'top 90%' }
         });
       });
+      // Compuerta arquitectónica en móvil: mismo concepto que en escritorio,
+      // atada al scroll vertical nativo (sin containerAnimation, que no
+      // existe en este breakpoint). Necesita su propio scrub (a diferencia
+      // del bloque anterior, que solo hace una entrada única).
+      if (!reduce) {
+        gsap.utils.toArray('[data-gate]').forEach(function (el) {
+          gsap.fromTo(el, { yPercent: 0 }, {
+            yPercent: -101, ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 45%', scrub: .4 }
+          });
+        });
+      }
       scenes.forEach(function (id) {
         var sc = document.getElementById(id);
         if (!sc) return;
@@ -1554,5 +1790,61 @@
   }
 })();
 </script>
+
+<!-- Tarjetas cubiertas: independiente del script principal a propósito
+     (funciona igual si GSAP falla). Un solo verbo — data-revealed — abre
+     la cubierta por clic/teclado; si la tarjeta ya tenía otra acción
+     vinculada al clic (aquí: MÁS PROYECTOS, que navega), el primer clic
+     solo revela y el segundo ejecuta esa acción. La rueda de Obras no
+     necesita nada de esto: reutiliza su propio data-active existente. -->
+<script>
+(function () {
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.reveal-card'));
+  if (!cards.length) return;
+
+  function isOpen(el) { return el.getAttribute('data-revealed') === '1'; }
+  function closeAll(except) {
+    cards.forEach(function (c) { if (c !== except) c.removeAttribute('data-revealed'); });
+  }
+  function toggle(el) {
+    if (isOpen(el)) {
+      el.removeAttribute('data-revealed');
+    } else {
+      closeAll(el);
+      el.setAttribute('data-revealed', '1');
+    }
+  }
+
+  cards.forEach(function (el) {
+    el.addEventListener('click', function () { toggle(el); });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(el); }
+    });
+  });
+
+  // "MÁS PROYECTOS": primer clic revela y detiene la navegación; con la
+  // cubierta ya abierta, el siguiente clic (o Enter) navega con normalidad.
+  var more = document.getElementById('obras-more');
+  if (more) {
+    more.addEventListener('click', function (e) {
+      if (!isOpen(more)) {
+        e.preventDefault();
+        closeAll(more);
+        more.setAttribute('data-revealed', '1');
+      }
+    });
+    more.addEventListener('keydown', function (e) {
+      if (e.key === ' ' && !isOpen(more)) {
+        e.preventDefault();
+        closeAll(more);
+        more.setAttribute('data-revealed', '1');
+      }
+      // Enter en un <a> ya dispara click de forma nativa; el handler de
+      // click de arriba decide si revela o deja navegar.
+    });
+  }
+})();
+</script>
+<script src="scripts/hero-video.js"></script>
 </body>
 </html>

@@ -1,5 +1,14 @@
 {
   "_readme": "Fuente de datos de produccion de proyectos Grupo Tejaz. Consumida por el home (pieza MAS PROYECTOS) y por /proyectos.html. Imagenes optimizadas en img/proyectos/. Reconciliado en Fase 3B (auditoria fotografica exhaustiva del 100% del material original), 2026-08-27. Ver PROJECTS-PHOTO-AUDIT.md para el detalle de la revision.",
+  "home": {
+    "featured": [
+      "casa-odesa-67-octubre-2015",
+      "casa-ladoga-125-diciembre-2021",
+      "casa-mi-febrero-2024",
+      "casa-l91-diciembre-2025"
+    ],
+    "archiveCover": "casa-caracas-455-mayo-2013"
+  },
   "projects": [
     {
       "id": "casa-caracas-455-mayo-2013",

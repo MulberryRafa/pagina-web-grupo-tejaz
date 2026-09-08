@@ -11,8 +11,7 @@
 <style>
   :root {
     --accent:#3F5C28; --accent-soft:#BCCB93;
-    --phf: grayscale(1) contrast(1.14) saturate(1) brightness(0.87);
-    --phn: grayscale(0.72) contrast(1.06) saturate(1.15) brightness(0.99);
+    --phf: grayscale(70%) saturate(45%) brightness(48%) contrast(105%);
     --dark: #0E0F0D; --bone: #E5E3DC;
     --safe-x: clamp(32px,3vw,72px);
   }
@@ -22,9 +21,14 @@
   img { display:block; max-width:100%; }
   ::selection { background:var(--accent); color:var(--bone); }
 
-  .ph { filter: var(--phf); transition: filter .35s ease; }
-  @media (hover:hover) and (pointer:fine) {
-    .item:hover .ph, .item:focus-visible .ph { filter: var(--phn); }
+  /* Revelado por filter (grayscale/saturate/brightness → none), nunca por
+     panel ni máscara: la foto no cambia de tamaño, posición ni recorte,
+     solo de "grado". Primer clic (o Enter/Space, nativos en <button>)
+     revela; el siguiente abre la galería. Nunca por hover. */
+  .ph { filter: var(--phf); transition: filter .6s ease; }
+  [data-revealed="1"] .ph { filter: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .ph { transition: none; }
   }
 
   a:focus-visible, button:focus-visible {
@@ -121,7 +125,7 @@
 
 <header id="chrome-top">
   <a href="index.html" class="brand">
-    <img src="logo-tejaz.png" alt="">
+    <img src="img/site/logo-tejaz.png" alt="">
     <span>Grupo Tejaz</span>
   </a>
   <a href="index.html" class="back nlink">VOLVER ↙</a>
@@ -155,8 +159,18 @@
   </div>
 </div>
 
+<!-- Datos generados desde projects.json. Actualizar con npm run build. -->
 <script id="projects-data" type="application/json">{
   "_readme": "Fuente de datos de produccion de proyectos Grupo Tejaz. Consumida por el home (pieza MAS PROYECTOS) y por /proyectos.html. Imagenes optimizadas en img/proyectos/. Reconciliado en Fase 3B (auditoria fotografica exhaustiva del 100% del material original), 2026-08-27. Ver PROJECTS-PHOTO-AUDIT.md para el detalle de la revision.",
+  "home": {
+    "featured": [
+      "casa-odesa-67-octubre-2015",
+      "casa-ladoga-125-diciembre-2021",
+      "casa-mi-febrero-2024",
+      "casa-l91-diciembre-2025"
+    ],
+    "archiveCover": "casa-caracas-455-mayo-2013"
+  },
   "projects": [
     {
       "id": "casa-caracas-455-mayo-2013",
@@ -1754,6 +1768,12 @@
     return parts.join(' · ');
   }
 
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+
   PROJECTS.forEach(function (p, i) {
     var btn = document.createElement('button');
     btn.className = 'item ' + sizeClass(p.coverWidth, p.coverHeight);
@@ -1766,14 +1786,23 @@
 
     btn.innerHTML =
       '<div class="frame" style="aspect-ratio:' + ratio + '">' +
-        '<img class="ph" src="' + p.cover + '" alt="' + p.name + ' — Grupo Tejaz" loading="lazy" width="' + (p.coverWidth || '') + '" height="' + (p.coverHeight || '') + '">' +
+        '<img class="ph" src="' + escapeHTML(p.cover) + '" alt="' + escapeHTML(p.name) + ' — Grupo Tejaz" loading="lazy" width="' + (p.coverWidth || '') + '" height="' + (p.coverHeight || '') + '">' +
       '</div>' +
       '<div class="cap">' +
-        '<span class="name">' + p.name + '</span>' +
-        (meta ? '<span class="meta">' + meta + '</span>' : '') +
+        '<span class="name">' + escapeHTML(p.name) + '</span>' +
+        (meta ? '<span class="meta">' + escapeHTML(meta) + '</span>' : '') +
       '</div>';
 
-    btn.addEventListener('click', function () { openLB(i, btn); });
+    // Primer clic (o Enter/Space, nativos en <button>): revela la foto.
+    // Con la cubierta ya abierta, el siguiente activa la galería, como
+    // siempre. Cerrar las demás mantiene una sola tarjeta abierta a la vez.
+    btn.addEventListener('click', function () {
+      if (btn.getAttribute('data-revealed') === '1') { openLB(i, btn); return; }
+      Array.prototype.forEach.call(archive.querySelectorAll('.item'), function (o) {
+        if (o !== btn) o.removeAttribute('data-revealed');
+      });
+      btn.setAttribute('data-revealed', '1');
+    });
     archive.appendChild(btn);
   });
 
@@ -1868,10 +1897,14 @@
   // Deep link básico: #casa-l81-marzo-2026 abre esa galería al cargar.
   function tryOpenFromHash() {
     var id = location.hash.replace('#', '');
-    if (!id) return;
+    if (!id) {
+      if (lb.classList.contains('open')) closeLB();
+      return;
+    }
     var idx = PROJECTS.findIndex(function (p) { return p.id === id; });
     if (idx >= 0) openLB(idx, null);
   }
+  window.addEventListener('hashchange', tryOpenFromHash);
   tryOpenFromHash();
 })();
 </script>
