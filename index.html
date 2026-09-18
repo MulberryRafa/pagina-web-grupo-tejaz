@@ -167,11 +167,12 @@
      color de la foto debajo). */
   #svc-1, #svc-2, #svc-3, #hacemos-bg { filter: none; }
 
-  /* Nosotros: fotografía editorial única de la sección, siempre a color por
-     la misma razón que Hacemos — no pertenece a ningún grupo con gesto de
-     revelado por clic (no es .reveal-card ni .wplate), así que sin este
-     override se quedaría en gris permanentemente, sin forma de revelarse. */
-  #nosotros-bg { filter: none; }
+  /* Nosotros y Contacto: fotografías editoriales únicas de su sección,
+     siempre a color por la misma razón que Hacemos — no pertenecen a ningún
+     grupo con gesto de revelado por clic (no son .reveal-card ni .wplate),
+     así que sin este override se quedarían en gris permanentemente, sin
+     forma de revelarse. */
+  #nosotros-bg, #contacto-bg { filter: none; }
 
   /* Servicios como sistema: el estado viaja por variable, así que título,
      texto e imagen cambian juntos, en el mismo tiempo y de vuelta. */
@@ -383,6 +384,19 @@
     #hero-brand-preview { display:none !important; }
     .hero-meta { grid-template-columns:1fr !important; }
     .hero-meta > div { border-left:none !important; border-top:1px solid rgba(229,227,220,.18) !important; padding:11px 0 0 !important; }
+    /* El clamp de escritorio tiene piso de 44px pensado para el ancho
+       mínimo de esa maqueta (mucho mayor a un teléfono real); "TUS
+       PROYECTOS" y "A LA REALIDAD" (las líneas más largas del titular) se
+       cortan contra el borde del viewport en teléfonos angostos a ese
+       tamaño. Un tamaño fluido propio de móvil, sin depender del piso de
+       escritorio, resuelve las tres líneas a la vez. */
+    #sc-hero h1 { font-size:10.6vw !important; }
+    /* La tercera línea ("a la realidad") es la más larga de las tres y,
+       aun a este tamaño reducido, sigue sin caber — lleva además un
+       padding-left en escritorio (para leerse como un escalón más de una
+       escalera) que a este ancho solo le resta el margen que le falta. */
+    #sc-hero h1 > div:nth-child(3) { padding-left:0 !important; }
+    #sc-hero h1 > div:nth-child(3) .hl { font-size:8.8vw !important; }
 
     .nos-grid { display:flex !important; flex-direction:column !important; align-items:stretch !important; gap:22px !important; }
     #nos-strip { width:100% !important; height:62vw !important; position:relative !important; margin-bottom:0 !important; }
@@ -409,6 +423,11 @@
     #wheel-idx, #wheel-data { display:none !important; }
     .wplate { height:auto !important; }
     .wplate .wframe { position:relative !important; inset:auto !important; height:64vw !important; filter:none !important; clip-path:none !important; }
+    /* La rueda 3D (con su estado data-active por foto centrada) es un
+       concepto exclusivo de escritorio; en móvil es una lista vertical
+       simple y ese JS nunca corre, así que sin este override las 4 fotos
+       se quedarían en gris para siempre, sin ningún gesto que las revele. */
+    .wplate .ph { filter:none !important; }
     .wplate .wcap { position:relative !important; top:auto !important; margin-top:12px !important; font-size:11px !important; white-space:normal !important; }
     #obras-more { width:100% !important; height:64vw !important; flex:none !important; margin-top:40px !important; }
     #obras-mob-stats { display:flex !important; }
@@ -419,10 +438,22 @@
     .zrow .zrule { display:none !important; }
     .zrow .zcoord { display:none !important; }
     .zname { font-size:9vw !important; }
+    /* "En dónde construimos" comparte fila con "04 CIUDADES" (mismo problema
+       que #con-close): a este ancho el rótulo le quita a la h2 el margen
+       que necesita para no cortarse contra su propio max-width:16ch. */
+    #zonas-head { flex-direction:column !important; align-items:flex-start !important; gap:10px !important; }
+    #zonas-head h2 { max-width:100% !important; }
 
-    #con-mask { font-size:calc(100vw / 12.2) !important; }
+    #con-mask { font-size:calc(100vw / 12.2) !important; max-width:100% !important; }
     .con-grid { grid-template-columns:1fr !important; gap:26px !important; }
     #con-end { position:relative !important; right:auto !important; bottom:auto !important; width:100% !important; margin-top:30px !important; }
+    /* "CONTÁCTENOS" y el enlace "VOLVER AL INICIO" comparten fila por flex
+       en escritorio (max-width:70vw le basta porque el enlace es angosto);
+       en móvil ese mismo max-width sigue activo pero el enlace flex:none le
+       quita la mayoría del ancho a la palabra, que se corta a media letra
+       contra su propio overflow:hidden. Apilados, cada uno usa el ancho
+       completo de la fila. */
+    #con-close { flex-direction:column !important; align-items:flex-start !important; gap:18px !important; }
     #foot { flex-direction:column !important; align-items:flex-start !important; gap:14px !important; }
   }
 
@@ -861,7 +892,7 @@
       <section id="sc-zonas" class="scene" data-theme="light" data-label="04 ZONAS" data-screen-label="04 Zonas" style="position:relative;flex:none;width:120vw;height:100%;overflow:hidden;background:transparent;color:#0E0F0D">
         <span class="sheet-id" style="color:#0E0F0D">A-04 / LOCALIZACIÓN</span>
         <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
+          <div id="zonas-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px">
             <h2 data-mask="true" style="margin:0;font-size:clamp(30px,3.8vw,68px);font-weight:800;font-variation-settings:'wdth' 108;line-height:.94;letter-spacing:-.02em;text-transform:uppercase;max-width:16ch">En dónde construimos</h2>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;opacity:.55;white-space:nowrap">04 CIUDADES</span>
           </div>
