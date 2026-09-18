@@ -153,8 +153,19 @@
     .gate-mark { width: clamp(30px, 20%, 110px); max-height: 38%; }
   }
 
-  /* Portada: negros con detalle y altas luces sin quemar. */
-  #hero-video { filter: var(--phf) contrast(1.05) brightness(.94); }
+  /* Portada: a color (sin el grado grayscale/saturate de --phf que usa el
+     resto del sitio), negros con detalle y altas luces sin quemar. El
+     material fuente viene comprimido a bitrate bajo para peso de página; el
+     realce de nitidez (ver #hero-sharpen, un unsharp mask vía
+     feConvolveMatrix) se aplica antes del grado de color para recuperar
+     borde sin tocar el archivo de video. */
+  #hero-video { filter: url(#hero-sharpen) brightness(.74) contrast(1.12) saturate(1.18); }
+
+  /* Hacemos: las cuatro fotos de obra se ven siempre a color, sin el grado
+     grayscale/oscuro de --phf ni el gesto de revelado por clic que usa el
+     resto del sitio (la compuerta/gate sigue intacta encima, solo cambia el
+     color de la foto debajo). */
+  #svc-1, #svc-2, #svc-3, #hacemos-bg { filter: none; }
 
   /* Servicios como sistema: el estado viaja por variable, así que título,
      texto e imagen cambian juntos, en el mismo tiempo y de vuelta. */
@@ -248,6 +259,18 @@
   .clink .ca { transition: transform .2s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
   .clink .cr { transition: background-color .2s ease; }
 
+  /* Dirección (Contacto): mismo gesto de enlace que el resto de la sección
+     (color de a:hover ya es global), con un subrayado propio porque aquí no
+     vive dentro de la lista con regla superior (.clink) — es un párrafo
+     suelto en la columna OFICINA. */
+  .addr-link {
+    text-decoration: underline;
+    text-decoration-color: rgba(229, 227, 220, .32);
+    text-underline-offset: 5px;
+    transition: text-decoration-color .2s ease;
+  }
+  .addr-link:hover, .addr-link:focus-visible { text-decoration-color: var(--accent-soft); }
+
   .col .cnum { transition: color .2s ease; }
   .col[data-active="1"] .cnum { color: var(--accent-soft); }
   .wplate .wcap { transition: opacity .28s linear, color .2s ease; }
@@ -316,7 +339,21 @@
     #scroller { height:auto !important; }
     #rail { display:block !important; width:100% !important; transform:none !important; }
     .scene { width:100% !important; height:auto !important; min-height:auto !important; }
+    /* #stage-bg solo cambia de oscuro a hueso vía scroll horizontal (JS de
+       escritorio, ver mm.add('(min-width:1181px)')); en móvil nunca corre,
+       así que las escenas claras (Nosotros, Zonas) se quedan con su texto
+       oscuro sobre el fondo oscuro por defecto del body. Cada escena pinta
+       su propio fondo aquí en vez de depender de esa animación compartida. */
+    .scene[data-theme="light"] { background: var(--bone) !important; }
     .sc-in { width:100% !important; height:auto !important; padding:96px 22px 64px !important; }
+    /* Zonas y Contacto usan justify-content:space-between en .sc-in para
+       repartir sus bloques sobre el alto completo de escritorio; con
+       height:auto en móvil ese reparto no tiene espacio sobrante que
+       distribuir, así que el margen negativo de respiro de los titulares
+       [data-mask]/#con-mask (pensado para no mover el layout durante su
+       animación de recorte) deja de tener colchón y termina superponiendo
+       el bloque siguiente. Un gap explícito restituye ese espacio. */
+    #sc-zonas .sc-in, #sc-contacto .sc-in { gap: 28px !important; }
     .desk { display:none !important; }
     .mob { display:flex !important; }
     #cursor { display:none !important; }
@@ -490,6 +527,12 @@
 })();
 </script>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="hero-sharpen" color-interpolation-filters="sRGB">
+    <feConvolveMatrix order="3" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0" edgeMode="duplicate" preserveAlpha="true"></feConvolveMatrix>
+  </filter>
+</svg>
+
 <a href="#sc-hero" id="skip-link">SALTAR AL CONTENIDO</a>
 
 <div id="root" style="position:relative;width:100%;background:#0E0F0D">
@@ -498,7 +541,7 @@
 
   <header id="chrome-top" style="position:fixed;top:0;left:0;right:0;z-index:92;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px clamp(18px,2.4vw,34px);color:#E5E3DC;pointer-events:none">
     <a href="#" onclick="goHero(event)" data-cursor="INICIO" style="display:flex;align-items:center;gap:10px;pointer-events:auto">
-      <img id="nav-mark" src="img/site/logo-tejaz.png" alt="" style="height:20px;width:auto;filter:brightness(0) invert(1)">
+      <img id="nav-mark" src="img/site/logo-tejaz.png" alt="" style="height:20px;width:auto">
       <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase">Grupo Tejaz</span>
     </a>
     <nav id="nav-index" class="desk" style="display:flex;align-items:center;gap:clamp(14px,2vw,30px);pointer-events:auto">
@@ -568,6 +611,19 @@
           </div>
           <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,13,.9) 0%,rgba(14,15,13,.3) 32%,rgba(14,15,13,.06) 58%,rgba(14,15,13,.62) 100%)"></div>
           <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,15,13,.5) 0%,rgba(14,15,13,0) 26%,rgba(14,15,13,.94) 100%)"></div>
+        </div>
+
+        <!-- PRUEBA / preview a pedido: lockup grande de marca, bajo el
+             datum-line (var(--datum-y)), en la banda que hoy queda vacía
+             entre la línea y la cota inferior. Vive fuera de .sc-in para no
+             alterar su flex ni el reparto space-between existente. Continúa
+             el escalonamiento del titular (línea 3, "a la realidad", lleva
+             padding-left:clamp(24px,5.6vw,108px) — un paso más a la derecha
+             que las líneas 1-2): este bloque da el siguiente paso de esa
+             misma escalera, más pronunciado, para leerse como su remate. -->
+        <div id="hero-brand-preview" style="position:absolute;left:calc(clamp(22px,3.2vw,58px) + clamp(48px,10.5vw,190px));top:calc(var(--datum-y) + clamp(18px,3.4vh,34px));z-index:2;display:flex;align-items:center;gap:clamp(14px,1.8vw,22px);pointer-events:none">
+          <img src="img/site/logo-tejaz.png" alt="" style="height:clamp(40px,6vh,64px);width:auto">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:clamp(20px,2.6vw,34px);letter-spacing:.22em;text-transform:uppercase;font-weight:500;color:#E5E3DC">Grupo Tejaz</span>
         </div>
 
         <div class="sc-in" style="position:relative;z-index:2;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(92px,12vh,140px) clamp(22px,3.2vw,58px) var(--clear)">
@@ -643,7 +699,7 @@
               </div>
               <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Residencial" data-drift="9" style="position:relative;height:56%;overflow:hidden">
                 <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
-                  <img id="svc-1" class="ph" src="img/proyectos/casa-mg-julio-2026/primary.jpg" alt="Casa entregada" style="width:100%;height:100%;object-fit:cover">
+                  <img id="svc-1" class="ph" src="img/proyectos/am83/primary.jpg" alt="AM83" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div class="gate" data-gate aria-hidden="true">
                   <img class="gate-mark" src="img/site/logo-tejaz-mark.png" alt="" aria-hidden="true">
@@ -727,23 +783,23 @@
                   <div id="hac-obr-outgoing" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform:translateX(-50%);overflow:hidden;opacity:0;pointer-events:none;z-index:50">
                     <img class="ph" src="img/site/hacemos-bg.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
                   </div>
-                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="Casa Odesa 67" tabindex="0" role="button" aria-label="Centrar Casa Odesa 67" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="AM83" tabindex="0" role="button" aria-label="Centrar AM83" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-1" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Casa Odesa 67" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-1" class="ph" src="img/proyectos/am83/primary.jpg" alt="AM83" style="width:100%;height:100%;object-fit:cover">
+                    </div>
+                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">AM83</div>
+                  </div>
+                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Casa Odesa 67" tabindex="0" role="button" aria-label="Centrar Casa Odesa 67" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                    <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
+                      <img id="proj-2" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Casa Odesa 67" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA ODESA 67</div>
                   </div>
-                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Casa Ladoga 125" tabindex="0" role="button" aria-label="Centrar Casa Ladoga 125" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Casa Ladoga 125" tabindex="0" role="button" aria-label="Centrar Casa Ladoga 125" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-2" class="ph" src="img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg" alt="Casa Ladoga 125" style="width:100%;height:100%;object-fit:cover">
+                      <img id="proj-3" class="ph" src="img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg" alt="Casa Ladoga 125" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA LADOGA 125</div>
-                  </div>
-                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Casa MI" tabindex="0" role="button" aria-label="Centrar Casa MI" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
-                    <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-3" class="ph" src="img/proyectos/casa-mi-febrero-2024/primary.jpg" alt="Casa MI" style="width:100%;height:100%;object-fit:cover">
-                    </div>
-                    <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA MI</div>
                   </div>
                   <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Casa L91" tabindex="0" role="button" aria-label="Centrar Casa L91" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
@@ -759,7 +815,7 @@
                      retos, materiales ni resultados. -->
                 <div id="wheel-data" style="position:absolute;right:2.5vw;bottom:6%;width:19vw;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,18px);opacity:0;pointer-events:none">
                   <span id="wd-idx" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:rgba(229,227,220,.5)">01 / 04</span>
-                  <div id="wd-name" style="font-size:clamp(24px,2.3vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">Casa Odesa 67</div>
+                  <div id="wd-name" style="font-size:clamp(24px,2.3vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:1;letter-spacing:-.022em">AM83</div>
                   <div id="wd-stat" style="font-size:14.5px;line-height:1.5;color:rgba(229,227,220,.72)"></div>
                 </div>
               </div>
@@ -774,12 +830,12 @@
                Reutiliza el único verbo de revelado del sitio (data-grade, cota
                cero) y el único gesto de hover (grado fotográfico + hilo nlink):
                ninguna timeline nueva. -->
-          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver los 21 proyectos de Grupo Tejaz" style="flex:none;width:24vw;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
+          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver los 22 proyectos de Grupo Tejaz" style="flex:none;width:24vw;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
             <img class="ph" src="img/proyectos/casa-caracas-455-mayo-2013/primary.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
             <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,10,.1) 0%,rgba(10,11,10,.82) 100%)"></div>
             <div style="position:relative;z-index:1;padding:0 clamp(18px,1.8vw,30px) 8% clamp(18px,1.8vw,30px);display:flex;flex-direction:column;gap:12px">
               <span style="font-size:clamp(26px,2.9vw,46px);font-weight:800;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.02em;text-transform:uppercase">MÁS<br>PROYECTOS ↗</span>
-              <span class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(229,227,220,.68)">VER LOS 21 PROYECTOS</span>
+              <span class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(229,227,220,.68)">VER LOS 22 PROYECTOS</span>
             </div>
           </a>
         </div>
@@ -839,7 +895,7 @@
           <div class="con-grid" style="display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:clamp(30px,4.4vw,86px);align-items:start;max-width:1240px">
             <div data-rise="true" style="display:flex;flex-direction:column;gap:14px">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">OFICINA</span>
-              <p style="margin:0;font-size:clamp(17px,1.42vw,23px);line-height:1.46;font-weight:500;max-width:20ch;text-wrap:pretty">Pinzón 1, Esq. Simón Bolívar, Fracc. Reforma, Veracruz, Ver.</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=Pinz%C3%B3n%201%2C%20Esq.%20Sim%C3%B3n%20Bol%C3%ADvar%2C%20Fracc.%20Reforma%2C%20Veracruz%2C%20Ver.%2C%20M%C3%A9xico" target="_blank" rel="noopener" onclick="markDone()" data-cursor="MAPA" aria-label="Abrir en Google Maps: Pinzón 1, Esq. Simón Bolívar, Fracc. Reforma, Veracruz, Ver." class="addr-link" style="display:block;margin:0;font-size:clamp(17px,1.42vw,23px);line-height:1.46;font-weight:500;max-width:20ch;text-wrap:pretty">Pinzón 1, Esq. Simón Bolívar, Fracc. Reforma, Veracruz, Ver.</a>
             </div>
             <div data-rise="true" style="display:flex;flex-direction:column;gap:6px">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;opacity:.62">ESCRÍBENOS</span>
@@ -1143,8 +1199,6 @@
     var top = document.getElementById('chrome-top');
     var bot = document.getElementById('chrome-bot');
     if (gsap) gsap.to([top, bot].filter(Boolean), { color: fg, duration: .28, ease: 'power1.out', overwrite: 'auto' });
-    var mark = document.getElementById('nav-mark');
-    if (mark) mark.style.filter = dark ? 'brightness(0) invert(1)' : 'none';
     document.querySelectorAll('#cursor span').forEach(function (s) { s.style.background = fg; s.style.color = fg; });
     var lbl = document.getElementById('cursor-label');
     if (lbl) { lbl.style.background = 'transparent'; lbl.style.color = fg; }
