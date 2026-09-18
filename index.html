@@ -167,6 +167,12 @@
      color de la foto debajo). */
   #svc-1, #svc-2, #svc-3, #hacemos-bg { filter: none; }
 
+  /* Nosotros: fotografía editorial única de la sección, siempre a color por
+     la misma razón que Hacemos — no pertenece a ningún grupo con gesto de
+     revelado por clic (no es .reveal-card ni .wplate), así que sin este
+     override se quedaría en gris permanentemente, sin forma de revelarse. */
+  #nosotros-bg { filter: none; }
+
   /* Servicios como sistema: el estado viaja por variable, así que título,
      texto e imagen cambian juntos, en el mismo tiempo y de vuelta. */
   .col { --svc-h: rgba(229,227,220,.66); --svc-p: rgba(229,227,220,.58); }
@@ -344,7 +350,12 @@
        así que las escenas claras (Nosotros, Zonas) se quedan con su texto
        oscuro sobre el fondo oscuro por defecto del body. Cada escena pinta
        su propio fondo aquí en vez de depender de esa animación compartida. */
-    .scene[data-theme="light"] { background: var(--bone) !important; }
+    /* --scene-bg (inline, puesta por el scrub de más abajo) permite que JS
+       module el color real sin pelear con este !important: el !important
+       protege la propiedad "background" (necesario para ganarle al
+       background:transparent inline de cada escena), pero el VALOR que
+       lee viene de una custom property que sí puede pisarse desde fuera. */
+    .scene[data-theme="light"] { background: var(--scene-bg, var(--bone)) !important; }
     .sc-in { width:100% !important; height:auto !important; padding:96px 22px 64px !important; }
     /* Zonas y Contacto usan justify-content:space-between en .sc-in para
        repartir sus bloques sobre el alto completo de escritorio; con
@@ -365,6 +376,11 @@
     #sc-hero { min-height:100svh !important; }
     #sc-hero .sc-in { min-height:100svh !important; justify-content:flex-end !important; gap:26px !important; }
     #sc-hero .sc-in { padding-bottom:84px !important; }
+    /* El lockup "Grupo Tejaz" vive anclado a --datum-y (la línea de cota),
+       que en móvil ya está oculta (#datum-line arriba). Sin este ocultado
+       queda flotando sobre SERVICIOS/COBERTURA/OFICINA, que en móvil se
+       ancla al fondo del hero con mucho menos colchón que en escritorio. */
+    #hero-brand-preview { display:none !important; }
     .hero-meta { grid-template-columns:1fr !important; }
     .hero-meta > div { border-left:none !important; border-top:1px solid rgba(229,227,220,.18) !important; padding:11px 0 0 !important; }
 
@@ -1770,6 +1786,23 @@
           });
         });
       }
+      // Cruce de tema oscuro→claro en móvil: sin rail ni containerAnimation
+      // (eso es #stage-bg, exclusivo de escritorio), cada escena clara pinta
+      // su propio fondo entero desde el primer frame, así que hoy se ve como
+      // un corte duro justo cuando su borde entra en pantalla. Aquí se liga
+      // ese mismo cambio de color al scroll (mismo verbo que el resto del
+      // sitio: scrub, nunca duración fija), para que se sienta como una
+      // continuación del ambiente y no como un panel nuevo aterrizando.
+      // gsap.utils.interpolate (no una tween de color) porque el valor real
+      // lo consume una custom property (--scene-bg, ver CSS arriba) y no la
+      // propiedad "background" en sí, que sigue protegida por su !important.
+      gsap.utils.toArray('.scene[data-theme="light"]').forEach(function (el) {
+        var mix = gsap.utils.interpolate('#0E0F0D', '#E5E3DC');
+        ScrollTrigger.create({
+          trigger: el, start: 'top 100%', end: 'top 35%', scrub: .4,
+          onUpdate: function (self) { el.style.setProperty('--scene-bg', mix(self.progress)); }
+        });
+      });
       scenes.forEach(function (id) {
         var sc = document.getElementById(id);
         if (!sc) return;
