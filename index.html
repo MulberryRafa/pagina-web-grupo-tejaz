@@ -177,6 +177,11 @@
   /* MÁS PROYECTOS: es un enlace, no una foto a revelar; se ve a color desde
      el inicio y un solo clic navega al archivo de proyectos. */
   #obras-more .ph { filter: none; }
+  /* Flecha de MÁS PROYECTOS: placa sólida en el verde del logo (el mismo
+     cuadro de la marca) en lugar del glifo ↗, que algunos teléfonos pintan
+     como emoji. */
+  .more-arrow { display:inline-block; width:.62em; height:.62em; margin-left:.22em; vertical-align:baseline; transition:transform .4s cubic-bezier(.23,1,.32,1); }
+  #obras-more:hover .more-arrow, #obras-more:focus-visible .more-arrow { transform:translate(.06em,-.06em); }
 
   /* Servicios como sistema: el estado viaja por variable, así que título,
      texto e imagen cambian juntos, en el mismo tiempo y de vuelta. */
@@ -406,7 +411,7 @@
     #nos-strip { width:100% !important; height:62vw !important; position:relative !important; margin-bottom:0 !important; }
     #sc-nosotros { display:flex !important; flex-direction:column !important; }
     #sc-nosotros .sc-in { padding-top:16px !important; }
-    #nos-word { order:-1 !important; position:relative !important; top:auto !important; left:auto !important; margin:94px 22px -8px !important; font-size:calc(100vw / 9.6) !important; mix-blend-mode:normal !important; color:#0E0F0D !important; }
+    #nos-word { order:-1 !important; position:relative !important; top:auto !important; left:auto !important; margin:62px 0 26px !important; font-size:calc(100vw / 9.6) !important; mix-blend-mode:normal !important; color:#0E0F0D !important; }
 
     .hac-row { flex-direction:column !important; gap:0 !important; }
     #hac-head { width:100% !important; padding-right:0 !important; border-right:none !important; padding-bottom:18px !important; }
@@ -415,6 +420,15 @@
     .col { --svc-h:#E5E3DC !important; --svc-p:rgba(229,227,220,.78) !important; }
     .col { width:100% !important; border-left:none !important; border-top:1px solid rgba(229,227,220,.16) !important; padding:20px 0 !important; }
     .col .ph-wrap { height:46vw !important; margin-top:16px !important; }
+    /* El identificador de lámina va anclado al fondo de la escena; en la
+       secuencia vertical queda debajo de la foto de Desarrollos, cortado. */
+    #sc-hacemos .sheet-id { display:none !important; }
+    /* Residencial: la foto fuente es vertical y la casa ocupa solo la
+       franja media; con el marco apaisado de 46vw se cortaban techo y
+       esquina. Un marco algo más alto (sigue siendo la nave mayor) y el
+       encuadre centrado en la casa la muestran completa. */
+    .col:has(#svc-1) .ph-wrap { height:62vw !important; }
+    #svc-1 { object-position:50% 40% !important; }
 
     #sc-obras .sc-in { flex-direction:column !important; align-items:stretch !important; }
     #obras-head { width:100% !important; border-right:none !important; padding-right:0 !important; gap:10px !important; padding-bottom:18px !important; }
@@ -874,19 +888,19 @@
           </div>
 
           <!-- Última pieza del carrusel de Obras: no es un proyecto, es la puerta
-               al archivo completo (21 proyectos reales). Vive fuera de #wheel-track
+               al archivo de proyectos destacados. Vive fuera de #wheel-track
                a propósito — no participa de la rotación de la rueda ni de su
                geometría (n=4, un cuarto de giro por proyecto), así que los cuatro
                proyectos existentes no cambian de comportamiento, tamaño ni timing.
                Reutiliza el único verbo de revelado del sitio (data-grade, cota
                cero) y el único gesto de hover (grado fotográfico + hilo nlink):
                ninguna timeline nueva. -->
-          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver los 22 proyectos de Grupo Tejaz" style="flex:none;width:24vw;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
+          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver más proyectos de Grupo Tejaz" style="flex:none;width:24vw;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
             <img class="ph" src="img/proyectos/casa-caracas-455-mayo-2013/primary.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
             <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,10,.1) 0%,rgba(10,11,10,.82) 100%)"></div>
             <div style="position:relative;z-index:1;padding:0 clamp(18px,1.8vw,30px) 8% clamp(18px,1.8vw,30px);display:flex;flex-direction:column;gap:12px">
-              <span style="font-size:clamp(26px,2.9vw,46px);font-weight:800;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.02em;text-transform:uppercase">MÁS<br>PROYECTOS ↗</span>
-              <span class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(229,227,220,.68)">VER LOS 22 PROYECTOS</span>
+              <span style="font-size:clamp(26px,2.9vw,46px);font-weight:800;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.02em;text-transform:uppercase">MÁS<br>PROYECTOS<svg class="more-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="24" height="24" fill="var(--logo-green)"/><path d="M8 16 16 8M9.5 8H16v6.5" fill="none" stroke="#E5E3DC" stroke-width="1.6" stroke-linecap="square"/></svg></span>
+              <span class="nlink" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(229,227,220,.68)">VER MÁS PROYECTOS</span>
             </div>
           </a>
         </div>

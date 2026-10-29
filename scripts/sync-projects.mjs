@@ -109,9 +109,9 @@ export function renderHome(html, data) {
   html = replaceOnce(html, /(<div id="wd-name"[^>]*>)[^<]*(<\/div>)/g, (_all, open, close) => open + escapeHTML(displayName(featured[0])) + close, 'wd-name');
   html = replaceOnce(html, /(<div id="wd-stat"[^>]*>)[^<]*(<\/div>)/g, (_all, open, close) => open + escapeHTML([featured[0].category, featured[0].location, featured[0].year].filter(Boolean).join(' · ')) + close, 'wd-stat');
   html = replaceOnce(html, /(<a id="obras-more"[^>]*>)([\s\S]*?)(<\/a>)/g, (_all, open, content, close) => {
-    open = setAttribute(open, 'aria-label', `Más proyectos — ver los ${data.projects.length} proyectos de Grupo Tejaz`);
+    // Sin cifra: el archivo es una selección de destacados, no el total de obras.
+    open = setAttribute(open, 'aria-label', 'Más proyectos — ver más proyectos de Grupo Tejaz');
     content = replaceOnce(content, /<img\b[^>]*>/g, tag => setAttribute(tag, 'src', byId.get(data.home.archiveCover).cover), 'portada de Más proyectos');
-    content = replaceOnce(content, /VER LOS \d+ PROYECTOS/g, () => `VER LOS ${data.projects.length} PROYECTOS`, 'conteo de Más proyectos');
     return open + content + close;
   }, 'obras-more');
   return html;

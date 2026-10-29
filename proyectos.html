@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Proyectos · Grupo Tejaz</title>
-<meta name="description" content="Archivo completo de proyectos de Grupo Tejaz — desarrollo y construcción en Veracruz.">
+<meta name="description" content="Más proyectos de Grupo Tejaz — desarrollo y construcción en Veracruz.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1817,7 +1817,8 @@
   var PROJECTS = JSON.parse(document.getElementById('projects-data').textContent).projects;
 
   var countEl = document.getElementById('p-count');
-  countEl.textContent = PROJECTS.length + ' PROYECTOS';
+  // Sin cifra: el archivo muestra una selección, no el total de obras.
+  countEl.textContent = 'PROYECTOS DESTACADOS';
 
   var archive = document.getElementById('archive');
 
