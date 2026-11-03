@@ -193,6 +193,11 @@
 
   /* Servicios como sistema: el estado viaja por variable, así que título,
      texto e imagen cambian juntos, en el mismo tiempo y de vuelta. */
+  /* Hacemos: cada marco toma la proporción exacta de su foto (--r) y nunca
+     recorta; su ancho es el de la nave salvo que la foto, a ese ancho, no
+     quepa en la fracción (--k) de la altura útil de la fila (--hac-h). */
+  #sc-hacemos { --hac-h: calc(100vh - clamp(92px,12vh,140px) - var(--clear)); }
+  #sc-hacemos .ph-wrap { flex:none; align-self:flex-start; aspect-ratio:var(--r); height:auto; width:min(100%, calc(var(--hac-h) * var(--k) * var(--r))); }
   .col { --svc-h: rgba(229,227,220,.66); --svc-p: rgba(229,227,220,.58); }
   .col[data-active="1"] { --svc-h: #E5E3DC; --svc-p: rgba(229,227,220,.8); }
   .col h3, .col p { transition: color .2s ease; }
@@ -342,7 +347,7 @@
     #sc-hero h1 { font-size:clamp(38px,6.2vw,92px) !important; }
     #hero-copy { gap:clamp(14px,2.2vh,26px) !important; }
     #hac-head p { display:none !important; }
-    .col .ph-wrap { max-height:38vh; }
+    #sc-hacemos { --hac-h: calc(100vh - 82px - min(180px,20vh)); }
     #con-mask { font-size:clamp(36px,6.2vw,108px) !important; }
     .con-grid p { font-size:clamp(15px,1.3vw,19px) !important; }
     /* Cinco filas de Zonas + cabecera deben caber sobre la cota sin tocar
@@ -427,16 +432,10 @@
        los cuatro servicios se leen al mismo nivel. */
     .col { --svc-h:#E5E3DC !important; --svc-p:rgba(229,227,220,.78) !important; }
     .col { width:100% !important; border-left:none !important; border-top:1px solid rgba(229,227,220,.16) !important; padding:20px 0 !important; }
-    .col .ph-wrap { height:46vw !important; margin-top:16px !important; }
+    #sc-hacemos .ph-wrap { width:100% !important; margin-top:16px !important; }
     /* El identificador de lámina va anclado al fondo de la escena; en la
        secuencia vertical queda debajo de la foto de Desarrollos, cortado. */
     #sc-hacemos .sheet-id { display:none !important; }
-    /* Residencial: la foto fuente es vertical y la casa ocupa solo la
-       franja media; con el marco apaisado de 46vw se cortaban techo y
-       esquina. Un marco algo más alto (sigue siendo la nave mayor) y el
-       encuadre centrado en la casa la muestran completa. */
-    .col:has(#svc-1) .ph-wrap { height:62vw !important; }
-    #svc-1 { object-position:50% 40% !important; }
 
     #sc-obras .sc-in { flex-direction:column !important; align-items:stretch !important; }
     #obras-head { width:100% !important; border-right:none !important; padding-right:0 !important; gap:10px !important; padding-bottom:18px !important; }
@@ -763,15 +762,15 @@
               <p style="margin:0;font-size:13px;line-height:1.6;color:rgba(229,227,220,.62);max-width:16ch">Cuatro disciplinas, una sola dirección.</p>
             </div>
 
-            <!-- Residencial: la nave mayor -->
-            <div class="col" data-grade="true" data-cursor="01" style="position:relative;z-index:1;flex:none;width:47vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(26px,2.8vw,50px);border-right:1px solid rgba(229,227,220,.16)">
+            <!-- Residencial: la única foto vertical, la nave más alta -->
+            <div class="col" data-grade="true" data-cursor="01" style="position:relative;z-index:1;flex:none;width:28vw;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(26px,2.8vw,50px);border-right:1px solid rgba(229,227,220,.16)">
               <div style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,28px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">01</span>
                 <h3 style="margin:0;font-size:clamp(34px,3.8vw,64px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.96;letter-spacing:-.018em;color:var(--svc-h)">Residencial</h3>
                 <p style="margin:0;font-size:15px;line-height:1.62;color:var(--svc-p);max-width:30ch">Casas y desarrollos habitacionales diseñados a la medida.</p>
               </div>
-              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Residencial" data-drift="9" style="position:relative;height:56%;overflow:hidden">
-                <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Residencial" data-drift="9" style="position:relative;--r:3/4;--k:.7;overflow:hidden">
+                <div style="position:absolute;inset:0">
                   <img id="svc-1" class="ph" src="img/proyectos/am83/primary.jpg" alt="AM83" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div class="gate" data-gate aria-hidden="true">
@@ -781,14 +780,14 @@
             </div>
 
             <!-- Comercial: peso medio -->
-            <div class="col" data-grade="true" data-cursor="02" style="position:relative;z-index:1;flex:none;width:33vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
+            <div class="col" data-grade="true" data-cursor="02" style="position:relative;z-index:1;flex:none;width:34vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
               <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px)">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">02</span>
                 <h3 style="margin:0;font-size:clamp(24px,2.5vw,42px);font-weight:700;font-variation-settings:'wdth' 112;line-height:.98;letter-spacing:-.015em;color:var(--svc-h)">Comercial</h3>
                 <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p);max-width:26ch">Espacios comerciales funcionales para el negocio de cada cliente.</p>
               </div>
-              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Comercial" data-drift="-11" style="position:relative;height:58%;overflow:hidden">
-                <div data-par="6" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Comercial" data-drift="-11" style="position:relative;--r:1045/772;--k:.62;overflow:hidden">
+                <div style="position:absolute;inset:0">
                   <img id="svc-2" class="ph" src="img/site/comercial-cfe-fachada.jpg" alt="Fachada remodelada de oficinas CFE" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div class="gate" data-gate aria-hidden="true">
@@ -797,14 +796,14 @@
               </div>
             </div>
 
-            <!-- Remodelación: nave angosta, vertical -->
-            <div class="col" data-grade="true" data-cursor="03" style="position:relative;z-index:1;flex:none;width:17vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(14px,2vh,22px);padding:0 clamp(14px,1.6vw,28px);border-right:1px solid rgba(229,227,220,.16)">
+            <!-- Remodelación -->
+            <div class="col" data-grade="true" data-cursor="03" style="position:relative;z-index:1;flex:none;width:32vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vh,34px);padding:0 clamp(22px,2.4vw,42px);border-right:1px solid rgba(229,227,220,.16)">
               <div style="display:flex;flex-direction:column;gap:6px">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">03</span>
                 <h3 style="margin:0;font-size:clamp(19px,1.9vw,29px);font-weight:700;font-variation-settings:'wdth' 108;line-height:1.02;letter-spacing:-.01em;color:var(--svc-h)">Remodelación</h3>
               </div>
-              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Remodelación" data-drift="12" style="position:relative;height:64%;overflow:hidden">
-                <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Remodelación" data-drift="12" style="position:relative;--r:4/3;--k:.62;overflow:hidden">
+                <div style="position:absolute;inset:0">
                   <img id="svc-3" class="ph" src="img/site/remodelacion-hotel-oriente.jpg" alt="Fachada remodelada del Hotel Oriente" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div class="gate" data-gate aria-hidden="true">
@@ -814,14 +813,14 @@
             </div>
 
             <!-- Desarrollos inmobiliarios: nave grande, contenida -->
-            <div class="col" data-grade="true" data-cursor="04" style="position:relative;z-index:1;flex:none;width:38vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(26px,4vh,48px);padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
+            <div class="col" data-grade="true" data-cursor="04" style="position:relative;z-index:1;flex:none;width:37vw;display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(26px,4vh,48px);padding:0 clamp(30px,3.4vw,60px) 0 clamp(26px,2.8vw,50px)">
               <div style="display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);max-width:26ch">
                 <span class="cnum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(229,227,220,.56)">04</span>
                 <h3 style="margin:0;font-size:clamp(22px,2.2vw,36px);font-weight:700;font-variation-settings:'wdth' 110;line-height:1;letter-spacing:-.012em;color:var(--svc-h)">Desarrollos inmobiliarios</h3>
                 <p style="margin:0;font-size:14px;line-height:1.6;color:var(--svc-p)">Construimos inmuebles propios para su venta y comercialización.</p>
               </div>
-              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Desarrollos inmobiliarios" data-drift="-8" style="position:relative;height:30%;overflow:hidden">
-                <div data-par="7" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+              <div class="ph-wrap reveal-card" tabindex="0" role="button" aria-label="Revelar fotografía: Desarrollos inmobiliarios" data-drift="-8" style="position:relative;--r:4/3;--k:.62;overflow:hidden">
+                <div style="position:absolute;inset:0">
                   <img id="hacemos-bg" class="ph" src="img/proyectos/casa-l147-enero-2026/alt-01.jpg" alt="Casa L147 terminada" style="width:100%;height:100%;object-fit:cover">
                 </div>
                 <div class="gate" data-gate aria-hidden="true">
@@ -854,7 +853,7 @@
                        encuadre, nunca dos imágenes en posiciones distintas
                        compitiendo por dominio. -->
                   <div id="hac-obr-outgoing" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform:translateX(-50%);overflow:hidden;opacity:0;pointer-events:none;z-index:50">
-                    <img class="ph" src="img/site/hacemos-bg.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+                    <img class="ph" src="img/proyectos/casa-l147-enero-2026/alt-01.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
                   </div>
                   <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="AM83" tabindex="0" role="button" aria-label="Centrar AM83" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
