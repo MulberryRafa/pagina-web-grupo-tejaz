@@ -6,7 +6,7 @@ export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const pages = ['index.html', 'proyectos.html'];
 
 export function productionFiles() {
-  const files = new Set([...pages, 'projects.json']);
+  const files = new Set([...pages, 'projects.json', 'robots.txt', 'sitemap.xml']);
   function addReference(reference, source) {
     if (!reference || /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(reference)) return;
     reference = reference.split(/[?#]/)[0];
