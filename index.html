@@ -421,7 +421,7 @@
     #sc-hero h1 > div:nth-child(3) .hl { font-size:8.8vw !important; }
 
     .nos-grid { display:flex !important; flex-direction:column !important; align-items:stretch !important; gap:22px !important; }
-    #nos-strip { width:100% !important; height:62vw !important; position:relative !important; margin-bottom:0 !important; }
+    #nos-strip { width:100% !important; height:auto !important; position:relative !important; margin-bottom:0 !important; }
     #sc-nosotros { display:flex !important; flex-direction:column !important; }
     #sc-nosotros .sc-in { padding-top:16px !important; }
     #nos-word { order:-1 !important; position:relative !important; top:auto !important; left:auto !important; margin:62px 0 26px !important; font-size:calc(100vw / 9.6) !important; mix-blend-mode:normal !important; color:#0E0F0D !important; }
@@ -445,16 +445,16 @@
     #wheel-3d { position:relative !important; inset:auto !important; transform-style:flat !important; display:flex !important; flex-direction:column !important; gap:40px !important; margin-top:42px !important; height:auto !important; }
     .wplate { position:relative !important; left:auto !important; bottom:auto !important; width:100% !important; transform:none !important; opacity:1 !important; z-index:auto !important; cursor:pointer !important; }
     .wplate .wcap { opacity:1 !important; }
-    #wheel-idx, #wheel-data { display:none !important; }
+    #wheel-idx, #wheel-data, #hac-obr-outgoing { display:none !important; }
     .wplate { height:auto !important; }
-    .wplate .wframe { position:relative !important; inset:auto !important; height:64vw !important; filter:none !important; clip-path:none !important; }
+    .wplate .wframe { position:relative !important; inset:auto !important; height:auto !important; aspect-ratio:var(--r);  filter:none !important; clip-path:none !important; }
     /* La rueda 3D (con su estado data-active por foto centrada) es un
        concepto exclusivo de escritorio; en móvil es una lista vertical
        simple y ese JS nunca corre, así que sin este override las 4 fotos
        se quedarían en gris para siempre, sin ningún gesto que las revele. */
     .wplate .ph { filter:none !important; }
     .wplate .wcap { position:relative !important; top:auto !important; margin-top:12px !important; font-size:11px !important; white-space:normal !important; }
-    #obras-more { width:100% !important; height:64vw !important; flex:none !important; margin-top:40px !important; }
+    #obras-more { width:100% !important; height:auto !important; flex:none !important; margin-top:40px !important; }
     #obras-mob-stats { display:flex !important; }
     #hero-out { -webkit-text-stroke-width:0 !important; }
     #hero-fill { clip-path:inset(0 0 0 0) !important; }
@@ -737,14 +737,14 @@
                quedar detrás de la fotografía ni recortada por el viewport. Lo
                monumental se resuelve en escala, no en superposición arriesgada. -->
           <div id="nos-word" data-grade="true" style="flex:none;margin:0 0 clamp(30px,4.6vh,58px);font-size:clamp(64px,9.4vw,164px);font-weight:800;font-variation-settings:'wdth' 106;line-height:.86;letter-spacing:-.026em;color:#0E0F0D;pointer-events:none">NOSOTROS</div>
-          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,30vw) 28vw;column-gap:clamp(64px,7.5vw,140px);align-items:end;flex:1">
+          <div class="nos-grid" style="display:grid;grid-template-columns:minmax(0,30vw) 36vw;column-gap:clamp(64px,7.5vw,140px);align-items:end;flex:1">
             <div data-grade="true" style="display:flex;flex-direction:column;gap:clamp(22px,3.2vh,36px);padding-bottom:clamp(22px,3.4vh,40px)">
               <p style="margin:0;font-size:clamp(19px,1.62vw,26px);line-height:1.42;font-weight:500;max-width:24ch;text-wrap:pretty">Grupo Tejaz es una empresa de desarrollo y construcción con sede en Veracruz. Trabajamos cada proyecto desde el diseño hasta la entrega, cuidando el detalle en cada etapa del proceso.</p>
               <div style="height:1px;width:40%;background:rgba(14,15,13,.2)"></div>
               <p style="margin:0;font-size:16px;line-height:1.65;color:#3E4038;max-width:36ch;text-wrap:pretty">Construimos residencias, espacios comerciales y desarrollos de uso mixto. Calidad, cumplimiento y diseño a la medida en cada proyecto, con una relación cercana con cada cliente.</p>
             </div>
-            <div id="nos-strip" data-grade="true" style="position:relative;width:28vw;height:50vh;overflow:hidden;align-self:end">
-              <div data-par="8" style="position:absolute;top:-6%;left:-8%;width:116%;height:112%">
+            <div id="nos-strip" data-grade="true" style="position:relative;width:36vw;aspect-ratio:16/9;overflow:hidden;align-self:end">
+              <div style="position:absolute;inset:0">
                 <img id="nosotros-bg" class="ph" src="img/site/nosotros-bg.jpg" alt="Obra o fachada Grupo Tejaz" style="width:100%;height:100%;object-fit:cover">
               </div>
             </div>
@@ -852,28 +852,28 @@
                        cuando Reforma, debajo, ya se ha resuelto — un solo
                        encuadre, nunca dos imágenes en posiciones distintas
                        compitiendo por dominio. -->
-                  <div id="hac-obr-outgoing" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform:translateX(-50%);overflow:hidden;opacity:0;pointer-events:none;z-index:50">
+                  <div id="hac-obr-outgoing" style="position:absolute;left:46%;bottom:6%;width:min(56vw,calc(66vh * 4 / 3));aspect-ratio:4/3;transform:translateX(-50%);overflow:hidden;opacity:0;pointer-events:none;z-index:50">
                     <img class="ph" src="img/proyectos/casa-l147-enero-2026/alt-01.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
                   </div>
-                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="AM83" tabindex="0" role="button" aria-label="Centrar AM83" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="0" data-cursor="CENTRAR" data-name="AM83" tabindex="0" role="button" aria-label="Centrar AM83" style="--r:3/4;position:absolute;left:46%;bottom:6%;width:min(56vw,calc(66vh * var(--r)));aspect-ratio:var(--r);transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-1" class="ph" src="img/proyectos/am83/primary.jpg" alt="AM83" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">AM83</div>
                   </div>
-                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Casa Odesa 67" tabindex="0" role="button" aria-label="Centrar Casa Odesa 67" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="1" data-cursor="CENTRAR" data-name="Casa Odesa 67" tabindex="0" role="button" aria-label="Centrar Casa Odesa 67" style="--r:4/3;position:absolute;left:46%;bottom:6%;width:min(56vw,calc(66vh * var(--r)));aspect-ratio:var(--r);transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
-                      <img id="proj-2" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Casa Odesa 67" style="width:100%;height:100%;object-fit:cover;object-position:50% 0%">
+                      <img id="proj-2" class="ph" src="img/proyectos/casa-odesa-67-octubre-2015/primary.jpg" alt="Casa Odesa 67" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA ODESA 67</div>
                   </div>
-                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Casa Ladoga 125" tabindex="0" role="button" aria-label="Centrar Casa Ladoga 125" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="2" data-cursor="CENTRAR" data-name="Casa Ladoga 125" tabindex="0" role="button" aria-label="Centrar Casa Ladoga 125" style="--r:3/4;position:absolute;left:46%;bottom:6%;width:min(56vw,calc(66vh * var(--r)));aspect-ratio:var(--r);transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-3" class="ph" src="img/proyectos/casa-ladoga-125-diciembre-2021/primary.jpg" alt="Casa Ladoga 125" style="width:100%;height:100%;object-fit:cover">
                     </div>
                     <div class="wcap" style="position:absolute;left:0;top:100%;font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;color:rgba(229,227,220,.74);white-space:nowrap;opacity:0">CASA LADOGA 125</div>
                   </div>
-                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Casa L91" tabindex="0" role="button" aria-label="Centrar Casa L91" style="position:absolute;left:46%;bottom:6%;width:min(56vw,112vh);height:66vh;transform-origin:50% 100%;will-change:transform,opacity">
+                  <div class="wplate" data-i="3" data-cursor="CENTRAR" data-name="Casa L91" tabindex="0" role="button" aria-label="Centrar Casa L91" style="--r:4/3;position:absolute;left:46%;bottom:6%;width:min(56vw,calc(66vh * var(--r)));aspect-ratio:var(--r);transform-origin:50% 100%;will-change:transform,opacity">
                     <div class="wframe" style="position:absolute;inset:0;overflow:hidden">
                       <img id="proj-4" class="ph" src="img/proyectos/casa-l91-diciembre-2025/primary.jpg" alt="Casa L91" style="width:100%;height:100%;object-fit:cover">
                     </div>
@@ -902,7 +902,7 @@
                Reutiliza el único verbo de revelado del sitio (data-grade, cota
                cero) y el único gesto de hover (grado fotográfico + hilo nlink):
                ninguna timeline nueva. -->
-          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver más proyectos de Grupo Tejaz" style="flex:none;width:24vw;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
+          <a id="obras-more" href="proyectos.html" data-grade="true" data-cursor="VER TODO" aria-label="Más proyectos — ver más proyectos de Grupo Tejaz" style="flex:none;width:auto;aspect-ratio:3/4;position:relative;overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:inherit">
             <img class="ph" src="img/proyectos/casa-caracas-455-mayo-2013/primary.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
             <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,10,.1) 0%,rgba(10,11,10,.82) 100%)"></div>
             <div style="position:relative;z-index:1;padding:0 clamp(18px,1.8vw,30px) 8% clamp(18px,1.8vw,30px);display:flex;flex-direction:column;gap:12px">
