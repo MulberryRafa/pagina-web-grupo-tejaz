@@ -107,7 +107,9 @@
   #lb.open { display:flex; }
   #lb .lb-stage { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:70px clamp(20px,6vw,90px) 96px; }
   #lb .lb-stage img { max-width:100%; max-height:100%; object-fit:contain; user-select:none; }
-  #lb .lb-top { position:absolute; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:20px clamp(18px,2.4vw,34px); }
+  /* La barra va sobre .lb-stage: sin z-index, la zona de "siguiente" (que
+     ocupa todo el alto del lado derecho) tapaba la X de cerrar. */
+  #lb .lb-top { position:absolute; top:0; left:0; right:0; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:20px clamp(18px,2.4vw,34px); }
   #lb .lb-name { font-size:15px; font-weight:600; }
   #lb .lb-idx { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.16em; opacity:.6; }
   #lb .lb-close { background:none; border:none; color:var(--bone); font-size:22px; line-height:1; cursor:pointer; padding:6px; }
